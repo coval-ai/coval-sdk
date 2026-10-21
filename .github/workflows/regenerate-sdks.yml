@@ -1,0 +1,236 @@
+name: Regenerate SDKs
+
+# The backend publishes external specs, then dispatches their commit and hashes.
+# Recovery is a manual rerun of backend's Publish OpenAPI Specs workflow.
+on:
+  repository_dispatch:
+    types: [openapi_specs_published]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: regenerate-sdks
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    if: vars.SDK_REGEN_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create regeneration token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.RELEASE_AUTOMATION_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - name: Checkout coval-sdk
+        uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            scripts/package-lock.json
+            typescript-sdk/package-lock.json
+
+      - name: Set up Java (openapi-generator-cli)
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Fetch verified published specs
+        run: python3 scripts/fetch-published-specs.py --output dist/openapi-specs
+
+      - name: Install scripts deps
+        run: npm ci --prefix scripts
+
+      - name: Bundle spec
+        id: bundle
+        env:
+          COVAL_SPECS_DIR: ${{ github.workspace }}/dist/openapi-specs
+        run: node scripts/bundle-spec.mjs
+
+      - name: Generate SDKs (pass 1)
+        id: generate
+        run: bash scripts/generate-sdks.sh
+
+      - name: Determinism check (regenerate into tmp + diff)
+        id: determinism
+        env:
+          COVAL_SPECS_DIR: ${{ github.workspace }}/dist/openapi-specs
+        run: |
+          set -euo pipefail
+          # Snapshot pass-1 output.
+          cp -r typescript-sdk/src/generated /tmp/ts-pass-1
+          cp typescript-sdk/src/CovalClient.ts /tmp/ts-client-pass-1.ts
+          cp -r python-sdk/src/coval_sdk /tmp/py-pass-1
+          cp python-sdk/GENERATED_README.md /tmp/py-readme-pass-1.md
+          cp dist/coval-openapi.yaml /tmp/spec-pass-1.yaml
+          # Re-run bundle + codegen.
+          node scripts/bundle-spec.mjs
+          bash scripts/generate-sdks.sh
+          # Diff. Any change between passes = upstream non-determinism.
+          echo "=== TypeScript generated diff ==="
+          diff -r /tmp/ts-pass-1 typescript-sdk/src/generated
+          echo "=== TypeScript CovalClient diff ==="
+          diff /tmp/ts-client-pass-1.ts typescript-sdk/src/CovalClient.ts
+          echo "=== Python generated diff ==="
+          diff -r /tmp/py-pass-1 python-sdk/src/coval_sdk
+          echo "=== Python generated README diff ==="
+          diff /tmp/py-readme-pass-1.md python-sdk/GENERATED_README.md
+          echo "=== bundled spec diff ==="
+          diff /tmp/spec-pass-1.yaml dist/coval-openapi.yaml
+          echo "✓ Codegen output is deterministic across two consecutive runs."
+
+      - name: Install TS SDK deps + build + test
+        id: typescript_validation
+        continue-on-error: true
+        working-directory: typescript-sdk
+        run: |
+          npm ci
+          npm run build
+          npm test
+
+      - name: Install Python SDK + run tests
+        id: python_validation
+        continue-on-error: true
+        working-directory: python-sdk
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pytest
+
+      - name: Open / update regen PR if there are changes
+        if: >-
+          always() &&
+          steps.bundle.outcome == 'success' &&
+          steps.generate.outcome == 'success' &&
+          steps.determinism.outcome == 'success'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "fix(sdks): regenerate from published OpenAPI specs"
+          title: "fix(sdks): regenerate from published OpenAPI specs"
+          body: |
+            Automated SDK regeneration from the verified public specs published by
+            `coval-ai/backend@${{ github.event.client_payload.ref }}`.
+
+            - Bundled `dist/coval-openapi.yaml`
+            - Regenerated TypeScript + Python SDKs and synchronized their `CovalClient` API surfaces
+            - Determinism check passed (two consecutive runs produced identical output)
+            - TypeScript validation: `${{ steps.typescript_validation.outcome }}`
+            - Python validation: `${{ steps.python_validation.outcome }}`
+
+            A failed validation result is intentionally committed to this PR so the
+            generated diff and failure are reviewable instead of being trapped in an
+            Actions log. Do not merge until both validations pass.
+
+            If only the OpenAPI marker timestamp changed, this PR can be closed
+            without merging.
+          # Stable branch name — peter-evans/create-pull-request updates the
+          # existing PR in place instead of opening a new one each run.
+          branch: chore/regenerate-sdks
+          delete-branch: false
+          add-paths: |
+            dist/coval-openapi.yaml
+            typescript-sdk/src/generated/
+            typescript-sdk/src/CovalClient.ts
+            python-sdk/src/coval_sdk/
+            python-sdk/GENERATED_README.md
+
+      - name: Fail if SDK validation failed
+        if: >-
+          always() &&
+          (steps.typescript_validation.outcome == 'failure' ||
+          steps.python_validation.outcome == 'failure')
+        run: |
+          echo "TypeScript validation: ${{ steps.typescript_validation.outcome }}"
+          echo "Python validation: ${{ steps.python_validation.outcome }}"
+          exit 1
+
+      - name: Close the prior failure issue after recovery
+        if: >-
+          success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'sdk-regen-failure',
+            });
+
+            for (const issue of existing.data) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Recovered successfully. Run: ${runUrl}`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'completed',
+              });
+            }
+
+      - name: File an issue if the regen failed
+        if: >-
+          failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Backend-triggered SDK regeneration is failing';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              `The backend-triggered \`Regenerate SDKs\` job failed.`,
+              ``,
+              `Run: ${runUrl}`,
+              ``,
+              `When generation completed, the rolling regen PR was still opened or`,
+              `updated with the validation result. The published SDKs remain unchanged`,
+              `until that PR is fixed, reviewed, and merged.`,
+            ].join('\n');
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'sdk-regen-failure',
+            });
+
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['sdk-regen-failure'],
+              });
+            }

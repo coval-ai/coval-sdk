@@ -1,0 +1,121 @@
+name: Publish SDK packages
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate and build both packages
+    if: vars.SDK_RELEASES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: "0.9.4"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Install SDK and release tools
+        env:
+          PYTHON_VERSION: "3.12"
+        run: scripts/install
+      - name: Verify generated release tag
+        run: |
+          git fetch origin main:refs/remotes/origin/main
+          .venv/bin/python scripts/validate_release.py tag "$GITHUB_REF_NAME"
+      - name: Install TypeScript build tools
+        run: npm ci --prefix typescript-sdk
+      - name: Validate and package both SDKs
+        run: scripts/check
+      - name: Upload Python distributions
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coval-sdk-python
+          path: dist/python/
+          if-no-files-found: error
+      - name: Upload npm package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coval-sdk-npm
+          path: dist/npm/
+          if-no-files-found: error
+
+  pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/coval-sdk/
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: coval-sdk-python
+          path: dist/
+      - name: Publish distributions
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
+        with:
+          packages-dir: dist/
+          attestations: true
+          skip-existing: true
+
+  npm:
+    name: Publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/@coval/sdk
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: coval-sdk-npm
+          path: dist/
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - name: Use an OIDC-capable npm CLI
+        run: npm install --global npm@11.5.1
+      - name: Detect an already published version
+        id: registry
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="${RELEASE_TAG#v}"
+          if npm view "@coval/sdk@$version" version --json > registry.json; then
+            node --input-type=module - "$version" <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          assert.equal(JSON.parse(readFileSync('registry.json', 'utf8')), process.argv[2]);
+          JS
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+          else
+            node --input-type=module - <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          assert.equal(JSON.parse(readFileSync('registry.json', 'utf8')).error.code, 'E404');
+          JS
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish package
+        if: steps.registry.outputs.publish == 'true'
+        run: npm publish dist/*.tgz --access public

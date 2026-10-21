@@ -1,0 +1,38 @@
+[dependency-groups]
+dev = [
+  "python-semantic-release==10.7.0",
+  "pytest>=8,<10",
+  "PyYAML==6.0.3",
+]
+
+[tool.semantic_release]
+allow_zero_version = true
+major_on_zero = true
+commit_parser = "conventional"
+commit_message = "chore(release): {version}"
+commit_author = "Coval Release Automation <coval-release-automation[bot]@users.noreply.github.com>"
+tag_format = "v{version}"
+version_toml = ["python-sdk/pyproject.toml:project.version"]
+build_command = ".venv/bin/python scripts/sync_versions.py"
+assets = [
+  "python-sdk/src/coval_sdk/__init__.py",
+  "python-sdk/src/coval_sdk/api_client.py",
+  "python-sdk/src/coval_sdk/configuration.py",
+  "typescript-sdk/package.json",
+  "typescript-sdk/package-lock.json",
+]
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+
+[tool.semantic_release.changelog]
+mode = "init"
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+mask_initial_release = false
+
+[tool.semantic_release.remote]
+url = "https://github.com/coval-ai/coval-sdk.git"
+ignore_token_for_push = true

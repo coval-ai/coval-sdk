@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+project_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$project_root"
+rm -rf dist/python dist/npm
+mkdir -p dist/python dist/npm
+.venv/bin/python -m build --outdir "$project_root/dist/python" python-sdk
+.venv/bin/python -m twine check dist/python/*
+npm run build --prefix typescript-sdk
+(cd typescript-sdk && npm pack --pack-destination "$project_root/dist/npm")
+.venv/bin/python scripts/check_package.py

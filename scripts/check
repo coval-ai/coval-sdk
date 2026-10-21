@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+project_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$project_root"
+.venv/bin/python -m pytest python-sdk/tests -q
+npm run typecheck --prefix typescript-sdk
+npm test --prefix typescript-sdk
+scripts/build
+smoke_dir=$(mktemp -d)
+trap 'rm -rf "$smoke_dir"' EXIT HUP INT TERM
+uv venv --python .venv/bin/python "$smoke_dir/python"
+uv pip install --python "$smoke_dir/python/bin/python" dist/python/*.whl pytest
+(cd "$smoke_dir" && env -u PYTHONPATH "$smoke_dir/python/bin/python" -I -m pytest "$project_root/python-sdk/tests" -q)
+mkdir -p "$smoke_dir/npm"
+(cd "$smoke_dir/npm" && npm init --yes && npm install "$project_root"/dist/npm/*.tgz && node --input-type=module - <<'JS'
+import assert from 'node:assert/strict';
+import { CovalClient, CovalMonitorsAPIErrorResponseErrorFromJSON } from '@coval/sdk';
+import * as generated from '@coval/sdk/generated';
+const client = new CovalClient({ apiKey: 'package-smoke-test' });
+assert(client.agents && client.alerts && client.alertEvents);
+assert.equal(typeof CovalMonitorsAPIErrorResponseErrorFromJSON, 'function');
+assert(Object.keys(generated).length > 0);
+JS
+)
