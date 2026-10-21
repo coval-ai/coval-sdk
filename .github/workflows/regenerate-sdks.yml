@@ -1,39 +1,10 @@
 name: Regenerate SDKs
 
-# Weekly cron + manual dispatch. Pulls the latest OpenAPI specs from
-# coval-ai/docs, regenerates @coval/sdk (TypeScript) + coval-sdk (Python),
-# runs build + tests, and opens (or updates) a single rolling regen PR.
-#
-# Prerequisites — set these as repository secrets before the first run:
-#
-#   DOCS_REPO_TOKEN (required for cross-org checkout of coval-ai/docs)
-#     Personal Access Token with `repo` read access to coval-ai/docs.
-#     The default GITHUB_TOKEN only scopes to this repo and cannot read
-#     coval-ai/docs.
-#
-#   RELEASE_AUTOMATION_APP_CLIENT_ID (repository variable) and
-#   RELEASE_AUTOMATION_APP_PRIVATE_KEY (repository secret)
-#     The Coval Release Automation App must have Contents and Pull requests
-#     write access to this repository so its generated PR starts normal CI.
-#
-# Hardening notes (TRACE-83):
-#   - Deps installed via `npm ci` against committed lockfiles only — no
-#     fallback to floating versions
-#   - openapi-generator-cli pinned to 2.13.4 in scripts/generate-sdks.sh
-#   - Determinism check re-runs codegen and fails on drift
-#   - PR branch is stable so peter-evans/create-pull-request updates the
-#     same PR in place instead of accumulating per-run branches
-
+# The backend publishes external specs, then dispatches their commit and hashes.
+# Recovery is a manual rerun of backend's Publish OpenAPI Specs workflow.
 on:
-  workflow_dispatch:
-    inputs:
-      docs_ref:
-        description: Branch or tag of coval-ai/docs to pull specs from
-        required: false
-        default: main
-  schedule:
-    # Weekly Monday 09:00 UTC.
-    - cron: "0 9 * * 1"
+  repository_dispatch:
+    types: [openapi_specs_published]
 
 permissions:
   contents: write
@@ -62,20 +33,6 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
 
-      - name: Checkout docs repo (specs source)
-        uses: actions/checkout@v7
-        with:
-          repository: coval-ai/docs
-          ref: ${{ github.event.inputs.docs_ref || 'main' }}
-          path: coval-docs
-          # DOCS_REPO_TOKEN must be configured as a repo secret. GITHUB_TOKEN
-          # cannot read another repository in the org by default.
-          token: ${{ secrets.DOCS_REPO_TOKEN }}
-
-      - name: Capture exact docs revision
-        id: source
-        run: echo "docs_sha=$(git -C coval-docs rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
@@ -96,13 +53,16 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Fetch verified published specs
+        run: python3 scripts/fetch-published-specs.py --output dist/openapi-specs
+
       - name: Install scripts deps
         run: npm ci --prefix scripts
 
       - name: Bundle spec
         id: bundle
         env:
-          COVAL_SPECS_DIR: ${{ github.workspace }}/coval-docs/api-reference/v1
+          COVAL_SPECS_DIR: ${{ github.workspace }}/dist/openapi-specs
         run: node scripts/bundle-spec.mjs
 
       - name: Generate SDKs (pass 1)
@@ -112,7 +72,7 @@ jobs:
       - name: Determinism check (regenerate into tmp + diff)
         id: determinism
         env:
-          COVAL_SPECS_DIR: ${{ github.workspace }}/coval-docs/api-reference/v1
+          COVAL_SPECS_DIR: ${{ github.workspace }}/dist/openapi-specs
         run: |
           set -euo pipefail
           # Snapshot pass-1 output.
@@ -164,11 +124,11 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.app-token.outputs.token }}
-          commit-message: "fix(sdks): regenerate from latest OpenAPI specs"
-          title: "fix(sdks): regenerate from latest OpenAPI specs"
+          commit-message: "fix(sdks): regenerate from published OpenAPI specs"
+          title: "fix(sdks): regenerate from published OpenAPI specs"
           body: |
-            Automated SDK regeneration from `coval-ai/docs@${{ steps.source.outputs.docs_sha }}`
-            (`${{ github.event.inputs.docs_ref || 'main' }}`).
+            Automated SDK regeneration from the verified public specs published by
+            `coval-ai/backend@${{ github.event.client_payload.ref }}`.
 
             - Bundled `dist/coval-openapi.yaml`
             - Regenerated TypeScript + Python SDKs and synchronized their `CovalClient` API surfaces
@@ -205,8 +165,7 @@ jobs:
 
       - name: Close the prior failure issue after recovery
         if: >-
-          success() &&
-          (github.event_name == 'schedule' || github.event.inputs.docs_ref == 'main')
+          success()
         uses: actions/github-script@v7
         with:
           script: |
@@ -234,22 +193,16 @@ jobs:
               });
             }
 
-      # This job failed silently every week from 2026-07-13 to 2026-07-29. A
-      # scheduled workflow has no reviewer and nobody watches the Actions tab,
-      # so the SDKs drifted from the API for sixteen days with no signal. File
-      # an issue on failure, and reuse a single one so repeated weekly failures
-      # accumulate in one thread instead of spamming.
       - name: File an issue if the regen failed
         if: >-
-          failure() &&
-          (github.event_name == 'schedule' || github.event.inputs.docs_ref == 'main')
+          failure()
         uses: actions/github-script@v7
         with:
           script: |
-            const title = 'Weekly SDK regeneration is failing';
+            const title = 'Backend-triggered SDK regeneration is failing';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = [
-              `The scheduled \`Regenerate SDKs\` job failed.`,
+              `The backend-triggered \`Regenerate SDKs\` job failed.`,
               ``,
               `Run: ${runUrl}`,
               ``,

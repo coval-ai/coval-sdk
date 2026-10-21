@@ -10,7 +10,7 @@ Release Automation checks out current `main`, derives the next version, and stam
 
 The tag starts `publish.yml`. Before either upload, it validates the App-pushed tag and generated commit in main history, builds and tests both packages, and checks clean package installations. The isolated `pypi` and `npm` jobs then download their respective artifacts and use registry Trusted Publishing with job-scoped OIDC. The Python publisher does not check out or execute the SDK.
 
-Regeneration uses the same App to open a rolling `fix(sdks):` PR. It does not bump versions; Semantic Release owns versioning after merge.
+Regeneration accepts only backend `openapi_specs_published` dispatches and uses the same App to open a rolling `fix(sdks):` PR. It downloads the event’s exact public spec set and verifies each hash before generation. Recovery is the backend’s manual **Publish OpenAPI Specs** workflow against the deployed backend commit; SDK regeneration has no cron or manual dispatch. It does not bump versions; Semantic Release owns versioning after merge.
 
 ## Repository cutover
 
@@ -20,9 +20,9 @@ The new repository starts with `SDK_REGEN_ENABLED` and `SDK_RELEASES_ENABLED` un
 
 1. Merge the SDK import and verify CI. Ensure intended source readers can access the new repository before retiring the original source paths. Repository visibility is a separate maintainer decision.
 2. Reconcile SDK changes that landed in `coval-examples` after the extraction base, then merge its cleanup to retire the old SDK workflows. Do not enable both repositories' regeneration or release workflows together.
-3. Complete the App and Trusted Publisher setup below. Create the `sdk-regen-failure` issue label. Configure `DOCS_REPO_TOKEN` for read access to `coval-ai/docs` if that checkout requires authentication; the App replaces `REGEN_PR_TOKEN` for writes in this repository.
+3. Complete the App and Trusted Publisher setup below. Create the `sdk-regen-failure` issue label. Verify the backend publisher dispatch App can write repository events to `coval-sdk`; the Coval Release App owns regeneration PRs. No docs-repository token is needed.
 4. Verify the imported versions against the registries and source repository. While release gates are disabled, establish `v0.9.2` at the imported main revision as the migration baseline. It marks the existing Python release boundary and does not claim that npm published `0.9.2`. Do not copy the old per-language tag schemes. Release Automation refuses to start without a reachable semantic baseline covering both imported version numbers.
-5. Set `SDK_REGEN_ENABLED=true`, manually dispatch regeneration against a selected docs revision, and review its result. Set `SDK_RELEASES_ENABLED=true` only after App access, publisher identities, the baseline, and the old-workflow retirement are verified. A semantic merge can then publish both packages automatically; use environment approvals if each upload needs a maintainer decision.
+5. Land the backend publication-manifest provider and docs consumer changes, then set `SDK_REGEN_ENABLED=true`. Use the backend’s manual publish workflow against the deployed backend SHA and review the resulting SDK PR and docs commit. Dispatch acceptance alone does not establish that either consumer finished successfully. Set `SDK_RELEASES_ENABLED=true` only after App access, publisher identities, the baseline, and the old-workflow retirement are verified. A semantic merge can then publish both packages automatically; use environment approvals if each upload needs a maintainer decision.
 
 No package or tag is published merely by preparing or merging this gated import. Source installs move to `git+https://github.com/coval-ai/coval-sdk.git#subdirectory=python-sdk` once the selected revision is available to the consumer.
 
@@ -58,3 +58,9 @@ The release tests run the real pinned Semantic Release tool against isolated Git
 Before the atomic push, a failed preparation can be retried with manual dispatch from `main`; no manual version bump is needed. After the push, retry failed publishing jobs at the same generated tag. PyPI skips existing distributions, and npm skips an existing exact package version. Registry errors other than npm's explicit not-found result fail the job.
 
 The registries cannot commit atomically together. One upload may succeed while the other fails; keep the same tag and version and retry only the incomplete publication. Do not move tags, replace published contents, or increment versions just to retry. A generated changelog or successful build does not establish availability: confirm both registry versions, provenance, and fresh consumer installations before reporting a shared release complete.
+
+## Publication event contract
+
+The backend stages only externally visible specs, publishes them, and independently dispatches `openapi_specs_published` to this repository and docs. `client_payload` contains `schema_version: 1`, `ref` as the resolved 40-character backend commit, and a nonempty `specs` list of `{name, sha256}` entries. SHA-256 values identify the exact staged bytes; names identify resources at `https://api.coval.dev/v1/openapi/{name}`. Duplicate names, invalid metadata, failed requests, or mismatched bytes fail before generated input files change.
+
+Public URLs serve the latest publication; the event does not create persistent immutable snapshots. A later publish or cached response can make verification fail. Republish the intended deployed backend revision through the backend workflow rather than bypassing verification or dispatching a consumer manually. Failed or missed dispatches are also recovered there. Regeneration and package publication remain separate gates.

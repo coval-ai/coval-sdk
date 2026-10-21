@@ -38,7 +38,9 @@ Run checks for the affected SDK. CI also tests Python 3.9, 3.12, and 3.14. Use s
 
 ## Generate clients
 
-Clone `coval-ai/docs` alongside this repository, or set `COVAL_SPECS_DIR` to its `api-reference/v1` directory. Record the exact docs commit when reporting generation results.
+Automated generation accepts only the backend’s `openapi_specs_published` event. `scripts/fetch-published-specs.py` verifies the event’s public spec set and hashes into `dist/openapi-specs`; it needs no docs checkout or token. Recover a failed or missed event through the backend’s manual **Publish OpenAPI Specs** workflow using the deployed backend commit. There is no SDK schedule or independent manual workflow.
+
+For offline development, populate `dist/openapi-specs` with synthetic or verified `*-v1.yaml` files, or set `COVAL_SPECS_DIR` to an explicit local contract directory. Record the backend commit/manifest or fixture provenance when reporting results.
 
 ```sh
 npm ci --prefix scripts

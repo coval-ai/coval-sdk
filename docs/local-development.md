@@ -13,7 +13,7 @@ npm run build --prefix typescript-sdk
 
 The root `.venv` contains the editable Python SDK and release tools. Use `.venv/bin/python` explicitly. `PYTHON_VERSION` selects the interpreter when creating a fresh environment. TypeScript compiles source into `typescript-sdk/dist/`; rebuild after changes when testing compiled output.
 
-Installation, imports, tests, type checks, and builds do not need Coval credentials. Generation additionally needs a local checkout or authenticated read access to the selected docs contract; [Contributing](../CONTRIBUTING.md#generate-clients) describes setup.
+Installation, imports, tests, type checks, and builds do not need Coval credentials. Offline generation additionally needs explicit synthetic or verified spec files; automated generation downloads the backend publication without a docs token; [Contributing](../CONTRIBUTING.md#generate-clients) describes setup.
 
 ## Checks and builds
 

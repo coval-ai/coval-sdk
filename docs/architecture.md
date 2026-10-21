@@ -12,7 +12,9 @@ Keep transport behavior at those owning boundaries. Do not introduce application
 
 ## Generation
 
-`scripts/bundle-spec.mjs` combines the selected `coval-ai/docs` contracts with frozen [compatibility specs](../legacy-specs/README.md). Canonical definitions win where they overlap. `.openapi-generator-config/` and `openapitools.json` configure the generators; `scripts/generate-sdks.sh` invokes them and applies `patch-generated-python.py` and `patch-generated-ts.mjs`.
+`scripts/bundle-spec.mjs` combines verified backend-published contracts with frozen [compatibility specs](../legacy-specs/README.md). Canonical definitions win where they overlap. `.openapi-generator-config/` and `openapitools.json` configure the generators; `scripts/generate-sdks.sh` invokes them and applies `patch-generated-python.py` and `patch-generated-ts.mjs`.
+
+The sole automated regeneration trigger is backend `repository_dispatch` after public spec publication. Both SDKs are independent of docs synchronization: `scripts/fetch-published-specs.py` checks the event’s resolved backend SHA, spec names, and content hashes before replacing inputs. A newer mutable publication can make an older event fail verification; recovery republishes through the backend manual workflow.
 
 The scripts preserve handwritten modules and synchronize generated API imports/properties in the client facades. Change the source contract or generator patches for generated behavior, then run generation twice to establish determinism. [Contributing](../CONTRIBUTING.md#generate-clients) has the commands.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Bundle Coval's per-resource OpenAPI v1 specs into a single combined spec.
 //
-// Source: docs/api-reference/v1/*-v1.yaml in the public docs repo
+// Source: dist/openapi-specs/*-v1.yaml from the verified backend publication
 //         (override via COVAL_SPECS_DIR), plus the frozen legacy specs in
 //         legacy-specs/ (override via COVAL_LEGACY_SPECS_DIR).
 // Output: dist/coval-openapi.yaml in the SDK repo.
@@ -37,7 +37,7 @@ import { parse, stringify } from 'yaml';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const repoRoot = resolve(__dirname, '..');
 const SOURCE_DIR =
-  process.env.COVAL_SPECS_DIR || resolve(repoRoot, '../docs/api-reference/v1');
+  process.env.COVAL_SPECS_DIR || resolve(repoRoot, 'dist/openapi-specs');
 const LEGACY_DIR = process.env.COVAL_LEGACY_SPECS_DIR || resolve(repoRoot, 'legacy-specs');
 const OUT_DIR = resolve(repoRoot, 'dist');
 const OUTPUT = join(OUT_DIR, 'coval-openapi.yaml');
@@ -49,7 +49,7 @@ const ALLOWED_SOURCE_SERVERS = new Set([
 
 if (!existsSync(SOURCE_DIR) || !statSync(SOURCE_DIR).isDirectory()) {
   console.error(`✗ Specs directory not found: ${SOURCE_DIR}`);
-  console.error('  Set COVAL_SPECS_DIR or check the docs repo is on disk.');
+  console.error('  Set COVAL_SPECS_DIR to explicit verified or synthetic specs for offline generation.');
   process.exit(1);
 }
 
