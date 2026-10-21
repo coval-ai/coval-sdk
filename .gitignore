@@ -27,3 +27,8 @@ scripts/node_modules/
 # Maintainer release tools
 /.venv/
 /.pytest_cache/
+
+# Local credentials
+.env
+.env.*
+!.env.example

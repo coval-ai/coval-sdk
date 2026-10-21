@@ -13,7 +13,7 @@ For streaming voice agents, use the separate [Coval Agent SDK](https://github.co
 
 ## Development
 
-See [Contributing](CONTRIBUTING.md) for setup, tests, and OpenAPI generation, and [Releasing](docs/releasing.md) for registry publishing and repository migration.
+See [Contributing](CONTRIBUTING.md) for setup, tests, and OpenAPI generation, [Local development](docs/local-development.md) for package checks, and [Architecture](docs/architecture.md) for module ownership. [Releasing](docs/releasing.md) covers registry publishing and repository migration.
 
 The initial SDK source was extracted from [coval-examples at `3b4e2b7`](https://github.com/coval-ai/coval-examples/tree/3b4e2b74b491fc0db09cbd8d5772d94f1391cf5d). The import preserves package names, existing versions, and runtime interfaces. Subsequent releases use one shared version for both API packages. Earlier history remains in that repository.
 
@@ -21,4 +21,8 @@ The initial SDK source was extracted from [coval-examples at `3b4e2b7`](https://
 
 [API reference](https://docs.coval.dev/api-reference) · [Issues](https://github.com/coval-ai/coval-sdk/issues) · support@coval.dev
 
-Both packages are MIT-licensed.
+Follow [Security](SECURITY.md) for private vulnerability reporting.
+
+## License
+
+Copyright 2026 Coval, Inc. Both packages are licensed under the [MIT License](LICENSE). See [NOTICE](NOTICE) for attribution.

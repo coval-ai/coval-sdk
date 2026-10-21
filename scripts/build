@@ -8,3 +8,4 @@ mkdir -p dist/python dist/npm
 .venv/bin/python -m twine check dist/python/*
 npm run build --prefix typescript-sdk
 (cd typescript-sdk && npm pack --pack-destination "$project_root/dist/npm")
+.venv/bin/python scripts/check_package.py

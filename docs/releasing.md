@@ -40,7 +40,7 @@ Configure these registry identities before enabling releases:
 | Workflow filename | `publish.yml` | `publish.yml` |
 | GitHub environment | `pypi` | `npm` |
 
-Create those GitHub environments and configure their review/tag policies as appropriate. npm Trusted Publishing supports private source repositories, but npm provenance requires public source. Leave npm's automatic provenance behavior in place; making the source public is a separate decision. See [npm's publisher documentation](https://docs.npmjs.com/trusted-publishers/). Workflow files do not configure App installations, secrets, registry trust, repository visibility, or branch protection.
+Create those GitHub environments and configure their review/tag policies as appropriate. Confirm the `coval-engineering` code-owner team has write access and a working private security reporting channel exists before making the repository public. npm Trusted Publishing supports private source repositories, but npm provenance requires public source. Leave npm's automatic provenance behavior in place; making the source public is a separate decision. See [npm's publisher documentation](https://docs.npmjs.com/trusted-publishers/). Workflow files do not configure App installations, secrets, registry trust, repository visibility, or branch protection.
 
 ## Validation and recovery
 
