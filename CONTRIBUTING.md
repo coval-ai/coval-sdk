@@ -1,6 +1,6 @@
 # Contributing
 
-Use a feature branch from `main` and open a pull request describing the behavior and validation. Keep package identities and existing public APIs stable across maintenance changes.
+Use a feature branch from `main` and open a pull request describing the behavior and validation. Keep package identities and existing public APIs stable across maintenance changes. Squash-merge using a Conventional Commit PR title; `fix:`/`perf:` release a patch, `feat:` a minor, and `!`/`BREAKING CHANGE:` a major. Semantic Release owns both package versions, the changelog, and release tags. Do not bump versions in feature or regeneration PRs.
 
 ## Setup and checks
 
@@ -19,6 +19,8 @@ npm run build --prefix typescript-sdk
 npm test --prefix typescript-sdk
 (cd typescript-sdk && npm pack --dry-run)
 ```
+
+For release workflow, configuration, or version-stamping changes, run `scripts/install` and `.venv/bin/python -m pytest release_tests -q` on Python 3.12. Run `scripts/check` after `npm ci --prefix typescript-sdk` to validate both SDKs and their built packages. Release tools use the root `.venv`; the language-only commands above remain available.
 
 Run checks for the affected SDK. CI also tests Python 3.9, 3.12, and 3.14. Use synthetic inputs and local collaborators; automated checks do not need Coval credentials.
 

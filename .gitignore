@@ -23,3 +23,7 @@ scripts/node_modules/
 
 # Existing Python example dirs may have their own
 .DS_Store
+
+# Maintainer release tools
+/.venv/
+/.pytest_cache/

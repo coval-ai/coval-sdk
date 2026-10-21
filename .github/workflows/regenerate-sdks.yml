@@ -11,11 +11,10 @@ name: Regenerate SDKs
 #     The default GITHUB_TOKEN only scopes to this repo and cannot read
 #     coval-ai/docs.
 #
-#   REGEN_PR_TOKEN (required to open the auto-PR)
-#     Personal Access Token with `repo` scope on coval-ai/coval-sdk.
-#     Used in place of GITHUB_TOKEN for the create-pull-request step
-#     because the coval-ai org ruleset disallows GitHub Actions from
-#     creating PRs via GITHUB_TOKEN. User PATs bypass that restriction.
+#   RELEASE_AUTOMATION_APP_CLIENT_ID (repository variable) and
+#   RELEASE_AUTOMATION_APP_PRIVATE_KEY (repository secret)
+#     The Coval Release Automation App must have Contents and Pull requests
+#     write access to this repository so its generated PR starts normal CI.
 #
 # Hardening notes (TRACE-83):
 #   - Deps installed via `npm ci` against committed lockfiles only — no
@@ -50,8 +49,18 @@ jobs:
     if: vars.SDK_REGEN_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Create regeneration token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.RELEASE_AUTOMATION_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - name: Checkout coval-sdk
         uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Checkout docs repo (specs source)
         uses: actions/checkout@v7
@@ -128,40 +137,6 @@ jobs:
           diff /tmp/spec-pass-1.yaml dist/coval-openapi.yaml
           echo "✓ Codegen output is deterministic across two consecutive runs."
 
-      - name: Bump versions if the generated output changed
-        id: versions
-        run: |
-          set -euo pipefail
-          # git status, not git diff — a new spec model arrives as an untracked
-          # file and would not show up in a diff against HEAD.
-          changed() { [ -n "$(git status --porcelain -- "$1")" ]; }
-
-          # An array, and `if` rather than `cmd && assign`: under `set -e` a
-          # failing `&&` list is itself a failing statement and would abort the
-          # step the moment one of the two SDKs had no changes.
-          args=()
-          python_changed=false
-          if changed python-sdk/src/coval_sdk; then
-            args+=(--python)
-            python_changed=true
-          fi
-          if changed typescript-sdk/src/generated; then
-            args+=(--typescript)
-          fi
-
-          if [ ${#args[@]} -eq 0 ]; then
-            echo "No generated changes; leaving versions alone."
-            exit 0
-          fi
-
-          python3 scripts/bump-sdk-version.py "${args[@]}"
-
-          # The Python package version is baked into the generated tree by
-          # generate-sdks.sh, so codegen has to run again to pick up the bump.
-          if [ "${python_changed}" = true ]; then
-            bash scripts/generate-sdks.sh
-          fi
-
       - name: Install TS SDK deps + build + test
         id: typescript_validation
         continue-on-error: true
@@ -185,17 +160,12 @@ jobs:
           always() &&
           steps.bundle.outcome == 'success' &&
           steps.generate.outcome == 'success' &&
-          steps.determinism.outcome == 'success' &&
-          steps.versions.outcome == 'success'
+          steps.determinism.outcome == 'success'
         uses: peter-evans/create-pull-request@v7
         with:
-          # Uses a user PAT instead of GITHUB_TOKEN because the coval-ai
-          # org ruleset disallows GitHub Actions from creating PRs via
-          # the default ephemeral token. The PAT authenticates as its
-          # owner (callumreidcoval), which is not subject to that gate.
-          token: ${{ secrets.REGEN_PR_TOKEN }}
-          commit-message: "chore(sdks): regenerate from latest OpenAPI specs"
-          title: "chore(sdks): regenerate from latest OpenAPI specs"
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "fix(sdks): regenerate from latest OpenAPI specs"
+          title: "fix(sdks): regenerate from latest OpenAPI specs"
           body: |
             Automated SDK regeneration from `coval-ai/docs@${{ steps.source.outputs.docs_sha }}`
             (`${{ github.event.inputs.docs_ref || 'main' }}`).
@@ -222,10 +192,6 @@ jobs:
             typescript-sdk/src/CovalClient.ts
             python-sdk/src/coval_sdk/
             python-sdk/GENERATED_README.md
-            python-sdk/pyproject.toml
-            python-sdk/tests/test_client.py
-            typescript-sdk/package.json
-            typescript-sdk/package-lock.json
 
       - name: Fail if SDK validation failed
         if: >-
