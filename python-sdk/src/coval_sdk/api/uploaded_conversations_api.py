@@ -2123,6 +2123,7 @@ class UploadedConversationsApi:
             '400': "CovalUploadedConversationsAPIErrorResponse",
             '401': "CovalUploadedConversationsAPIErrorResponse",
             '404': "CovalUploadedConversationsAPIErrorResponse",
+            '412': "CovalUploadedConversationsAPIErrorResponse",
             '413': "CovalUploadedConversationsAPIErrorResponse",
             '500': "CovalUploadedConversationsAPIErrorResponse",
         }
@@ -2195,6 +2196,7 @@ class UploadedConversationsApi:
             '400': "CovalUploadedConversationsAPIErrorResponse",
             '401': "CovalUploadedConversationsAPIErrorResponse",
             '404': "CovalUploadedConversationsAPIErrorResponse",
+            '412': "CovalUploadedConversationsAPIErrorResponse",
             '413': "CovalUploadedConversationsAPIErrorResponse",
             '500': "CovalUploadedConversationsAPIErrorResponse",
         }
@@ -2267,6 +2269,7 @@ class UploadedConversationsApi:
             '400': "CovalUploadedConversationsAPIErrorResponse",
             '401': "CovalUploadedConversationsAPIErrorResponse",
             '404': "CovalUploadedConversationsAPIErrorResponse",
+            '412': "CovalUploadedConversationsAPIErrorResponse",
             '413': "CovalUploadedConversationsAPIErrorResponse",
             '500': "CovalUploadedConversationsAPIErrorResponse",
         }

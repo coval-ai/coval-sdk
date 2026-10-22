@@ -49,7 +49,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
     notifications: StrictBool = Field(description="Whether notifications are enabled")
     project_rules: Optional[List[CovalReviewsAPIProjectRule]] = Field(default=None, description="Rules applied to this project (e.g. require notes on disagreement)")
     enforced_collaboration: Optional[StrictBool] = Field(default=False, description="Whether collaborative claims and explicit single-author completion are enforced")
-    allow_metric_skipping: Optional[StrictBool] = Field(default=False, description="Allow reviewers to skip linked metrics")
+    allow_metric_skipping: Optional[StrictBool] = Field(default=False, description="Allow reviewers to skip linked metrics. Rejected on collaborative projects unless enforced_collaboration is true.")
     skippable_metric_ids: Optional[List[Annotated[str, Field(min_length=1, strict=True, max_length=200)]]] = Field(default=None, description="Metric IDs eligible for skipping. Null means all linked metrics; an empty list means none.")
     create_time: datetime = Field(description="Creation timestamp (ISO 8601)")
     update_time: datetime = Field(description="Last update timestamp (ISO 8601)")

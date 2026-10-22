@@ -34,6 +34,11 @@ import {
  * 2. Each tool call has a unique `id` and function details
  * 3. Tool responses use `role: tool` with matching `tool_call_id`
  * 
+ * **Coval Tool Entries:**
+ * - A `role: tool` message with `is_tool_call` set is an entry recorded by Coval's simulator: a tool
+ *   invocation (`true`) or a setup payload record (`false`)
+ * - It carries `name` and `tool_call_owner` and needs no `tool_call_id`
+ * 
  * **Timing Information:**
  * - `start_time` and `end_time` are measured in seconds from the start of the audio (e.g., 0.0, 3.5, 7.2)
  * - Both `start_time` and `end_time` are **required** if:
@@ -97,6 +102,46 @@ export interface CovalUploadedConversationsAPITranscriptMessage {
      */
     tool_call_id?: string | null;
     /**
+     * Tool or record name for a Coval tool entry (`role: tool` with `is_tool_call` set).
+     * 
+     * Coval's own simulator records each tool call made during a simulation, such as a persona
+     * keypad press (`dtmf_tool`), and each setup payload exchanged with the agent, as a `role: tool`
+     * message in this form.
+     * 
+     * @type {string}
+     * @memberof CovalUploadedConversationsAPITranscriptMessage
+     */
+    name?: string | null;
+    /**
+     * Present on a Coval tool entry: `true` for a tool invocation, `false` for a setup payload record.
+     * 
+     * A Coval tool entry needs no `tool_call_id`; the message `content` carries the call's arguments and
+     * result, or the recorded payload. `true` is only valid with `role: tool`.
+     * 
+     * @type {boolean}
+     * @memberof CovalUploadedConversationsAPITranscriptMessage
+     */
+    is_tool_call?: boolean | null;
+    /**
+     * Which side produced a Coval tool entry. Only valid with `role: tool`.
+     * 
+     * @type {CovalUploadedConversationsAPITranscriptMessageToolCallOwnerEnum}
+     * @memberof CovalUploadedConversationsAPITranscriptMessage
+     */
+    tool_call_owner?: CovalUploadedConversationsAPITranscriptMessageToolCallOwnerEnum | null;
+    /**
+     * `true` when the speaker was interrupted before finishing this message.
+     * @type {boolean}
+     * @memberof CovalUploadedConversationsAPITranscriptMessage
+     */
+    is_interrupted?: boolean | null;
+    /**
+     * `true` when `start_time` and `end_time` are estimated rather than measured.
+     * @type {boolean}
+     * @memberof CovalUploadedConversationsAPITranscriptMessage
+     */
+    is_estimated?: boolean | null;
+    /**
      * When this message started, in seconds from the beginning of the conversation.
      * 
      * **Required for audio-based metrics** (latency, interruption rate) when both transcript and audio are provided.
@@ -152,6 +197,15 @@ export const CovalUploadedConversationsAPITranscriptMessageRoleEnum = {
 } as const;
 export type CovalUploadedConversationsAPITranscriptMessageRoleEnum = typeof CovalUploadedConversationsAPITranscriptMessageRoleEnum[keyof typeof CovalUploadedConversationsAPITranscriptMessageRoleEnum];
 
+/**
+ * @export
+ */
+export const CovalUploadedConversationsAPITranscriptMessageToolCallOwnerEnum = {
+    User: 'user',
+    Assistant: 'assistant'
+} as const;
+export type CovalUploadedConversationsAPITranscriptMessageToolCallOwnerEnum = typeof CovalUploadedConversationsAPITranscriptMessageToolCallOwnerEnum[keyof typeof CovalUploadedConversationsAPITranscriptMessageToolCallOwnerEnum];
+
 
 /**
  * Check if a given object implements the CovalUploadedConversationsAPITranscriptMessage interface.
@@ -176,6 +230,11 @@ export function CovalUploadedConversationsAPITranscriptMessageFromJSONTyped(json
         'message': json['message'] == null ? undefined : json['message'],
         'tool_calls': json['tool_calls'] == null ? undefined : ((json['tool_calls'] as Array<any>).map(CovalUploadedConversationsAPIToolCallFromJSON)),
         'tool_call_id': json['tool_call_id'] == null ? undefined : json['tool_call_id'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'is_tool_call': json['is_tool_call'] == null ? undefined : json['is_tool_call'],
+        'tool_call_owner': json['tool_call_owner'] == null ? undefined : json['tool_call_owner'],
+        'is_interrupted': json['is_interrupted'] == null ? undefined : json['is_interrupted'],
+        'is_estimated': json['is_estimated'] == null ? undefined : json['is_estimated'],
         'start_time': json['start_time'] == null ? undefined : json['start_time'],
         'end_time': json['end_time'] == null ? undefined : json['end_time'],
         'timestamp': json['timestamp'] == null ? undefined : (new Date(json['timestamp'])),
@@ -200,6 +259,11 @@ export function CovalUploadedConversationsAPITranscriptMessageToJSONTyped(value?
         'message': value['message'],
         'tool_calls': value['tool_calls'] == null ? undefined : ((value['tool_calls'] as Array<any>).map(CovalUploadedConversationsAPIToolCallToJSON)),
         'tool_call_id': value['tool_call_id'],
+        'name': value['name'],
+        'is_tool_call': value['is_tool_call'],
+        'tool_call_owner': value['tool_call_owner'],
+        'is_interrupted': value['is_interrupted'],
+        'is_estimated': value['is_estimated'],
         'start_time': value['start_time'],
         'end_time': value['end_time'],
         'timestamp': value['timestamp'] == null ? value['timestamp'] : value['timestamp'].toISOString(),

@@ -45,7 +45,7 @@ class CovalReviewsAPIUpdateReviewProjectRequest(BaseModel):
     blind_labeling_shown_metric_ids: Optional[List[StrictStr]] = Field(default=None, description="Metric IDs whose machine score stays visible during blind labeling")
     opted_out_assignees: Optional[List[StrictStr]] = Field(default=None, description="Assignees who opted out of notifications")
     enforced_collaboration: Optional[StrictBool] = Field(default=None, description="Enforce claims and explicit single-author completion for collaborative projects")
-    allow_metric_skipping: Optional[StrictBool] = Field(default=None, description="Allow reviewers to skip linked metrics")
+    allow_metric_skipping: Optional[StrictBool] = Field(default=None, description="Allow reviewers to skip linked metrics. Rejected on collaborative projects unless enforced_collaboration is true.")
     skippable_metric_ids: Optional[Annotated[List[Annotated[str, Field(min_length=1, strict=True, max_length=200)]], Field(max_length=25)]] = Field(default=None, description="Metric IDs eligible for skipping. Null means all linked metrics; omission preserves the current value.")
     project_type: Optional[StrictStr] = None
     review_label_enabled: Optional[StrictBool] = Field(default=None, description="False pauses conversation triage for everyone while preserving categories, modes, and saved labels. True enables triage. Null uses legacy configuration-based activation. Omission leaves the enabled state unchanged. For legacy clients, explicitly sending empty categories and both modes as null without this field pauses triage while preserving configuration. When all three configuration fields are supplied without this field, a valid enabled configuration is treated as enabled.")

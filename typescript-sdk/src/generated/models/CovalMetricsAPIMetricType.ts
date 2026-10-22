@@ -30,6 +30,7 @@
  * - `METRIC_TRANSCRIPT_REGEX` - Regex pattern matching
  * - `METRIC_PAUSE_ANALYSIS` - Speech pause detection
  * - `METRIC_SQL_FLOAT` - Custom SQL query over the simulation's data (set `sql_query`)
+ * - `METRIC_PYTHON` - Tested Python metric; create and edit through the Python draft publication API.
  * - `METRIC_COMPOSITE_EVALUATION` - Judges a list of criteria independently and reports how
  *   many were met (set `criteria_source`, and `criteria_path` or `criteria` to match)
  * 
@@ -52,6 +53,7 @@ export const CovalMetricsAPIMetricType = {
     MetricAgentRefusal: 'METRIC_AGENT_REFUSAL',
     MetricPauseAnalysis: 'METRIC_PAUSE_ANALYSIS',
     MetricSqlFloat: 'METRIC_SQL_FLOAT',
+    MetricPython: 'METRIC_PYTHON',
     MetricCompositeEvaluation: 'METRIC_COMPOSITE_EVALUATION',
     MetricLlmTtfb: 'METRIC_LLM_TTFB',
     MetricTtsTtfb: 'METRIC_TTS_TTFB',

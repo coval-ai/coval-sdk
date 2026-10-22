@@ -19,7 +19,7 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from coval_sdk.models.coval_uploaded_conversations_api_tool_call import CovalUploadedConversationsAPIToolCall
 from typing import Optional, Set
@@ -28,26 +28,41 @@ from pydantic_core import to_jsonable_python
 
 class CovalUploadedConversationsAPITranscriptMessage(BaseModel):
     """
-    A single message in a conversation transcript.  **Content Requirements:** - For `user`, `system`, and `tool` roles: Either `content` or `message` must be provided - For `assistant` role: Either `content`, `message`, or `tool_calls` must be provided - Supports OpenAI message format including tool calls  **Tool Call Flow:** 1. Assistant sends message with `tool_calls` array (content may be null) 2. Each tool call has a unique `id` and function details 3. Tool responses use `role: tool` with matching `tool_call_id`  **Timing Information:** - `start_time` and `end_time` are measured in seconds from the start of the audio (e.g., 0.0, 3.5, 7.2) - Both `start_time` and `end_time` are **required** if:   - You submit both `transcript` AND `audio`/`audio_url`   - You want audio-based metrics (latency, interruption rate, audio duration)   - You want to avoid audio retranscription - If timing fields are omitted when audio is present, the system will automatically transcribe and diarize the audio to extract timing information - `timestamp` (ISO 8601) is separate and used only for external system correlation
+    A single message in a conversation transcript.  **Content Requirements:** - For `user`, `system`, and `tool` roles: Either `content` or `message` must be provided - For `assistant` role: Either `content`, `message`, or `tool_calls` must be provided - Supports OpenAI message format including tool calls  **Tool Call Flow:** 1. Assistant sends message with `tool_calls` array (content may be null) 2. Each tool call has a unique `id` and function details 3. Tool responses use `role: tool` with matching `tool_call_id`  **Coval Tool Entries:** - A `role: tool` message with `is_tool_call` set is an entry recorded by Coval's simulator: a tool   invocation (`true`) or a setup payload record (`false`) - It carries `name` and `tool_call_owner` and needs no `tool_call_id`  **Timing Information:** - `start_time` and `end_time` are measured in seconds from the start of the audio (e.g., 0.0, 3.5, 7.2) - Both `start_time` and `end_time` are **required** if:   - You submit both `transcript` AND `audio`/`audio_url`   - You want audio-based metrics (latency, interruption rate, audio duration)   - You want to avoid audio retranscription - If timing fields are omitted when audio is present, the system will automatically transcribe and diarize the audio to extract timing information - `timestamp` (ISO 8601) is separate and used only for external system correlation
     """ # noqa: E501
     role: StrictStr = Field(description="Speaker role in the conversation.  - `user`: The human user or customer - `assistant`: The AI assistant or agent - `system`: System instructions (typically at conversation start) - `tool`: Tool/function response (must include `tool_call_id`) ")
     content: Optional[StrictStr] = Field(default=None, description="Message content (primary field).  Can be `null` for assistant messages that only contain tool calls. ")
     message: Optional[StrictStr] = Field(default=None, description="Message content (alternative to content, for compatibility)")
     tool_calls: Optional[List[CovalUploadedConversationsAPIToolCall]] = Field(default=None, description="Tool calls made by the assistant in this message.  **Only valid for `role: assistant`.**  When an assistant message contains tool calls, the `content` field may be `null` or empty. Each tool call must have a unique `id` that will be referenced by the corresponding tool response. ")
     tool_call_id: Optional[StrictStr] = Field(default=None, description="ID of the tool call this message responds to.  **Required when `role: tool`.**  Must match the `id` of a tool call from a previous assistant message. ")
+    name: Optional[StrictStr] = Field(default=None, description="Tool or record name for a Coval tool entry (`role: tool` with `is_tool_call` set).  Coval's own simulator records each tool call made during a simulation, such as a persona keypad press (`dtmf_tool`), and each setup payload exchanged with the agent, as a `role: tool` message in this form. ")
+    is_tool_call: Optional[StrictBool] = Field(default=None, description="Present on a Coval tool entry: `true` for a tool invocation, `false` for a setup payload record.  A Coval tool entry needs no `tool_call_id`; the message `content` carries the call's arguments and result, or the recorded payload. `true` is only valid with `role: tool`. ")
+    tool_call_owner: Optional[StrictStr] = Field(default=None, description="Which side produced a Coval tool entry. Only valid with `role: tool`. ")
+    is_interrupted: Optional[StrictBool] = Field(default=None, description="`true` when the speaker was interrupted before finishing this message.")
+    is_estimated: Optional[StrictBool] = Field(default=None, description="`true` when `start_time` and `end_time` are estimated rather than measured.")
     start_time: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="When this message started, in seconds from the beginning of the conversation.  **Required for audio-based metrics** (latency, interruption rate) when both transcript and audio are provided. Without this field, the audio will be retranscribed to extract timing information. ")
     end_time: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="When this message ended, in seconds from the beginning of the conversation.  **Required for audio-based metrics** (latency, interruption rate) when both transcript and audio are provided. Without this field, the audio will be retranscribed to extract timing information. ")
     timestamp: Optional[datetime] = Field(default=None, description="When this message was spoken (ISO 8601 datetime)")
     first_word_start: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Alternative field for start offset in seconds from conversation start.  Use either start_time/end_time OR firstWordStart/lastWordEnd, not both.", alias="firstWordStart")
     last_word_end: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Alternative field for end offset in seconds from conversation start.  Use either start_time/end_time OR firstWordStart/lastWordEnd, not both.", alias="lastWordEnd")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["role", "content", "message", "tool_calls", "tool_call_id", "start_time", "end_time", "timestamp", "firstWordStart", "lastWordEnd"]
+    __properties: ClassVar[List[str]] = ["role", "content", "message", "tool_calls", "tool_call_id", "name", "is_tool_call", "tool_call_owner", "is_interrupted", "is_estimated", "start_time", "end_time", "timestamp", "firstWordStart", "lastWordEnd"]
 
     @field_validator('role')
     def role_validate_enum(cls, value):
         """Validates the enum"""
         if value not in set(['user', 'assistant', 'system', 'tool']):
             raise ValueError("must be one of enum values ('user', 'assistant', 'system', 'tool')")
+        return value
+
+    @field_validator('tool_call_owner')
+    def tool_call_owner_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['user', 'assistant']):
+            raise ValueError("must be one of enum values ('user', 'assistant')")
         return value
 
     model_config = ConfigDict(
@@ -123,6 +138,31 @@ class CovalUploadedConversationsAPITranscriptMessage(BaseModel):
         if self.tool_call_id is None and "tool_call_id" in self.model_fields_set:
             _dict['tool_call_id'] = None
 
+        # set to None if name (nullable) is None
+        # and model_fields_set contains the field
+        if self.name is None and "name" in self.model_fields_set:
+            _dict['name'] = None
+
+        # set to None if is_tool_call (nullable) is None
+        # and model_fields_set contains the field
+        if self.is_tool_call is None and "is_tool_call" in self.model_fields_set:
+            _dict['is_tool_call'] = None
+
+        # set to None if tool_call_owner (nullable) is None
+        # and model_fields_set contains the field
+        if self.tool_call_owner is None and "tool_call_owner" in self.model_fields_set:
+            _dict['tool_call_owner'] = None
+
+        # set to None if is_interrupted (nullable) is None
+        # and model_fields_set contains the field
+        if self.is_interrupted is None and "is_interrupted" in self.model_fields_set:
+            _dict['is_interrupted'] = None
+
+        # set to None if is_estimated (nullable) is None
+        # and model_fields_set contains the field
+        if self.is_estimated is None and "is_estimated" in self.model_fields_set:
+            _dict['is_estimated'] = None
+
         # set to None if start_time (nullable) is None
         # and model_fields_set contains the field
         if self.start_time is None and "start_time" in self.model_fields_set:
@@ -165,6 +205,11 @@ class CovalUploadedConversationsAPITranscriptMessage(BaseModel):
             "message": obj.get("message"),
             "tool_calls": [CovalUploadedConversationsAPIToolCall.from_dict(_item) for _item in obj["tool_calls"]] if obj.get("tool_calls") is not None else None,
             "tool_call_id": obj.get("tool_call_id"),
+            "name": obj.get("name"),
+            "is_tool_call": obj.get("is_tool_call"),
+            "tool_call_owner": obj.get("tool_call_owner"),
+            "is_interrupted": obj.get("is_interrupted"),
+            "is_estimated": obj.get("is_estimated"),
             "start_time": obj.get("start_time"),
             "end_time": obj.get("end_time"),
             "timestamp": obj.get("timestamp"),

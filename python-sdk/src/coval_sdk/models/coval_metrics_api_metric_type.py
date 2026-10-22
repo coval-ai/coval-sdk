@@ -21,7 +21,7 @@ from typing_extensions import Self
 
 class CovalMetricsAPIMetricType(str, Enum):
     """
-    Metric evaluation type.  - `METRIC_AGENT_JUDGE` - Agentic binary evaluation with bounded evidence tools - `METRIC_AGENT_JUDGE_CATEGORICAL` - Agentic categorical evaluation with bounded evidence tools - `METRIC_AGENT_JUDGE_NUMERICAL` - Agentic numerical evaluation with bounded evidence tools - `METRIC_LLM_BINARY` - Yes/no LLM evaluation - `METRIC_CATEGORICAL` - Multi-class classification - `METRIC_NUMERICAL_LLM_JUDGE` - Numerical scoring (1-N) - `METRIC_AUDIO_LLM_BINARY` - Audio-based yes/no - `METRIC_AUDIO_LLM_CATEGORICAL` - Audio-based classification - `METRIC_AUDIO_LLM_NUMERICAL` - Audio-based scoring - `METRIC_TOOLCALL` - Tool/function call evaluation - `METRIC_METADATA_FIELD` - Extract metadata field - `METRIC_TRANSCRIPT_REGEX` - Regex pattern matching - `METRIC_PAUSE_ANALYSIS` - Speech pause detection - `METRIC_SQL_FLOAT` - Custom SQL query over the simulation's data (set `sql_query`) - `METRIC_COMPOSITE_EVALUATION` - Judges a list of criteria independently and reports how   many were met (set `criteria_source`, and `criteria_path` or `criteria` to match) 
+    Metric evaluation type.  - `METRIC_AGENT_JUDGE` - Agentic binary evaluation with bounded evidence tools - `METRIC_AGENT_JUDGE_CATEGORICAL` - Agentic categorical evaluation with bounded evidence tools - `METRIC_AGENT_JUDGE_NUMERICAL` - Agentic numerical evaluation with bounded evidence tools - `METRIC_LLM_BINARY` - Yes/no LLM evaluation - `METRIC_CATEGORICAL` - Multi-class classification - `METRIC_NUMERICAL_LLM_JUDGE` - Numerical scoring (1-N) - `METRIC_AUDIO_LLM_BINARY` - Audio-based yes/no - `METRIC_AUDIO_LLM_CATEGORICAL` - Audio-based classification - `METRIC_AUDIO_LLM_NUMERICAL` - Audio-based scoring - `METRIC_TOOLCALL` - Tool/function call evaluation - `METRIC_METADATA_FIELD` - Extract metadata field - `METRIC_TRANSCRIPT_REGEX` - Regex pattern matching - `METRIC_PAUSE_ANALYSIS` - Speech pause detection - `METRIC_SQL_FLOAT` - Custom SQL query over the simulation's data (set `sql_query`) - `METRIC_PYTHON` - Tested Python metric; create and edit through the Python draft publication API. - `METRIC_COMPOSITE_EVALUATION` - Judges a list of criteria independently and reports how   many were met (set `criteria_source`, and `criteria_path` or `criteria` to match) 
     """
 
     """
@@ -43,6 +43,7 @@ class CovalMetricsAPIMetricType(str, Enum):
     METRIC_AGENT_REFUSAL = 'METRIC_AGENT_REFUSAL'
     METRIC_PAUSE_ANALYSIS = 'METRIC_PAUSE_ANALYSIS'
     METRIC_SQL_FLOAT = 'METRIC_SQL_FLOAT'
+    METRIC_PYTHON = 'METRIC_PYTHON'
     METRIC_COMPOSITE_EVALUATION = 'METRIC_COMPOSITE_EVALUATION'
     METRIC_LLM_TTFB = 'METRIC_LLM_TTFB'
     METRIC_TTS_TTFB = 'METRIC_TTS_TTFB'

@@ -129,7 +129,7 @@ export interface SimulatedConversationsApiInterface {
     deleteSimulatedConversationRequestOpts(requestParameters: DeleteSimulatedConversationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Cancel or delete a simulation.
+     * Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
      * @summary Delete or cancel simulation
      * @param {string} simulationId The simulation ID to delete/cancel
      * @param {*} [options] Override http request option.
@@ -139,7 +139,7 @@ export interface SimulatedConversationsApiInterface {
     deleteSimulatedConversationRaw(requestParameters: DeleteSimulatedConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>>;
 
     /**
-     * Cancel or delete a simulation.
+     * Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
      * Delete or cancel simulation
      */
     deleteSimulatedConversation(requestParameters: DeleteSimulatedConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object>;
@@ -391,7 +391,7 @@ export class SimulatedConversationsApi extends runtime.BaseAPI implements Simula
     }
 
     /**
-     * Cancel or delete a simulation.
+     * Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
      * Delete or cancel simulation
      */
     async deleteSimulatedConversationRaw(requestParameters: DeleteSimulatedConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
@@ -402,7 +402,7 @@ export class SimulatedConversationsApi extends runtime.BaseAPI implements Simula
     }
 
     /**
-     * Cancel or delete a simulation.
+     * Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
      * Delete or cancel simulation
      */
     async deleteSimulatedConversation(requestParameters: DeleteSimulatedConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {

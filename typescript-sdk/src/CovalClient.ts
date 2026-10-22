@@ -32,6 +32,7 @@ import {
   OrganizationConversationsConfigApi,
   OrganizationUsersApi,
   PersonasApi,
+  PythonMetricsApi,
   ReportsApi,
   ReviewAnnotationsApi,
   ReviewProjectsApi,
@@ -93,6 +94,7 @@ export const GENERATED_API_PROPERTY_NAMES = [
   'organizationConversationsConfig',
   'organizationUsers',
   'personas',
+  'pythonMetrics',
   'reports',
   'reviewAnnotations',
   'reviewProjects',
@@ -131,6 +133,7 @@ export class CovalClient {
   readonly organizationConversationsConfig: OrganizationConversationsConfigApi;
   readonly organizationUsers: OrganizationUsersApi;
   readonly personas: PersonasApi;
+  readonly pythonMetrics: PythonMetricsApi;
   readonly reports: ReportsApi;
   readonly reviewAnnotations: ReviewAnnotationsApi;
   readonly reviewProjects: ReviewProjectsApi;
@@ -205,6 +208,7 @@ export class CovalClient {
     this.organizationConversationsConfig = new OrganizationConversationsConfigApi(this.configuration);
     this.organizationUsers = new OrganizationUsersApi(this.configuration);
     this.personas = new PersonasApi(this.configuration);
+    this.pythonMetrics = new PythonMetricsApi(this.configuration);
     this.reports = new ReportsApi(this.configuration);
     this.reviewAnnotations = new ReviewAnnotationsApi(this.configuration);
     this.reviewProjects = new ReviewProjectsApi(this.configuration);

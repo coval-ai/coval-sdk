@@ -17,6 +17,7 @@ from coval_sdk.api.mutations_api import MutationsApi
 from coval_sdk.api.organization_conversations_config_api import OrganizationConversationsConfigApi
 from coval_sdk.api.organization_users_api import OrganizationUsersApi
 from coval_sdk.api.personas_api import PersonasApi
+from coval_sdk.api.python_metrics_api import PythonMetricsApi
 from coval_sdk.api.reports_api import ReportsApi
 from coval_sdk.api.review_annotations_api import ReviewAnnotationsApi
 from coval_sdk.api.review_projects_api import ReviewProjectsApi

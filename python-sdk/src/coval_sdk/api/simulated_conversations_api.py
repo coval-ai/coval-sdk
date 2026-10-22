@@ -67,7 +67,7 @@ class SimulatedConversationsApi:
     ) -> object:
         """Delete or cancel simulation
 
-        Cancel or delete a simulation.
+        Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
 
         :param simulation_id: The simulation ID to delete/cancel (required)
         :type simulation_id: str
@@ -106,6 +106,7 @@ class SimulatedConversationsApi:
             '401': "CovalSimulatedConversationsAPIErrorResponse",
             '404': "CovalSimulatedConversationsAPIErrorResponse",
             '500': "CovalSimulatedConversationsAPIErrorResponse",
+            '503': "CovalSimulatedConversationsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -137,7 +138,7 @@ class SimulatedConversationsApi:
     ) -> ApiResponse[object]:
         """Delete or cancel simulation
 
-        Cancel or delete a simulation.
+        Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
 
         :param simulation_id: The simulation ID to delete/cancel (required)
         :type simulation_id: str
@@ -176,6 +177,7 @@ class SimulatedConversationsApi:
             '401': "CovalSimulatedConversationsAPIErrorResponse",
             '404': "CovalSimulatedConversationsAPIErrorResponse",
             '500': "CovalSimulatedConversationsAPIErrorResponse",
+            '503': "CovalSimulatedConversationsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -207,7 +209,7 @@ class SimulatedConversationsApi:
     ) -> RESTResponseType:
         """Delete or cancel simulation
 
-        Cancel or delete a simulation.
+        Cancel or delete a simulation. Retry a temporarily busy simulation after receiving HTTP 503.
 
         :param simulation_id: The simulation ID to delete/cancel (required)
         :type simulation_id: str
@@ -246,6 +248,7 @@ class SimulatedConversationsApi:
             '401': "CovalSimulatedConversationsAPIErrorResponse",
             '404': "CovalSimulatedConversationsAPIErrorResponse",
             '500': "CovalSimulatedConversationsAPIErrorResponse",
+            '503': "CovalSimulatedConversationsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
