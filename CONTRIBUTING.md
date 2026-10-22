@@ -2,7 +2,7 @@
 
 The [README](README.md) introduces the SDKs and their supported packages. This guide describes contribution and review; [Python conventions](docs/python-style.md), [TypeScript conventions](docs/typescript-style.md), and [architecture](docs/architecture.md) describe code ownership.
 
-Use a feature branch from `main` and open a pull request describing the behavior and validation. Keep package identities and existing public APIs stable across maintenance changes. Squash-merge using a Conventional Commit PR title; `fix:`/`perf:` release a patch, `feat:` a minor, and `!`/`BREAKING CHANGE:` a major. Semantic Release owns both package versions, the changelog, and release tags. Do not bump versions in feature or regeneration PRs.
+Use a feature branch from `main` and open a pull request describing the behavior and validation. Keep package identities and existing public APIs stable across maintenance changes. Squash-merge using a Conventional Commit PR title; `fix:`/`perf:` release a patch, `feat:` a minor, and `!`/`BREAKING CHANGE:` a major. Semantic Release owns both package versions, the changelog, and release tags. Do not bump versions in feature PRs or generated updates. Backend-triggered regeneration commits directly to `main` only after hash verification, deterministic generation, and both SDK validations; see [Releasing](docs/releasing.md).
 
 ## Pull requests
 

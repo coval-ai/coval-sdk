@@ -22,4 +22,4 @@ The scripts preserve handwritten modules and synchronize generated API imports/p
 
 The root `.venv` holds Python development and release tools; the root `pyproject.toml` is not another published package. Each language directory owns its distribution metadata. `scripts/build` creates and validates Python and npm archives, including their license and attribution files. `scripts/check` adds runtime tests and isolated package installation checks.
 
-The workflows under `.github/workflows/` own SDK CI, regeneration PRs, release preparation, and registry uploads. [Releasing](releasing.md) defines version synchronization, App authentication, validation, cutover gates, and publication retries.
+The workflows under `.github/workflows/` own SDK CI, validated regeneration commits to main, release preparation, and registry uploads. [Releasing](releasing.md) defines version synchronization, App authentication, validation, cutover gates, and publication retries.

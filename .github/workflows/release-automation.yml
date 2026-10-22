@@ -15,7 +15,10 @@ concurrency:
 jobs:
   release:
     name: Prepare version, changelog, and tag
-    if: vars.SDK_RELEASES_ENABLED == 'true' && github.actor != 'coval-release-automation[bot]'
+    if: >-
+      vars.SDK_RELEASES_ENABLED == 'true' &&
+      !(github.actor == 'coval-release-automation[bot]' &&
+      startsWith(github.event.head_commit.message, 'chore(release):'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
