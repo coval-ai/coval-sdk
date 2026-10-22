@@ -203,6 +203,12 @@ Class | Method | HTTP request | Description
 *PersonasApi* | [**revert_persona_version**](docs/PersonasApi.md#revert_persona_version) | **POST** /personas/{persona_id}/versions/{version_id}/revert | Revert persona version
 *PersonasApi* | [**update_background_sound**](docs/PersonasApi.md#update_background_sound) | **PATCH** /personas/background-sounds/{background_sound_id} | Update background sound
 *PersonasApi* | [**update_persona**](docs/PersonasApi.md#update_persona) | **PATCH** /personas/{persona_id} | Update persona
+*PythonMetricsApi* | [**cancel_python_metric_preview**](docs/PythonMetricsApi.md#cancel_python_metric_preview) | **POST** /python-metric-drafts/{draft_id}/previews/{preview_id}/cancel | Cancel a historical preview
+*PythonMetricsApi* | [**create_python_metric_draft**](docs/PythonMetricsApi.md#create_python_metric_draft) | **POST** /python-metric-drafts | Save a Python metric draft
+*PythonMetricsApi* | [**get_python_metric_draft**](docs/PythonMetricsApi.md#get_python_metric_draft) | **GET** /python-metric-drafts/{draft_id} | Get a Python metric draft
+*PythonMetricsApi* | [**get_python_metric_preview**](docs/PythonMetricsApi.md#get_python_metric_preview) | **GET** /python-metric-drafts/{draft_id}/previews/{preview_id} | Get a historical preview result
+*PythonMetricsApi* | [**preview_python_metric**](docs/PythonMetricsApi.md#preview_python_metric) | **POST** /python-metric-drafts/{draft_id}/previews | Evaluate a draft on a historical conversation
+*PythonMetricsApi* | [**publish_python_metric**](docs/PythonMetricsApi.md#publish_python_metric) | **POST** /python-metric-drafts/{draft_id}/publish | Publish an approved and tested Python metric
 *ReportsApi* | [**create_report**](docs/ReportsApi.md#create_report) | **POST** /reports | Create report
 *ReportsApi* | [**delete_report**](docs/ReportsApi.md#delete_report) | **DELETE** /reports/{report_id} | Delete report
 *ReportsApi* | [**get_report**](docs/ReportsApi.md#get_report) | **GET** /reports/{report_id} | Get report
@@ -837,6 +843,16 @@ Class | Method | HTTP request | Description
  - [ListUploadedConversations200Response](docs/ListUploadedConversations200Response.md)
  - [NonSCRIPTTestCase](docs/NonSCRIPTTestCase.md)
  - [PersonaWithPrompt](docs/PersonaWithPrompt.md)
+ - [PythonMetricsAPICreatePythonMetricDraftRequest](docs/PythonMetricsAPICreatePythonMetricDraftRequest.md)
+ - [PythonMetricsAPIInputRequirements](docs/PythonMetricsAPIInputRequirements.md)
+ - [PythonMetricsAPIPreviewPythonMetricBody](docs/PythonMetricsAPIPreviewPythonMetricBody.md)
+ - [PythonMetricsAPIPublishPythonMetricBody](docs/PythonMetricsAPIPublishPythonMetricBody.md)
+ - [PythonMetricsAPIPublishPythonMetricResponse](docs/PythonMetricsAPIPublishPythonMetricResponse.md)
+ - [PythonMetricsAPIPythonMetricDraftResource](docs/PythonMetricsAPIPythonMetricDraftResource.md)
+ - [PythonMetricsAPIPythonMetricDraftResponse](docs/PythonMetricsAPIPythonMetricDraftResponse.md)
+ - [PythonMetricsAPIPythonMetricPreviewResource](docs/PythonMetricsAPIPythonMetricPreviewResource.md)
+ - [PythonMetricsAPIPythonMetricPreviewResourceValue](docs/PythonMetricsAPIPythonMetricPreviewResourceValue.md)
+ - [PythonMetricsAPIPythonMetricPreviewsResponse](docs/PythonMetricsAPIPythonMetricPreviewsResponse.md)
  - [SCRIPTTestCaseWithLegacyNestedTurns](docs/SCRIPTTestCaseWithLegacyNestedTurns.md)
  - [SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput](docs/SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput.md)
  - [SCRIPTTestCaseWithTopLevelTurns](docs/SCRIPTTestCaseWithTopLevelTurns.md)
@@ -946,6 +962,13 @@ Authentication schemes defined for the API:
 
 <a id="Coval_Personas_API_ApiKeyAuth"></a>
 ### Coval_Personas_API_ApiKeyAuth
+
+- **Type**: API key
+- **API key parameter name**: X-API-Key
+- **Location**: HTTP header
+
+<a id="Python_Metrics_API_ApiKeyAuth"></a>
+### Python_Metrics_API_ApiKeyAuth
 
 - **Type**: API key
 - **API key parameter name**: X-API-Key

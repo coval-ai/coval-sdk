@@ -41,6 +41,7 @@ __all__ = [
     "OrganizationConversationsConfigApi",
     "OrganizationUsersApi",
     "PersonasApi",
+    "PythonMetricsApi",
     "ReportsApi",
     "ReviewAnnotationsApi",
     "ReviewProjectsApi",
@@ -592,6 +593,16 @@ __all__ = [
     "ListUploadedConversations200Response",
     "NonSCRIPTTestCase",
     "PersonaWithPrompt",
+    "PythonMetricsAPICreatePythonMetricDraftRequest",
+    "PythonMetricsAPIInputRequirements",
+    "PythonMetricsAPIPreviewPythonMetricBody",
+    "PythonMetricsAPIPublishPythonMetricBody",
+    "PythonMetricsAPIPublishPythonMetricResponse",
+    "PythonMetricsAPIPythonMetricDraftResource",
+    "PythonMetricsAPIPythonMetricDraftResponse",
+    "PythonMetricsAPIPythonMetricPreviewResource",
+    "PythonMetricsAPIPythonMetricPreviewResourceValue",
+    "PythonMetricsAPIPythonMetricPreviewsResponse",
     "SCRIPTTestCaseWithLegacyNestedTurns",
     "SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput",
     "SCRIPTTestCaseWithTopLevelTurns",
@@ -655,6 +666,7 @@ from coval_sdk.api.mutations_api import MutationsApi as MutationsApi
 from coval_sdk.api.organization_conversations_config_api import OrganizationConversationsConfigApi as OrganizationConversationsConfigApi
 from coval_sdk.api.organization_users_api import OrganizationUsersApi as OrganizationUsersApi
 from coval_sdk.api.personas_api import PersonasApi as PersonasApi
+from coval_sdk.api.python_metrics_api import PythonMetricsApi as PythonMetricsApi
 from coval_sdk.api.reports_api import ReportsApi as ReportsApi
 from coval_sdk.api.review_annotations_api import ReviewAnnotationsApi as ReviewAnnotationsApi
 from coval_sdk.api.review_projects_api import ReviewProjectsApi as ReviewProjectsApi
@@ -1210,6 +1222,16 @@ from coval_sdk.models.list_test_sets200_response import ListTestSets200Response 
 from coval_sdk.models.list_uploaded_conversations200_response import ListUploadedConversations200Response as ListUploadedConversations200Response
 from coval_sdk.models.non_script_test_case import NonSCRIPTTestCase as NonSCRIPTTestCase
 from coval_sdk.models.persona_with_prompt import PersonaWithPrompt as PersonaWithPrompt
+from coval_sdk.models.python_metrics_api_create_python_metric_draft_request import PythonMetricsAPICreatePythonMetricDraftRequest as PythonMetricsAPICreatePythonMetricDraftRequest
+from coval_sdk.models.python_metrics_api_input_requirements import PythonMetricsAPIInputRequirements as PythonMetricsAPIInputRequirements
+from coval_sdk.models.python_metrics_api_preview_python_metric_body import PythonMetricsAPIPreviewPythonMetricBody as PythonMetricsAPIPreviewPythonMetricBody
+from coval_sdk.models.python_metrics_api_publish_python_metric_body import PythonMetricsAPIPublishPythonMetricBody as PythonMetricsAPIPublishPythonMetricBody
+from coval_sdk.models.python_metrics_api_publish_python_metric_response import PythonMetricsAPIPublishPythonMetricResponse as PythonMetricsAPIPublishPythonMetricResponse
+from coval_sdk.models.python_metrics_api_python_metric_draft_resource import PythonMetricsAPIPythonMetricDraftResource as PythonMetricsAPIPythonMetricDraftResource
+from coval_sdk.models.python_metrics_api_python_metric_draft_response import PythonMetricsAPIPythonMetricDraftResponse as PythonMetricsAPIPythonMetricDraftResponse
+from coval_sdk.models.python_metrics_api_python_metric_preview_resource import PythonMetricsAPIPythonMetricPreviewResource as PythonMetricsAPIPythonMetricPreviewResource
+from coval_sdk.models.python_metrics_api_python_metric_preview_resource_value import PythonMetricsAPIPythonMetricPreviewResourceValue as PythonMetricsAPIPythonMetricPreviewResourceValue
+from coval_sdk.models.python_metrics_api_python_metric_previews_response import PythonMetricsAPIPythonMetricPreviewsResponse as PythonMetricsAPIPythonMetricPreviewsResponse
 from coval_sdk.models.script_test_case_with_legacy_nested_turns import SCRIPTTestCaseWithLegacyNestedTurns as SCRIPTTestCaseWithLegacyNestedTurns
 from coval_sdk.models.script_test_case_with_legacy_nested_turns_simulation_metadata_input import SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput as SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput
 from coval_sdk.models.script_test_case_with_top_level_turns import SCRIPTTestCaseWithTopLevelTurns as SCRIPTTestCaseWithTopLevelTurns

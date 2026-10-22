@@ -109,7 +109,10 @@ export interface CovalUploadedConversationsAPISubmitUploadedConversationRequest 
      */
     upload_id?: string;
     /**
-     * List of metric IDs to evaluate (22–26 character IDs).
+     * Metric IDs or exact legacy metric_name values to evaluate. IDs take precedence.
+     * Legacy names must resolve to a unique active metric visible in the request workspace.
+     * Display names are not accepted. Unknown, ambiguous, inactive, hidden, deleted, or
+     * inaccessible selections return 400 INVALID_ARGUMENT.
      * 
      * If not provided, uses your default metrics configured in the Coval dashboard.
      * 
@@ -157,7 +160,10 @@ export interface CovalUploadedConversationsAPISubmitUploadedConversationRequest 
      */
     external_conversation_id?: string;
     /**
-     * When the conversation actually occurred (ISO 8601)
+     * The instant the audio recording begins, in ISO 8601 with sub-second precision. Coval uses it to align the recording with trace spans in the trace viewer and to locate traces around the call.
+     * 
+     * Optional. Without it, the trace viewer draws the recording without aligning it to spans.
+     * 
      * @type {Date}
      * @memberof CovalUploadedConversationsAPISubmitUploadedConversationRequest
      */

@@ -147,6 +147,16 @@ export interface CovalPersonasAPIUpdatePersonaRequest {
      */
     interruption_rate?: CovalPersonasAPIUpdatePersonaRequestInterruptionRateEnum | null;
     /**
+     * Whether the persona follows interruption instructions in the test case or the
+     * persona prompt, interrupting the agent mid-utterance when one is met. Takes effect
+     * only for organizations with prompted interruptions enabled. Defaults to false. null
+     * is ignored; send false to disable.
+     * 
+     * @type {boolean}
+     * @memberof CovalPersonasAPIUpdatePersonaRequest
+     */
+    interruption_instructions_enabled?: boolean | null;
+    /**
      * Enable multilingual speech-to-text so callers speaking languages other than the primary language_code are still transcribed accurately. Send null to clear an existing override.
      * @type {boolean}
      * @memberof CovalPersonasAPIUpdatePersonaRequest
@@ -264,6 +274,7 @@ export function CovalPersonasAPIUpdatePersonaRequestFromJSONTyped(json: any, ign
         'wait_seconds': json['wait_seconds'] == null ? undefined : json['wait_seconds'],
         'conversation_initiation': json['conversation_initiation'] == null ? undefined : json['conversation_initiation'],
         'interruption_rate': json['interruption_rate'] == null ? undefined : json['interruption_rate'],
+        'interruption_instructions_enabled': json['interruption_instructions_enabled'] == null ? undefined : json['interruption_instructions_enabled'],
         'multi_language_stt': json['multi_language_stt'] == null ? undefined : json['multi_language_stt'],
         'hold_music_timeout_seconds': json['hold_music_timeout_seconds'] == null ? undefined : json['hold_music_timeout_seconds'],
         'situate_speaker': json['situate_speaker'] == null ? undefined : json['situate_speaker'],
@@ -300,6 +311,7 @@ export function CovalPersonasAPIUpdatePersonaRequestToJSONTyped(value?: CovalPer
         'wait_seconds': value['wait_seconds'],
         'conversation_initiation': value['conversation_initiation'],
         'interruption_rate': value['interruption_rate'],
+        'interruption_instructions_enabled': value['interruption_instructions_enabled'],
         'multi_language_stt': value['multi_language_stt'],
         'hold_music_timeout_seconds': value['hold_music_timeout_seconds'],
         'situate_speaker': value['situate_speaker'],

@@ -109,6 +109,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -184,6 +185,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -259,6 +261,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -407,6 +410,7 @@ class ReviewAnnotationsApi:
             '200': "object",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -477,6 +481,7 @@ class ReviewAnnotationsApi:
             '200': "object",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -547,6 +552,7 @@ class ReviewAnnotationsApi:
             '200': "object",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -681,6 +687,7 @@ class ReviewAnnotationsApi:
             '200': "CovalReviewsAPIGetReviewAnnotationResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -755,6 +762,7 @@ class ReviewAnnotationsApi:
             '200': "CovalReviewsAPIGetReviewAnnotationResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -829,6 +837,7 @@ class ReviewAnnotationsApi:
             '200': "CovalReviewsAPIGetReviewAnnotationResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -965,6 +974,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '403': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
             '503': "CovalReviewsAPIErrorResponse",
         }
@@ -1037,6 +1047,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '403': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
             '503': "CovalReviewsAPIErrorResponse",
         }
@@ -1109,6 +1120,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '403': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
             '503': "CovalReviewsAPIErrorResponse",
         }
@@ -1563,6 +1575,7 @@ class ReviewAnnotationsApi:
             '200': "CovalReviewsAPIListReviewAnnotationsResponse",
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -1645,6 +1658,7 @@ class ReviewAnnotationsApi:
             '200': "CovalReviewsAPIListReviewAnnotationsResponse",
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -1727,6 +1741,7 @@ class ReviewAnnotationsApi:
             '200': "CovalReviewsAPIListReviewAnnotationsResponse",
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -1883,6 +1898,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -1962,6 +1978,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -2041,6 +2058,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
         response_data = self.api_client.call_api(

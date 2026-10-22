@@ -100,7 +100,10 @@ export interface CovalUploadedConversationsAPIUploadedConversationResource {
      */
     external_conversation_id?: string | null;
     /**
-     * When the conversation actually occurred (ISO 8601)
+     * The instant the audio recording begins, in ISO 8601 with sub-second precision. Coval uses it to align the recording with trace spans in the trace viewer and to locate traces around the call.
+     * 
+     * When it was not provided at submit, this is the time Coval received the conversation, and the trace viewer draws the recording without aligning it to spans.
+     * 
      * @type {Date}
      * @memberof CovalUploadedConversationsAPIUploadedConversationResource
      */

@@ -30,6 +30,7 @@ from coval_sdk.api import (
   OrganizationConversationsConfigApi,
   OrganizationUsersApi,
   PersonasApi,
+  PythonMetricsApi,
   ReportsApi,
   ReviewAnnotationsApi,
   ReviewProjectsApi,
@@ -74,6 +75,7 @@ API_PROPERTY_NAMES = (
   "organization_conversations_config",
   "organization_users",
   "personas",
+  "python_metrics",
   "reports",
   "review_annotations",
   "review_projects",
@@ -273,6 +275,7 @@ class CovalClient:
     self.organization_conversations_config = OrganizationConversationsConfigApi(self.api_client)
     self.organization_users = OrganizationUsersApi(self.api_client)
     self.personas = PersonasApi(self.api_client)
+    self.python_metrics = PythonMetricsApi(self.api_client)
     self.reports = ReportsApi(self.api_client)
     self.review_annotations = ReviewAnnotationsApi(self.api_client)
     self.review_projects = ReviewProjectsApi(self.api_client)

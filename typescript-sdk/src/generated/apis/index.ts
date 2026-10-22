@@ -16,6 +16,7 @@ export * from './MutationsApi.js';
 export * from './OrganizationConversationsConfigApi.js';
 export * from './OrganizationUsersApi.js';
 export * from './PersonasApi.js';
+export * from './PythonMetricsApi.js';
 export * from './ReportsApi.js';
 export * from './ReviewAnnotationsApi.js';
 export * from './ReviewProjectsApi.js';

@@ -42,7 +42,7 @@ class CovalUploadedConversationsAPIUploadedConversationResource(BaseModel):
     status: CovalUploadedConversationsAPIConversationStatus
     create_time: datetime = Field(description="When conversation was submitted (ISO 8601)")
     external_conversation_id: Optional[StrictStr] = Field(default=None, description="External conversation ID from customer system")
-    occurred_at: Optional[datetime] = Field(default=None, description="When the conversation actually occurred (ISO 8601)")
+    occurred_at: Optional[datetime] = Field(default=None, description="The instant the audio recording begins, in ISO 8601 with sub-second precision. Coval uses it to align the recording with trace spans in the trace viewer and to locate traces around the call.  When it was not provided at submit, this is the time Coval received the conversation, and the trace viewer draws the recording without aligning it to spans. ")
     has_audio: Optional[StrictBool] = Field(default=None, description="Whether audio is available for this conversation.  Use GET /v1/conversations/uploaded/{id}/audio to retrieve presigned URL. ")
     agent_id: Optional[StrictStr] = Field(default=None, description="Agent resource ID (22-character ShortUUID), if one was provided at submission")
     persona_id: Optional[StrictStr] = Field(default=None, description="Reference to persona resource (typically null for uploaded conversations)")

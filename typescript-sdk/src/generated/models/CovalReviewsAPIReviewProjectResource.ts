@@ -137,7 +137,7 @@ export interface CovalReviewsAPIReviewProjectResource {
      */
     enforced_collaboration?: boolean;
     /**
-     * Allow reviewers to skip linked metrics
+     * Allow reviewers to skip linked metrics. Rejected on collaborative projects unless enforced_collaboration is true.
      * @type {boolean}
      * @memberof CovalReviewsAPIReviewProjectResource
      */

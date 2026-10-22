@@ -48,13 +48,14 @@ class CovalPersonasAPIUpdatePersonaRequest(BaseModel):
     wait_seconds: Optional[Union[Annotated[float, Field(le=2, strict=True, ge=0.1)], Annotated[int, Field(le=2, strict=True, ge=1)]]] = Field(default=None, description="Response delay in seconds. Send null to clear an existing configured delay.")
     conversation_initiation: Optional[StrictStr] = Field(default=None, description="Who initiates the conversation. Send null to clear an existing selection.")
     interruption_rate: Optional[StrictStr] = Field(default=None, description="How often the persona interrupts the agent. While the agent is speaking, the persona forces a new turn once about 90 seconds (LOW), 45 seconds (MEDIUM), or 30 seconds (HIGH) have passed since the call started or since its last interruption. NONE never interrupts. This is a timer, not a semantic barge-in. null is ignored; send NONE to disable. ")
+    interruption_instructions_enabled: Optional[StrictBool] = Field(default=None, description="Whether the persona follows interruption instructions in the test case or the persona prompt, interrupting the agent mid-utterance when one is met. Takes effect only for organizations with prompted interruptions enabled. Defaults to false. null is ignored; send false to disable. ")
     multi_language_stt: Optional[StrictBool] = Field(default=None, description="Enable multilingual speech-to-text so callers speaking languages other than the primary language_code are still transcribed accurately. Send null to clear an existing override.")
     hold_music_timeout_seconds: Optional[Union[Annotated[float, Field(le=300, strict=True, ge=5)], Annotated[int, Field(le=300, strict=True, ge=5)]]] = Field(default=None, description="Disconnect after this many seconds of no speech (5-300). Send null to clear an existing timeout.")
     situate_speaker: Optional[StrictStr] = Field(default=None, description="Persona placement preset. Send null to clear an existing preset. - speakerphone-easy: User speaking from a distance from the microphone - speakerphone-hard: User speaking from a distance from the microphone in an acoustically challenging environment. ")
     audio_degradation: Optional[CovalPersonasAPIAudioDegradationConfig] = Field(default=None, description="Channel degradation preset. Send null to clear an existing audio_degradation preset. ")
     tags: Optional[Annotated[List[Annotated[str, Field(strict=True, max_length=200)]], Field(max_length=20)]] = Field(default=None, description="Tags to associate with this persona. Null or omitted leaves tags unchanged. Pass [] to clear all tags.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["silent_mode", "multi_phone_config", "initialization_parameters", "custom_persona_data", "voice", "custom_voice_id", "name", "persona_prompt", "voice_name", "language_code", "background_sound", "background_sound_volume", "voice_volume", "voice_speed", "wait_seconds", "conversation_initiation", "interruption_rate", "multi_language_stt", "hold_music_timeout_seconds", "situate_speaker", "audio_degradation", "tags"]
+    __properties: ClassVar[List[str]] = ["silent_mode", "multi_phone_config", "initialization_parameters", "custom_persona_data", "voice", "custom_voice_id", "name", "persona_prompt", "voice_name", "language_code", "background_sound", "background_sound_volume", "voice_volume", "voice_speed", "wait_seconds", "conversation_initiation", "interruption_rate", "interruption_instructions_enabled", "multi_language_stt", "hold_music_timeout_seconds", "situate_speaker", "audio_degradation", "tags"]
 
     @field_validator('voice')
     def voice_validate_enum(cls, value):
@@ -246,6 +247,11 @@ class CovalPersonasAPIUpdatePersonaRequest(BaseModel):
         if self.interruption_rate is None and "interruption_rate" in self.model_fields_set:
             _dict['interruption_rate'] = None
 
+        # set to None if interruption_instructions_enabled (nullable) is None
+        # and model_fields_set contains the field
+        if self.interruption_instructions_enabled is None and "interruption_instructions_enabled" in self.model_fields_set:
+            _dict['interruption_instructions_enabled'] = None
+
         # set to None if multi_language_stt (nullable) is None
         # and model_fields_set contains the field
         if self.multi_language_stt is None and "multi_language_stt" in self.model_fields_set:
@@ -300,6 +306,7 @@ class CovalPersonasAPIUpdatePersonaRequest(BaseModel):
             "wait_seconds": obj.get("wait_seconds"),
             "conversation_initiation": obj.get("conversation_initiation"),
             "interruption_rate": obj.get("interruption_rate"),
+            "interruption_instructions_enabled": obj.get("interruption_instructions_enabled"),
             "multi_language_stt": obj.get("multi_language_stt"),
             "hold_music_timeout_seconds": obj.get("hold_music_timeout_seconds"),
             "situate_speaker": obj.get("situate_speaker"),
