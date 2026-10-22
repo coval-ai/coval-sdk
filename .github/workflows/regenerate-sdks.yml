@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
 concurrency:
@@ -27,10 +26,10 @@ jobs:
           client-id: ${{ vars.RELEASE_AUTOMATION_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
           permission-contents: write
-          permission-pull-requests: write
       - name: Checkout coval-sdk
         uses: actions/checkout@v7
         with:
+          ref: main
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Set up Node
@@ -115,53 +114,13 @@ jobs:
           pip install -e ".[dev]"
           pytest
 
-      - name: Open / update regen PR if there are changes
-        if: >-
-          always() &&
-          steps.bundle.outcome == 'success' &&
-          steps.generate.outcome == 'success' &&
-          steps.determinism.outcome == 'success'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          commit-message: "fix(sdks): regenerate from published OpenAPI specs"
-          title: "fix(sdks): regenerate from published OpenAPI specs"
-          body: |
-            Automated SDK regeneration from the verified public specs published by
-            `coval-ai/backend@${{ github.event.client_payload.ref }}`.
-
-            - Bundled `dist/coval-openapi.yaml`
-            - Regenerated TypeScript + Python SDKs and synchronized their `CovalClient` API surfaces
-            - Determinism check passed (two consecutive runs produced identical output)
-            - TypeScript validation: `${{ steps.typescript_validation.outcome }}`
-            - Python validation: `${{ steps.python_validation.outcome }}`
-
-            A failed validation result is intentionally committed to this PR so the
-            generated diff and failure are reviewable instead of being trapped in an
-            Actions log. Do not merge until both validations pass.
-
-            If only the OpenAPI marker timestamp changed, this PR can be closed
-            without merging.
-          # Stable branch name — peter-evans/create-pull-request updates the
-          # existing PR in place instead of opening a new one each run.
-          branch: chore/regenerate-sdks
-          delete-branch: false
-          add-paths: |
-            dist/coval-openapi.yaml
-            typescript-sdk/src/generated/
-            typescript-sdk/src/CovalClient.ts
-            python-sdk/src/coval_sdk/
-            python-sdk/GENERATED_README.md
-
-      - name: Fail if SDK validation failed
-        if: >-
-          always() &&
-          (steps.typescript_validation.outcome == 'failure' ||
-          steps.python_validation.outcome == 'failure')
-        run: |
-          echo "TypeScript validation: ${{ steps.typescript_validation.outcome }}"
-          echo "Python validation: ${{ steps.python_validation.outcome }}"
-          exit 1
+      - name: Commit validated SDKs to main
+        env:
+          SOURCE_REF: ${{ github.event.client_payload.ref }}
+          DETERMINISM: ${{ steps.determinism.outcome }}
+          TYPESCRIPT_VALIDATION: ${{ steps.typescript_validation.outcome }}
+          PYTHON_VALIDATION: ${{ steps.python_validation.outcome }}
+        run: bash scripts/commit-generated-sdks.sh
 
       - name: Close the prior failure issue after recovery
         if: >-
@@ -206,9 +165,9 @@ jobs:
               ``,
               `Run: ${runUrl}`,
               ``,
-              `When generation completed, the rolling regen PR was still opened or`,
-              `updated with the validation result. The published SDKs remain unchanged`,
-              `until that PR is fixed, reviewed, and merged.`,
+              `Generated SDKs update main only after deterministic generation and`,
+              `both language validations succeed. A failed update must be recovered`,
+              `through backend Publish OpenAPI Specs against the deployed revision.`,
             ].join('\n');
 
             const existing = await github.rest.issues.listForRepo({
