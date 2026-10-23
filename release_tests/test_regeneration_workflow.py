@@ -44,6 +44,7 @@ def test_backend_event_is_the_only_regeneration_entry_point():
     )
     assert publish["env"] == {
         "SOURCE_REF": "${{ github.event.client_payload.ref }}",
+        "CANDIDATE_DIR": "${{ runner.temp }}/generation-candidate",
         "DETERMINISM": "${{ steps.determinism.outcome }}",
         "TYPESCRIPT_VALIDATION": "${{ steps.typescript_validation.outcome }}",
         "PYTHON_VALIDATION": "${{ steps.python_validation.outcome }}",
@@ -57,8 +58,17 @@ def test_backend_event_is_the_only_regeneration_entry_point():
         for step in steps
         if step.get("uses", "").startswith("actions/checkout@")
     )
-    assert checkout["with"]["ref"] == "main"
-    assert "steps.app-token.outputs.token" in checkout["with"]["token"]
+    assert checkout["with"]["ref"] == "${{ github.sha }}"
+    assert checkout["with"]["persist-credentials"] == "false"
+    assert "secrets." not in str(job)
+    promoter = workflow["jobs"]["promote"]
+    assert promoter["environment"] == "release-automation"
+    assert "scripts/install" not in str(promoter)
+    assert "npm ci" not in str(promoter)
+    assert "needs.regenerate.outputs.changed == 'true'" in promoter["if"]
+    token_index = next(i for i, step in enumerate(promoter["steps"]) if step.get("id") == "app-token")
+    validation_index = next(i for i, step in enumerate(promoter["steps"]) if "release_candidate.py prepare" in step.get("run", ""))
+    assert validation_index < token_index
 
 
 def test_regeneration_failure_appends_recovery_guidance_to_job_summary(tmp_path):

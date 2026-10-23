@@ -25,6 +25,7 @@ concurrency:
 jobs:
   retry:
     name: Request existing release through the App
+    environment: release-automation
     if: github.event_name == 'workflow_dispatch' && vars.SDK_RELEASES_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -62,10 +63,11 @@ jobs:
         with:
           fetch-depth: 0
           ref: refs/tags/${{ env.RELEASE_TAG }}
+          persist-credentials: false
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.9.4"
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: "24"
       - name: Install SDK and release tools
@@ -130,12 +132,17 @@ jobs:
         with:
           name: coval-sdk-npm
           path: dist/
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: "24"
           registry-url: https://registry.npmjs.org
-      - name: Use an OIDC-capable npm CLI
-        run: npm install --global npm@11.5.1
+      - name: Require an OIDC-capable npm CLI
+        run: |
+          node --input-type=module - "$(npm --version)" <<'JS'
+          import assert from 'node:assert/strict';
+          const [major, minor, patch] = process.argv[2].split('.').map(Number);
+          assert(major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1))));
+          JS
       - name: Detect an already published version
         id: registry
         run: |
@@ -158,4 +165,4 @@ jobs:
           fi
       - name: Publish package
         if: steps.registry.outputs.publish == 'true'
-        run: npm publish ./dist/*.tgz --access public
+        run: npm publish ./dist/*.tgz --access public --ignore-scripts

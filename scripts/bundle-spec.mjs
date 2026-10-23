@@ -28,7 +28,7 @@
 // primarily a paths + components consolidation.
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -105,9 +105,8 @@ const droppedLegacyPaths = [];
 const droppedLegacyTags = [];
 const tmpFiles = [];
 
-const tmpRoot = join(tmpdir(), `coval-sdk-bundle-${process.pid}`);
-rmSync(tmpRoot, { recursive: true, force: true });
-mkdirSync(tmpRoot, { recursive: true });
+const tmpRoot = mkdtempSync(join(tmpdir(), 'coval-sdk-bundle-'));
+process.once('exit', () => rmSync(tmpRoot, { recursive: true, force: true }));
 
 for (const { key, filename, filepath, legacy } of sources) {
   const doc = parse(readFileSync(filepath, 'utf8'));
@@ -233,9 +232,7 @@ try {
   execFileSync(redocly, args, { stdio: 'inherit', cwd: repoRoot });
 } catch (err) {
   console.error(`\n✗ redocly join failed (exit ${err.status})`);
-  rmSync(tmpRoot, { recursive: true, force: true });
   process.exit(err.status ?? 1);
 }
 
-rmSync(tmpRoot, { recursive: true, force: true });
 console.log(`\n✓ Bundled spec → ${OUTPUT}`);

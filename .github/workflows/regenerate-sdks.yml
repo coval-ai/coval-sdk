@@ -17,22 +17,17 @@ jobs:
   regenerate:
     if: vars.SDK_REGEN_ENABLED == 'true'
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.prepare.outputs.changed }}
     steps:
-      - name: Create regeneration token
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ vars.RELEASE_AUTOMATION_APP_CLIENT_ID }}
-          private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
-          permission-contents: write
       - name: Checkout coval-sdk
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: main
-          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.sha }}
+          persist-credentials: false
 
       - name: Set up Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: "22"
           cache: npm
@@ -41,13 +36,13 @@ jobs:
             typescript-sdk/package-lock.json
 
       - name: Set up Java (openapi-generator-cli)
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
           java-version: "21"
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -113,13 +108,76 @@ jobs:
           pip install -e ".[dev]"
           pytest
 
-      - name: Commit validated SDKs to main
+      - name: Prepare validated generated source
+        id: prepare
         env:
           SOURCE_REF: ${{ github.event.client_payload.ref }}
+          CANDIDATE_DIR: ${{ runner.temp }}/generation-candidate
           DETERMINISM: ${{ steps.determinism.outcome }}
           TYPESCRIPT_VALIDATION: ${{ steps.typescript_validation.outcome }}
           PYTHON_VALIDATION: ${{ steps.python_validation.outcome }}
         run: bash scripts/commit-generated-sdks.sh
+
+      - name: Upload generated source candidate
+        if: steps.prepare.outputs.changed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: generation-candidate
+          path: ${{ runner.temp }}/generation-candidate/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Summarize regeneration failure
+        if: failure()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "## SDK regeneration failed"
+            echo
+            echo "Run: $RUN_URL"
+            echo
+            echo "Inspect the failed step's logs for details. Generated SDKs update main only after deterministic generation and both language validations succeed."
+            echo
+            echo "Recover through backend Publish OpenAPI Specs against the deployed backend revision."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  promote:
+    name: Promote validated generated source
+    needs: regenerate
+    if: needs.regenerate.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: release-automation
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: generation-candidate
+          path: ${{ runner.temp }}/generation-candidate/
+      - name: Validate generated-source candidate
+        env:
+          SOURCE_REF: ${{ github.event.client_payload.ref }}
+        run: >-
+          python3 scripts/release_candidate.py prepare regeneration
+          "$RUNNER_TEMP/generation-candidate" --source "$SOURCE_REF" --base "$GITHUB_SHA"
+      - name: Create regeneration token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.RELEASE_AUTOMATION_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
+          permission-contents: write
+      - name: Push validated generated source
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: >-
+          git -c credential.helper= -c 'credential.helper=!gh auth git-credential'
+          push origin HEAD:refs/heads/main
 
       - name: Summarize regeneration failure
         if: failure()

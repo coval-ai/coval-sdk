@@ -28,6 +28,7 @@ git add -- \
   python-sdk/GENERATED_README.md
 if git diff --cached --quiet; then
   echo "Generated SDKs are already current; no commit needed."
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then echo 'changed=false' >> "$GITHUB_OUTPUT"; fi
   exit 0
 fi
 
@@ -36,4 +37,6 @@ git -c user.name='coval-release-automation[bot]' \
   -c commit.gpgsign=false \
   commit -m 'fix(sdks): regenerate from published OpenAPI specs' \
   -m "Backend source: $SOURCE_REF"
-git push origin HEAD:refs/heads/main
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+python3 "$script_dir/release_candidate.py" export regeneration "$CANDIDATE_DIR" --source "$SOURCE_REF"
+if [ -n "${GITHUB_OUTPUT:-}" ]; then echo 'changed=true' >> "$GITHUB_OUTPUT"; fi

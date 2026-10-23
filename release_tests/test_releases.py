@@ -330,3 +330,44 @@ def test_rejects_tag_target_and_nonapp_release_author(prepared):
     )
     git(prepared, "tag", "-f", "v0.9.3")
     assert "authored by the release App" in validate(prepared, "v0.9.3").stderr
+
+
+@pytest.mark.parametrize("tampered", [False, True])
+def test_real_release_candidate_requires_independent_validation(
+    prepared, tampered
+):
+    base = git(prepared, "rev-parse", "HEAD^")
+    if tampered:
+        path = prepared / VERSION_FILES[4]
+        package = json.loads(path.read_text())
+        package["scripts"]["injected"] = "echo unexpected"
+        path.write_text(json.dumps(package, indent=2) + "\n")
+        git(prepared, "add", ".")
+        git(prepared, "commit", "--amend", "--no-edit")
+    artifact = prepared.parent / "candidate-data"
+    helper = ROOT / "scripts/release_candidate.py"
+    run(
+        prepared, sys.executable, str(helper), "export", "release",
+        str(artifact), "--tag", "v0.9.3"
+    )
+    publisher = prepared.parent / "publisher"
+    git(
+        prepared.parent, "clone", "--branch", "main",
+        str(prepared.parent / "remote.git"), str(publisher)
+    )
+    run(
+        publisher, sys.executable, str(helper), "prepare", "release",
+        str(artifact), "--tag", "v0.9.3", "--base", base
+    )
+    result = validate(publisher, "v0.9.3")
+    if tampered:
+        assert result.returncode != 0
+        assert "limited to version metadata" in result.stderr
+    else:
+        assert result.returncode == 0, result.stderr
+        git(
+            publisher, "push", "--atomic", "origin",
+            "HEAD:refs/heads/main", "refs/tags/v0.9.3"
+        )
+    remote = git(publisher, "ls-remote", "origin", "refs/heads/main")
+    assert remote.startswith(base) is tampered
