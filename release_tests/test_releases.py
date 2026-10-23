@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 import sys
 import tomllib
@@ -84,6 +85,23 @@ def repository(tmp_path):
             "https://github.com/example/sdk-release-fixture.git",
         )
     )
+    python_metadata = checkout / VERSION_FILES[0]
+    python_metadata.write_text(
+        re.sub(
+            r'(?m)^version = "[0-9]+\.[0-9]+\.[0-9]+"$',
+            'version = "0.9.2"',
+            python_metadata.read_text(),
+        )
+    )
+    run(checkout, sys.executable, "scripts/sync_versions.py", NEW_VERSION="0.9.2")
+    for name in VERSION_FILES[4:]:
+        path = checkout / name
+        package = json.loads(path.read_text())
+        package["version"] = "0.7.2"
+        if "packages" in package:
+            package["packages"][""]["version"] = "0.7.2"
+        path.write_text(json.dumps(package, indent=2) + "\n")
+    (checkout / "CHANGELOG.md").write_text("# Changelog\n")
     (checkout / ".venv/bin").mkdir(parents=True)
     (checkout / ".venv/bin/python").symlink_to(sys.executable)
     commit(checkout, "chore: import existing sdk packages")
@@ -143,6 +161,11 @@ def assert_versions(repository, version):
 
 
 def test_cutover_patch_minor_breaking_and_noop(repository):
+    assert (
+        tomllib.loads((repository / VERSION_FILES[0]).read_text())["project"]["version"]
+        == "0.9.2"
+    )
+    assert json.loads((repository / VERSION_FILES[4]).read_text())["version"] == "0.7.2"
     assert validate(repository, mode="baseline").returncode == 0
     cases = [
         ("fix: synchronize client releases", "0.9.3", "Synchronize client releases"),
