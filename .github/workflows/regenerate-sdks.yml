@@ -7,8 +7,7 @@ on:
     types: [openapi_specs_published]
 
 permissions:
-  contents: write
-  issues: write
+  contents: read
 
 concurrency:
   group: regenerate-sdks
@@ -122,74 +121,17 @@ jobs:
           PYTHON_VALIDATION: ${{ steps.python_validation.outcome }}
         run: bash scripts/commit-generated-sdks.sh
 
-      - name: Close the prior failure issue after recovery
-        if: >-
-          success()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const existing = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'sdk-regen-failure',
-            });
-
-            for (const issue of existing.data) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: `Recovered successfully. Run: ${runUrl}`,
-              });
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed',
-                state_reason: 'completed',
-              });
-            }
-
-      - name: File an issue if the regen failed
-        if: >-
-          failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const title = 'Backend-triggered SDK regeneration is failing';
-            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const body = [
-              `The backend-triggered \`Regenerate SDKs\` job failed.`,
-              ``,
-              `Run: ${runUrl}`,
-              ``,
-              `Generated SDKs update main only after deterministic generation and`,
-              `both language validations succeed. A failed update must be recovered`,
-              `through backend Publish OpenAPI Specs against the deployed revision.`,
-            ].join('\n');
-
-            const existing = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'sdk-regen-failure',
-            });
-
-            if (existing.data.length > 0) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: existing.data[0].number,
-                body,
-              });
-            } else {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                body,
-                labels: ['sdk-regen-failure'],
-              });
-            }
+      - name: Summarize regeneration failure
+        if: failure()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "## SDK regeneration failed"
+            echo
+            echo "Run: $RUN_URL"
+            echo
+            echo "Inspect the failed step's logs for details. Generated SDKs update main only after deterministic generation and both language validations succeed."
+            echo
+            echo "Recover through backend Publish OpenAPI Specs against the deployed backend revision."
+          } >> "$GITHUB_STEP_SUMMARY"
