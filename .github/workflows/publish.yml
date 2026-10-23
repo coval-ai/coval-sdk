@@ -3,23 +3,65 @@ name: Publish SDK packages
 on:
   push:
     tags: ["v*"]
+  repository_dispatch:
+    types: [sdk_release_retry]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing generated release tag to retry
+        required: true
+        type: string
+
+env:
+  RELEASE_TAG: ${{ github.event.client_payload.tag || github.ref_name }}
 
 permissions:
   contents: read
 
 concurrency:
-  group: sdk-publish-${{ github.ref }}
+  group: sdk-publish-${{ github.event.client_payload.tag || inputs.release_tag || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
+  retry:
+    name: Request existing release through the App
+    if: github.event_name == 'workflow_dispatch' && vars.SDK_RELEASES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require main and a final release tag
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/main
+          [[ "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+      - name: Create release automation token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.RELEASE_AUTOMATION_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
+          permission-contents: write
+      - name: Dispatch existing release
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
+            -f event_type=sdk_release_retry -f "client_payload[tag]=$RELEASE_TAG"
+
   build:
     name: Validate and build both packages
-    if: vars.SDK_RELEASES_ENABLED == 'true'
+    if: >-
+      vars.SDK_RELEASES_ENABLED == 'true' &&
+      github.event_name != 'workflow_dispatch' &&
+      github.actor == 'coval-release-automation[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
+          ref: refs/tags/${{ env.RELEASE_TAG }}
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           version: "0.9.4"
@@ -33,7 +75,7 @@ jobs:
       - name: Verify generated release tag
         run: |
           git fetch origin main:refs/remotes/origin/main
-          .venv/bin/python scripts/validate_release.py tag "$GITHUB_REF_NAME"
+          .venv/bin/python scripts/validate_release.py tag "$RELEASE_TAG"
       - name: Install TypeScript build tools
         run: npm ci --prefix typescript-sdk
       - name: Validate and package both SDKs
@@ -96,8 +138,6 @@ jobs:
         run: npm install --global npm@11.5.1
       - name: Detect an already published version
         id: registry
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           version="${RELEASE_TAG#v}"
@@ -118,4 +158,4 @@ jobs:
           fi
       - name: Publish package
         if: steps.registry.outputs.publish == 'true'
-        run: npm publish dist/*.tgz --access public
+        run: npm publish ./dist/*.tgz --access public
