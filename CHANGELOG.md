@@ -1,6 +1,26 @@
 # CHANGELOG
 
 
+## v0.9.4 (2026-10-23)
+
+### Bug Fixes
+
+- **sdks**: Regenerate from published OpenAPI specs
+  ([`b34ae25`](https://github.com/coval-ai/coval-sdk/commit/b34ae25496ff14926e620435573e5a8be850a421))
+
+### Continuous Integration
+
+- Harden sdk generation and release boundaries ([#7](https://github.com/coval-ai/coval-sdk/pull/7),
+  [`7f5d03a`](https://github.com/coval-ai/coval-sdk/commit/7f5d03a236450e4b65cf37206b92a5838ca8f69b))
+
+- Repair npm publication and support existing-tag recovery
+  ([#5](https://github.com/coval-ai/coval-sdk/pull/5),
+  [`e498e82`](https://github.com/coval-ai/coval-sdk/commit/e498e82b8f063d2432cfa3512f156106c8190bd3))
+
+- Report sdk regeneration failures in actions ([#6](https://github.com/coval-ai/coval-sdk/pull/6),
+  [`6db2f95`](https://github.com/coval-ai/coval-sdk/commit/6db2f9506f6f509e39e1f5ec15306ff6ef0e5f65))
+
+
 ## v0.9.3 (2026-10-23)
 
 ### Bug Fixes
