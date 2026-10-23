@@ -1,5 +1,7 @@
 """Bind backend publication verification to the generation workflow."""
 
+import os
+import subprocess
 from pathlib import Path
 
 import yaml
@@ -48,7 +50,8 @@ def test_backend_event_is_the_only_regeneration_entry_point():
     }
     assert "always()" not in publish.get("if", "")
     assert "create-pull-request" not in text
-    assert "pull-requests" not in workflow["permissions"]
+    assert workflow["permissions"] == {"contents": "read"}
+    assert "permissions" not in job
     checkout = next(
         step
         for step in steps
@@ -56,6 +59,41 @@ def test_backend_event_is_the_only_regeneration_entry_point():
     )
     assert checkout["with"]["ref"] == "main"
     assert "steps.app-token.outputs.token" in checkout["with"]["token"]
+
+
+def test_regeneration_failure_appends_recovery_guidance_to_job_summary(tmp_path):
+    root = Path(__file__).resolve().parents[1]
+    workflow = yaml.load(
+        (root / ".github/workflows/regenerate-sdks.yml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    step = next(
+        step
+        for step in workflow["jobs"]["regenerate"]["steps"]
+        if "GITHUB_STEP_SUMMARY" in step.get("run", "")
+    )
+    assert step["if"] == "failure()"
+    assert step["env"]["RUN_URL"] == (
+        "${{ github.server_url }}/${{ github.repository }}"
+        "/actions/runs/${{ github.run_id }}"
+    )
+    summary = tmp_path / "summary.md"
+    summary.write_text("Prior validation details\n")
+    run_url = "https://github.com/coval-ai/coval-sdk/actions/runs/12345"
+    subprocess.run(
+        ["bash", "-e", "-c", step["run"]],
+        env={**os.environ, "RUN_URL": run_url, "GITHUB_STEP_SUMMARY": str(summary)},
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    result = summary.read_text()
+    assert result.startswith("Prior validation details\n")
+    assert "SDK regeneration failed" in result
+    assert run_url in result
+    assert "failed step's logs" in result
+    assert "Publish OpenAPI Specs" in result
+    assert "deployed backend revision" in result
 
 
 def test_release_recursion_guard_allows_regeneration_bot_commits():
