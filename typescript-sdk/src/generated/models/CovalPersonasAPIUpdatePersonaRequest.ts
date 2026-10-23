@@ -77,7 +77,7 @@ export interface CovalPersonasAPIUpdatePersonaRequest {
      */
     name?: string | null;
     /**
-     * Instructions describing persona behavior and personality. Send null to clear only when the persona's resulting silent_mode is true; otherwise the request is rejected.
+     * Optional instructions for persona behavior. Send null or an empty string to clear; omit the field to leave it unchanged.
      * @type {string}
      * @memberof CovalPersonasAPIUpdatePersonaRequest
      */

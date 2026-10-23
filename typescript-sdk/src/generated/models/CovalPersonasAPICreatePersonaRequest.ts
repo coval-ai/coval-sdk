@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { SilentPersona } from './SilentPersona.js';
-import {
-    SilentPersonaFromJSON,
-    SilentPersonaFromJSONTyped,
-    SilentPersonaToJSON,
-    SilentPersonaToJSONTyped,
-} from './SilentPersona.js';
 import type { CovalPersonasAPIMultiPhoneConfig } from './CovalPersonasAPIMultiPhoneConfig.js';
 import {
     CovalPersonasAPIMultiPhoneConfigFromJSON,
@@ -34,13 +27,6 @@ import {
     CovalPersonasAPIAudioDegradationConfigToJSON,
     CovalPersonasAPIAudioDegradationConfigToJSONTyped,
 } from './CovalPersonasAPIAudioDegradationConfig.js';
-import type { PersonaWithPrompt } from './PersonaWithPrompt.js';
-import {
-    PersonaWithPromptFromJSON,
-    PersonaWithPromptFromJSONTyped,
-    PersonaWithPromptToJSON,
-    PersonaWithPromptToJSONTyped,
-} from './PersonaWithPrompt.js';
 
 /**
  * 
@@ -91,7 +77,7 @@ export interface CovalPersonasAPICreatePersonaRequest {
      */
     name: string;
     /**
-     * Instructions describing persona behavior and personality. Required unless silent_mode is true.
+     * Optional instructions describing persona behavior and personality. Null or an empty string leaves behavior to the test case.
      * @type {string}
      * @memberof CovalPersonasAPICreatePersonaRequest
      */
