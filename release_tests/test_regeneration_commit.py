@@ -1,6 +1,7 @@
 """Exercise generated SDK publication against real isolated Git remotes."""
 
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -56,20 +57,37 @@ def checkout(tmp_path):
     return root
 
 
-def publish(root, **overrides):
-    return run(
+def publish(root, promote=True, **overrides):
+    candidate = root.parent / "candidate"
+    result = run(
         root,
         "bash",
         str(SCRIPT),
         check=False,
         **{
             "SOURCE_REF": SOURCE,
+            "CANDIDATE_DIR": str(candidate),
             "DETERMINISM": "success",
             "TYPESCRIPT_VALIDATION": "success",
             "PYTHON_VALIDATION": "success",
             **overrides,
         },
     )
+    if result.returncode or not promote or not candidate.exists():
+        return result
+    writer = root.parent / "writer"
+    git(root.parent, "clone", str(root.parent / "remote.git"), str(writer))
+    prepared = run(
+        writer, "python3", str(ROOT / "scripts/release_candidate.py"),
+        "prepare", "regeneration", str(candidate), "--source", SOURCE,
+        "--base", git(root, "rev-parse", "HEAD^"), check=False,
+    )
+    if prepared.returncode:
+        return prepared
+    hook = root / ".git/hooks/pre-push"
+    if hook.exists():
+        shutil.copy(hook, writer / ".git/hooks/pre-push")
+    return run(writer, "git", "push", "origin", "HEAD:refs/heads/main", check=False)
 
 
 def remote_head(root):
@@ -81,8 +99,6 @@ def test_validated_output_updates_main_without_unrelated_files(checkout):
     (checkout / GENERATED).write_text("new operation\n")
     (checkout / "python-sdk/src/coval_sdk/api/new.py").write_text("new model\n")
     (checkout / "typescript-sdk/src/generated/resource.ts").unlink()
-    (checkout / "README.md").write_text("unrelated local edit\n")
-    (checkout / "unrelated.txt").write_text("untracked\n")
     result = publish(checkout)
     assert result.returncode == 0, result.stderr
     head = remote_head(checkout)
@@ -101,7 +117,7 @@ def test_validated_output_updates_main_without_unrelated_files(checkout):
         == "coval-release-automation[bot]"
     )
     assert SOURCE in git(checkout, "show", "-s", "--format=%B", head)
-    assert (checkout / "README.md").read_text() == "unrelated local edit\n"
+    assert (checkout / "README.md").read_text() == "original\n"
 
 
 def test_unchanged_generated_output_is_a_noop(checkout):
@@ -167,3 +183,23 @@ def test_concurrent_main_update_is_preserved(checkout, tmp_path, timing):
         assert git(checkout, "rev-parse", "HEAD") == initial
     else:
         assert "failed to push" in result.stderr
+
+
+def test_preparation_has_no_remote_write_and_exports_only_data(checkout):
+    previous = remote_head(checkout)
+    (checkout / GENERATED).write_text("validated generation\n")
+    result = publish(checkout, promote=False)
+    assert result.returncode == 0, result.stderr
+    assert remote_head(checkout) == previous
+    candidate = checkout.parent / "candidate"
+    assert {path.name for path in candidate.iterdir()} == {"candidate.json", "candidate.patch"}
+
+
+def test_unrelated_checkout_changes_prevent_candidate_export(checkout):
+    previous = remote_head(checkout)
+    (checkout / GENERATED).write_text("new generation\n")
+    (checkout / "README.md").write_text("unexpected mutation\n")
+    result = publish(checkout, promote=False)
+    assert result.returncode != 0
+    assert "clean checkout" in result.stderr
+    assert remote_head(checkout) == previous

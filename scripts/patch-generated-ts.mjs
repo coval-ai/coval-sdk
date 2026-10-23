@@ -11,6 +11,7 @@ import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from '
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
+import { createGeneratedFile, readOptionalGeneratedFile, rewriteGeneratedFile } from './generated-files.mjs';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const repoRoot = resolve(__dirname, '..');
@@ -116,12 +117,12 @@ function patchCompatibilityModelAliases() {
     const newFile = join(MODELS_DIR, `${newName}.ts`);
     const indexExport = `export * from './${oldName}.js';`;
 
-    if (!existsSync(oldFile)) {
-      if (!existsSync(newFile)) {
+    if (readOptionalGeneratedFile(oldFile) === null) {
+      const targetContents = readOptionalGeneratedFile(newFile);
+      if (targetContents === null) {
         throw new Error(`Compatibility target does not exist: ${newFile}`);
       }
 
-      const targetContents = readFileSync(newFile, 'utf8');
       const typeExports = new Set(
         [...targetContents.matchAll(/export (?:interface|type) (\w+)/g)].map(
           (match) => match[1],
@@ -160,7 +161,7 @@ function patchCompatibilityModelAliases() {
           `} from './${newName}.js';`,
         );
       }
-      writeFileSync(oldFile, `${lines.join('\n')}\n`);
+      createGeneratedFile(oldFile, `${lines.join('\n')}\n`);
       patched += 1;
     }
 
@@ -215,18 +216,19 @@ function patchUpdateRunOneOfOrdering() {
     ],
   ];
 
-  let contents = readFileSync(UPDATE_RUN_ONE_OF_FILE, 'utf8');
   let patched = 0;
-  for (const [monitoringFirst, runFirst] of swaps) {
-    if (contents.includes(monitoringFirst)) {
-      contents = contents.replace(monitoringFirst, runFirst);
-      patched += 1;
-    } else if (!contents.includes(runFirst)) {
-      throw new Error('Generated UpdateRun200ResponseRun oneOf ordering changed');
+  rewriteGeneratedFile(UPDATE_RUN_ONE_OF_FILE, (contents) => {
+    for (const [monitoringFirst, runFirst] of swaps) {
+      if (contents.includes(monitoringFirst)) {
+        contents = contents.replace(monitoringFirst, runFirst);
+        patched += 1;
+      } else if (!contents.includes(runFirst)) {
+        throw new Error('Generated UpdateRun200ResponseRun oneOf ordering changed');
+      }
     }
-  }
 
-  if (patched > 0) writeFileSync(UPDATE_RUN_ONE_OF_FILE, contents);
+    return contents;
+  });
   return patched;
 }
 // --- end update_run oneOf ordering patch ------------------------------------
@@ -301,23 +303,22 @@ for (const [schemaName, schema] of Object.entries(schemas)) {
     const modelIdent = schemaToFileName(schemaName);
     const enumTypeName = `${modelIdent}${propToPascal(propName)}Enum`;
     const modelFile = join(MODELS_DIR, `${modelIdent}.ts`);
-    if (!existsSync(modelFile)) continue;
-    let contents = readFileSync(modelFile, 'utf8');
-    if (contents.includes(`export const ${enumTypeName}`) || contents.includes(`export enum ${enumTypeName}`)) {
-      continue;
-    }
+    rewriteGeneratedFile(modelFile, (contents) => {
+      if (contents.includes(`export const ${enumTypeName}`) || contents.includes(`export enum ${enumTypeName}`)) {
+        return contents;
+      }
 
-    const block =
-      `\n\n/** @export */\nexport const ${enumTypeName} = {\n` +
-      prop.enum
-        .map((v) => `    ${enumMemberName(v)}: ${JSON.stringify(v)} as const,`)
-        .join('\n') +
-      `\n} as const;\nexport type ${enumTypeName} = typeof ${enumTypeName}[keyof typeof ${enumTypeName}];\n`;
+      const block =
+        `\n\n/** @export */\nexport const ${enumTypeName} = {\n` +
+        prop.enum
+          .map((v) => `    ${enumMemberName(v)}: ${JSON.stringify(v)} as const,`)
+          .join('\n') +
+        `\n} as const;\nexport type ${enumTypeName} = typeof ${enumTypeName}[keyof typeof ${enumTypeName}];\n`;
 
-    contents += block;
-    writeFileSync(modelFile, contents);
-    patches += 1;
-    console.log(`  + ${schemaName}.${propName} → ${enumTypeName}`);
+      patches += 1;
+      console.log(`  + ${schemaName}.${propName} → ${enumTypeName}`);
+      return contents + block;
+    });
   }
 }
 
@@ -334,28 +335,27 @@ for (const [schemaName, schema] of Object.entries(schemas)) {
 
     const aliasName = `${schemaToFileName(schemaName)}${propToPascal(propName)}`;
     const modelFile = join(MODELS_DIR, `${aliasName}.ts`);
-    if (!existsSync(modelFile)) continue;
-    let contents = readFileSync(modelFile, 'utf8');
-    const emptyAlias = `export type ${aliasName} = ;`;
-    if (!contents.includes(emptyAlias)) continue;
+    rewriteGeneratedFile(modelFile, (contents) => {
+      const emptyAlias = `export type ${aliasName} = ;`;
+      if (!contents.includes(emptyAlias)) return contents;
 
-    const missingImports = members.filter(
-      (member) => !contents.includes(`import type { ${member} }`),
-    );
-    if (missingImports.length > 0) {
-      console.error(
-        `Cannot repair ${aliasName}; generated file is missing imports for ${missingImports.join(', ')}`,
+      const missingImports = members.filter(
+        (member) => !contents.includes(`import type { ${member} }`),
       );
-      process.exit(1);
-    }
+      if (missingImports.length > 0) {
+        throw new Error(
+          `Cannot repair ${aliasName}; generated file is missing imports for ${missingImports.join(', ')}`,
+        );
+      }
 
-    contents = contents.replace(
-      emptyAlias,
-      `export type ${aliasName} = ${members.join(' | ')};`,
-    );
-    writeFileSync(modelFile, contents);
-    unionPatches += 1;
-    console.log(`  + ${schemaName}.${propName} -> ${members.join(' | ')}`);
+      const updated = contents.replace(
+        emptyAlias,
+        `export type ${aliasName} = ${members.join(' | ')};`,
+      );
+      unionPatches += 1;
+      console.log(`  + ${schemaName}.${propName} -> ${members.join(' | ')}`);
+      return updated;
+    });
   }
 }
 
