@@ -90,6 +90,13 @@ import {
     CovalMetricsAPIMetricThresholdResourceToJSON,
     CovalMetricsAPIMetricThresholdResourceToJSONTyped,
 } from './CovalMetricsAPIMetricThresholdResource.js';
+import type { CovalMetricsAPIPythonMetricConfiguration } from './CovalMetricsAPIPythonMetricConfiguration.js';
+import {
+    CovalMetricsAPIPythonMetricConfigurationFromJSON,
+    CovalMetricsAPIPythonMetricConfigurationFromJSONTyped,
+    CovalMetricsAPIPythonMetricConfigurationToJSON,
+    CovalMetricsAPIPythonMetricConfigurationToJSONTyped,
+} from './CovalMetricsAPIPythonMetricConfiguration.js';
 
 /**
  * Metric resource
@@ -97,6 +104,12 @@ import {
  * @interface CovalMetricsAPIMetricResource
  */
 export interface CovalMetricsAPIMetricResource {
+    /**
+     * Exact authored Python configuration for the current version; null for other metric types. Revise through Python drafts, previews and publication.
+     * @type {CovalMetricsAPIPythonMetricConfiguration}
+     * @memberof CovalMetricsAPIMetricResource
+     */
+    python_metric?: CovalMetricsAPIPythonMetricConfiguration | null;
     /**
      * Authoring timestamp; null when unknown.
      * @type {Date}
@@ -574,6 +587,7 @@ export const CovalMetricsAPIMetricResourceSuccessEndReasonsEnum = {
     DurationLimit: 'DURATION_LIMIT',
     PersonaDisconnected: 'PERSONA_DISCONNECTED',
     AgentDisconnected: 'AGENT_DISCONNECTED',
+    AgentEndCue: 'AGENT_END_CUE',
     PipelineError: 'PIPELINE_ERROR',
     RepetitionLoop: 'REPETITION_LOOP',
     AudioUploadPlaybackCompleted: 'AUDIO_UPLOAD_PLAYBACK_COMPLETED',
@@ -662,6 +676,7 @@ export function CovalMetricsAPIMetricResourceFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
+        'python_metric': json['python_metric'] == null ? undefined : CovalMetricsAPIPythonMetricConfigurationFromJSON(json['python_metric']),
         'created_at': (json['created_at'] == null ? null : new Date(json['created_at'])),
         'created_by': json['created_by'],
         'updated_at': (json['updated_at'] == null ? null : new Date(json['updated_at'])),
@@ -747,6 +762,7 @@ export function CovalMetricsAPIMetricResourceToJSONTyped(value?: Omit<CovalMetri
 
     return {
         
+        'python_metric': CovalMetricsAPIPythonMetricConfigurationToJSON(value['python_metric']),
         'name': value['name'],
         'id': value['id'],
         'metric_name': value['metric_name'],

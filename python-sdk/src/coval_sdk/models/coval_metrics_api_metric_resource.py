@@ -32,6 +32,7 @@ from coval_sdk.models.coval_metrics_api_metric_resource_expected_body import Cov
 from coval_sdk.models.coval_metrics_api_metric_runtime_config import CovalMetricsAPIMetricRuntimeConfig
 from coval_sdk.models.coval_metrics_api_metric_threshold_resource import CovalMetricsAPIMetricThresholdResource
 from coval_sdk.models.coval_metrics_api_metric_type import CovalMetricsAPIMetricType
+from coval_sdk.models.coval_metrics_api_python_metric_configuration import CovalMetricsAPIPythonMetricConfiguration
 from coval_sdk.models.coval_metrics_api_target_condition import CovalMetricsAPITargetCondition
 from typing import Optional, Set
 from typing_extensions import Self
@@ -41,6 +42,7 @@ class CovalMetricsAPIMetricResource(BaseModel):
     """
     Metric resource
     """ # noqa: E501
+    python_metric: Optional[CovalMetricsAPIPythonMetricConfiguration] = Field(default=None, description="Exact authored Python configuration for the current version; null for other metric types. Revise through Python drafts, previews and publication.")
     created_at: Optional[datetime] = Field(description="Authoring timestamp; null when unknown.")
     created_by: Optional[StrictStr] = Field(description="Canonical author user ID; null when unknown.")
     updated_at: Optional[datetime] = Field(description="Authoring timestamp; null when unknown.")
@@ -113,7 +115,7 @@ class CovalMetricsAPIMetricResource(BaseModel):
     threshold_preset: Optional[StrictStr] = Field(default=None, description="METRIC_VOLUME threshold preset: 'strict', 'normal', or 'lenient'.")
     value_source: Optional[StrictStr] = Field(default=None, description="Source of the aggregated value: 'attribute' (default) reads the configured span attribute; 'duration' aggregates the span's own duration converted to seconds.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["created_at", "created_by", "updated_at", "updated_by", "name", "id", "metric_name", "description", "metric_type", "judge_mode", "evaluation", "prompt", "enabled_tools", "dependency_metric_ids", "categories", "min_value", "max_value", "metadata_field_type", "metadata_field_key", "regex_pattern", "role", "min_pause_duration_seconds", "max_silence_duration_seconds", "min_silence_gap_seconds", "frequency_threshold", "direction", "success_sentiments", "percent_above", "success_end_reasons", "observation_name", "expected_body", "match_path", "min_volume_change_for_pitch_misalignment", "threshold", "operator", "ivr_flow", "sql_query", "aggregation_method", "unit", "criteria_source", "criteria_path", "criteria", "reporting_method", "base_prompt_template", "include_traces", "audio_filter", "runtime_config", "target_condition", "tags", "create_time", "update_time", "current_version", "case_insensitive", "detection_preset", "harmonics_to_noise_ratio_threshold_offset_db", "jitter_threshold_multiplier", "loud_threshold_db", "low_pitch_threshold_multiplier", "mad_z_score_threshold", "match_mode", "metric_attribute", "min_fry_segment_seconds", "organization_threshold", "pause_detection_preset", "pitch_change_threshold_hz", "position", "significant_changes_threshold_hz", "soft_threshold_db", "span_name", "threshold_preset", "value_source"]
+    __properties: ClassVar[List[str]] = ["python_metric", "created_at", "created_by", "updated_at", "updated_by", "name", "id", "metric_name", "description", "metric_type", "judge_mode", "evaluation", "prompt", "enabled_tools", "dependency_metric_ids", "categories", "min_value", "max_value", "metadata_field_type", "metadata_field_key", "regex_pattern", "role", "min_pause_duration_seconds", "max_silence_duration_seconds", "min_silence_gap_seconds", "frequency_threshold", "direction", "success_sentiments", "percent_above", "success_end_reasons", "observation_name", "expected_body", "match_path", "min_volume_change_for_pitch_misalignment", "threshold", "operator", "ivr_flow", "sql_query", "aggregation_method", "unit", "criteria_source", "criteria_path", "criteria", "reporting_method", "base_prompt_template", "include_traces", "audio_filter", "runtime_config", "target_condition", "tags", "create_time", "update_time", "current_version", "case_insensitive", "detection_preset", "harmonics_to_noise_ratio_threshold_offset_db", "jitter_threshold_multiplier", "loud_threshold_db", "low_pitch_threshold_multiplier", "mad_z_score_threshold", "match_mode", "metric_attribute", "min_fry_segment_seconds", "organization_threshold", "pause_detection_preset", "pitch_change_threshold_hz", "position", "significant_changes_threshold_hz", "soft_threshold_db", "span_name", "threshold_preset", "value_source"]
 
     @field_validator('role')
     def role_validate_enum(cls, value):
@@ -153,8 +155,8 @@ class CovalMetricsAPIMetricResource(BaseModel):
             return value
 
         for i in value:
-            if i not in set(['UNKNOWN', 'IDLE_TIMEOUT', 'DURATION_LIMIT', 'PERSONA_DISCONNECTED', 'AGENT_DISCONNECTED', 'PIPELINE_ERROR', 'REPETITION_LOOP', 'AUDIO_UPLOAD_PLAYBACK_COMPLETED', 'SCRIPT_COMPLETED', 'SCRIPT_DIVERGED']):
-                raise ValueError("each list item must be one of ('UNKNOWN', 'IDLE_TIMEOUT', 'DURATION_LIMIT', 'PERSONA_DISCONNECTED', 'AGENT_DISCONNECTED', 'PIPELINE_ERROR', 'REPETITION_LOOP', 'AUDIO_UPLOAD_PLAYBACK_COMPLETED', 'SCRIPT_COMPLETED', 'SCRIPT_DIVERGED')")
+            if i not in set(['UNKNOWN', 'IDLE_TIMEOUT', 'DURATION_LIMIT', 'PERSONA_DISCONNECTED', 'AGENT_DISCONNECTED', 'AGENT_END_CUE', 'PIPELINE_ERROR', 'REPETITION_LOOP', 'AUDIO_UPLOAD_PLAYBACK_COMPLETED', 'SCRIPT_COMPLETED', 'SCRIPT_DIVERGED']):
+                raise ValueError("each list item must be one of ('UNKNOWN', 'IDLE_TIMEOUT', 'DURATION_LIMIT', 'PERSONA_DISCONNECTED', 'AGENT_DISCONNECTED', 'AGENT_END_CUE', 'PIPELINE_ERROR', 'REPETITION_LOOP', 'AUDIO_UPLOAD_PLAYBACK_COMPLETED', 'SCRIPT_COMPLETED', 'SCRIPT_DIVERGED')")
         return value
 
     @field_validator('operator')
@@ -256,6 +258,9 @@ class CovalMetricsAPIMetricResource(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of python_metric
+        if self.python_metric:
+            _dict['python_metric'] = self.python_metric.to_dict()
         # override the default output from pydantic by calling `to_dict()` of evaluation
         if self.evaluation:
             _dict['evaluation'] = self.evaluation.to_dict()
@@ -281,6 +286,11 @@ class CovalMetricsAPIMetricResource(BaseModel):
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
+
+        # set to None if python_metric (nullable) is None
+        # and model_fields_set contains the field
+        if self.python_metric is None and "python_metric" in self.model_fields_set:
+            _dict['python_metric'] = None
 
         # set to None if created_at (nullable) is None
         # and model_fields_set contains the field
@@ -609,6 +619,7 @@ class CovalMetricsAPIMetricResource(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "python_metric": CovalMetricsAPIPythonMetricConfiguration.from_dict(obj["python_metric"]) if obj.get("python_metric") is not None else None,
             "created_at": obj.get("created_at"),
             "created_by": obj.get("created_by"),
             "updated_at": obj.get("updated_at"),

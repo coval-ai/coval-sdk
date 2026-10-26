@@ -67,7 +67,7 @@ class ReviewAnnotationsApi:
     ) -> CovalReviewsAPICreateReviewAnnotationResponse:
         """Create review annotation
 
-        Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+        Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
 
         :param coval_reviews_api_create_review_annotation_request: (required)
         :type coval_reviews_api_create_review_annotation_request: CovalReviewsAPICreateReviewAnnotationRequest
@@ -108,6 +108,7 @@ class ReviewAnnotationsApi:
             '201': "CovalReviewsAPICreateReviewAnnotationResponse",
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
+            '403': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
@@ -143,7 +144,7 @@ class ReviewAnnotationsApi:
     ) -> ApiResponse[CovalReviewsAPICreateReviewAnnotationResponse]:
         """Create review annotation
 
-        Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+        Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
 
         :param coval_reviews_api_create_review_annotation_request: (required)
         :type coval_reviews_api_create_review_annotation_request: CovalReviewsAPICreateReviewAnnotationRequest
@@ -184,6 +185,7 @@ class ReviewAnnotationsApi:
             '201': "CovalReviewsAPICreateReviewAnnotationResponse",
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
+            '403': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
@@ -219,7 +221,7 @@ class ReviewAnnotationsApi:
     ) -> RESTResponseType:
         """Create review annotation
 
-        Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+        Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
 
         :param coval_reviews_api_create_review_annotation_request: (required)
         :type coval_reviews_api_create_review_annotation_request: CovalReviewsAPICreateReviewAnnotationRequest
@@ -260,6 +262,7 @@ class ReviewAnnotationsApi:
             '201': "CovalReviewsAPICreateReviewAnnotationResponse",
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
+            '403': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
@@ -357,6 +360,7 @@ class ReviewAnnotationsApi:
     def delete_review_annotation(
         self,
         annotation_id: Annotated[StrictStr, Field(description="The annotation ID")],
+        project_id: Annotated[Optional[StrictStr], Field(description="Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer's annotation. ")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -372,10 +376,12 @@ class ReviewAnnotationsApi:
     ) -> object:
         """Delete review annotation
 
-        Delete a review annotation.
+        Delete a review annotation. Another reviewer's annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
 
         :param annotation_id: The annotation ID (required)
         :type annotation_id: str
+        :param project_id: Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer's annotation. 
+        :type project_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -400,6 +406,7 @@ class ReviewAnnotationsApi:
 
         _param = self._delete_review_annotation_serialize(
             annotation_id=annotation_id,
+            project_id=project_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -428,6 +435,7 @@ class ReviewAnnotationsApi:
     def delete_review_annotation_with_http_info(
         self,
         annotation_id: Annotated[StrictStr, Field(description="The annotation ID")],
+        project_id: Annotated[Optional[StrictStr], Field(description="Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer's annotation. ")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -443,10 +451,12 @@ class ReviewAnnotationsApi:
     ) -> ApiResponse[object]:
         """Delete review annotation
 
-        Delete a review annotation.
+        Delete a review annotation. Another reviewer's annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
 
         :param annotation_id: The annotation ID (required)
         :type annotation_id: str
+        :param project_id: Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer's annotation. 
+        :type project_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -471,6 +481,7 @@ class ReviewAnnotationsApi:
 
         _param = self._delete_review_annotation_serialize(
             annotation_id=annotation_id,
+            project_id=project_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -499,6 +510,7 @@ class ReviewAnnotationsApi:
     def delete_review_annotation_without_preload_content(
         self,
         annotation_id: Annotated[StrictStr, Field(description="The annotation ID")],
+        project_id: Annotated[Optional[StrictStr], Field(description="Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer's annotation. ")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -514,10 +526,12 @@ class ReviewAnnotationsApi:
     ) -> RESTResponseType:
         """Delete review annotation
 
-        Delete a review annotation.
+        Delete a review annotation. Another reviewer's annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
 
         :param annotation_id: The annotation ID (required)
         :type annotation_id: str
+        :param project_id: Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer's annotation. 
+        :type project_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -542,6 +556,7 @@ class ReviewAnnotationsApi:
 
         _param = self._delete_review_annotation_serialize(
             annotation_id=annotation_id,
+            project_id=project_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -565,6 +580,7 @@ class ReviewAnnotationsApi:
     def _delete_review_annotation_serialize(
         self,
         annotation_id,
+        project_id,
         _request_auth,
         _content_type,
         _headers,
@@ -589,6 +605,10 @@ class ReviewAnnotationsApi:
         if annotation_id is not None:
             _path_params['annotation_id'] = annotation_id
         # process the query parameters
+        if project_id is not None:
+            
+            _query_params.append(('project_id', project_id))
+            
         # process the header parameters
         # process the form parameters
         # process the body parameter
@@ -1853,7 +1873,7 @@ class ReviewAnnotationsApi:
     ) -> CovalReviewsAPIUpdateReviewAnnotationResponse:
         """Update review annotation
 
-        Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+        Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer's annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
 
         :param annotation_id: The annotation ID (required)
         :type annotation_id: str
@@ -1933,7 +1953,7 @@ class ReviewAnnotationsApi:
     ) -> ApiResponse[CovalReviewsAPIUpdateReviewAnnotationResponse]:
         """Update review annotation
 
-        Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+        Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer's annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
 
         :param annotation_id: The annotation ID (required)
         :type annotation_id: str
@@ -2013,7 +2033,7 @@ class ReviewAnnotationsApi:
     ) -> RESTResponseType:
         """Update review annotation
 
-        Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+        Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer's annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
 
         :param annotation_id: The annotation ID (required)
         :type annotation_id: str

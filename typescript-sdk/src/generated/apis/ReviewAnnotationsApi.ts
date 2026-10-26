@@ -71,6 +71,7 @@ export interface CreateReviewAnnotationRequest {
 
 export interface DeleteReviewAnnotationRequest {
     annotationId: string;
+    projectId?: string;
 }
 
 export interface GetReviewAnnotationRequest {
@@ -117,7 +118,7 @@ export interface ReviewAnnotationsApiInterface {
     createReviewAnnotationRequestOpts(requestParameters: CreateReviewAnnotationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
      * @summary Create review annotation
      * @param {CovalReviewsAPICreateReviewAnnotationRequest} covalReviewsAPICreateReviewAnnotationRequest 
      * @param {string} [projectId] Optional project ID. The simulation output, metric, and reviewer must match an assignment in this project. Applies project rules to the returned completion status. 
@@ -128,7 +129,7 @@ export interface ReviewAnnotationsApiInterface {
     createReviewAnnotationRaw(requestParameters: CreateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalReviewsAPICreateReviewAnnotationResponse>>;
 
     /**
-     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
      * Create review annotation
      */
     createReviewAnnotation(requestParameters: CreateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalReviewsAPICreateReviewAnnotationResponse>;
@@ -136,15 +137,17 @@ export interface ReviewAnnotationsApiInterface {
     /**
      * Creates request options for deleteReviewAnnotation without sending the request
      * @param {string} annotationId The annotation ID
+     * @param {string} [projectId] Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer\&#39;s annotation. 
      * @throws {RequiredError}
      * @memberof ReviewAnnotationsApiInterface
      */
     deleteReviewAnnotationRequestOpts(requestParameters: DeleteReviewAnnotationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Delete a review annotation.
+     * Delete a review annotation. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
      * @summary Delete review annotation
      * @param {string} annotationId The annotation ID
+     * @param {string} [projectId] Optional project ID. The annotation must match an assignment in this project, and a manager of this project may delete another reviewer\&#39;s annotation. 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ReviewAnnotationsApiInterface
@@ -152,7 +155,7 @@ export interface ReviewAnnotationsApiInterface {
     deleteReviewAnnotationRaw(requestParameters: DeleteReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>>;
 
     /**
-     * Delete a review annotation.
+     * Delete a review annotation. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
      * Delete review annotation
      */
     deleteReviewAnnotation(requestParameters: DeleteReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object>;
@@ -274,7 +277,7 @@ export interface ReviewAnnotationsApiInterface {
     updateReviewAnnotationRequestOpts(requestParameters: UpdateReviewAnnotationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
      * @summary Update review annotation
      * @param {string} annotationId The annotation ID
      * @param {CovalReviewsAPIUpdateReviewAnnotationRequest} covalReviewsAPIUpdateReviewAnnotationRequest 
@@ -286,7 +289,7 @@ export interface ReviewAnnotationsApiInterface {
     updateReviewAnnotationRaw(requestParameters: UpdateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalReviewsAPIUpdateReviewAnnotationResponse>>;
 
     /**
-     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
      * Update review annotation
      */
     updateReviewAnnotation(requestParameters: UpdateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalReviewsAPIUpdateReviewAnnotationResponse>;
@@ -336,7 +339,7 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
     }
 
     /**
-     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
      * Create review annotation
      */
     async createReviewAnnotationRaw(requestParameters: CreateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalReviewsAPICreateReviewAnnotationResponse>> {
@@ -347,7 +350,7 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
     }
 
     /**
-     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. 
+     * Create or update the saved annotation for a simulation output, metric, and reviewer. Project creation does not create these annotation records. Use the returned `review_annotation.id` with PATCH for later partial updates. Repeating POST replaces the saved answer fields, including clearing omitted optional answer fields. A personal API key can write only for its own user unless it manages the supplied `project_id`; a write for another reviewer returns HTTP 403. 
      * Create review annotation
      */
     async createReviewAnnotation(requestParameters: CreateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalReviewsAPICreateReviewAnnotationResponse> {
@@ -368,6 +371,10 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
 
         const queryParameters: any = {};
 
+        if (requestParameters['projectId'] != null) {
+            queryParameters['project_id'] = requestParameters['projectId'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
@@ -387,7 +394,7 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
     }
 
     /**
-     * Delete a review annotation.
+     * Delete a review annotation. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
      * Delete review annotation
      */
     async deleteReviewAnnotationRaw(requestParameters: DeleteReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
@@ -398,7 +405,7 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
     }
 
     /**
-     * Delete a review annotation.
+     * Delete a review annotation. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. 
      * Delete review annotation
      */
     async deleteReviewAnnotation(requestParameters: DeleteReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
@@ -670,7 +677,7 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
     }
 
     /**
-     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
      * Update review annotation
      */
     async updateReviewAnnotationRaw(requestParameters: UpdateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalReviewsAPIUpdateReviewAnnotationResponse>> {
@@ -681,7 +688,7 @@ export class ReviewAnnotationsApi extends runtime.BaseAPI implements ReviewAnnot
     }
 
     /**
-     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. 
+     * Partially update an existing saved review annotation using its annotation ID. Create the annotation with POST before attempting to update it; project assignment IDs cannot be used as annotation IDs. The reviewer cannot be changed. A different non-null `assignee` returns HTTP 400 (`INVALID_ARGUMENT`); create an annotation for that reviewer instead. Completion status is derived from saved ground truth and, when `project_id` is supplied, the applicable project rules. Another reviewer\'s annotation returns HTTP 404 unless the caller manages the supplied `project_id`. The simulation output, metric, and reviewer ID cannot be changed; supplying `simulation_output_id`, `metric_id`, or `assignee_user_id` returns HTTP 400 (`INVALID_ARGUMENT`). 
      * Update review annotation
      */
     async updateReviewAnnotation(requestParameters: UpdateReviewAnnotationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalReviewsAPIUpdateReviewAnnotationResponse> {

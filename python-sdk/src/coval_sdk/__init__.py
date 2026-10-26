@@ -227,6 +227,7 @@ __all__ = [
     "CovalMetricsAPIGetMetricResponse",
     "CovalMetricsAPIGetMetricTemplateVariablesResponse",
     "CovalMetricsAPIGetThresholdResponse",
+    "CovalMetricsAPIInputRequirements",
     "CovalMetricsAPIIvrFlow",
     "CovalMetricsAPIIvrFlowEdgesInner",
     "CovalMetricsAPIIvrFlowNodesInner",
@@ -258,6 +259,7 @@ __all__ = [
     "CovalMetricsAPIMetricVersionResource",
     "CovalMetricsAPIPatchThresholdRequest",
     "CovalMetricsAPIPatchThresholdResponse",
+    "CovalMetricsAPIPythonMetricConfiguration",
     "CovalMetricsAPIRecentlyDeletedMetricResource",
     "CovalMetricsAPISchemaColumnResource",
     "CovalMetricsAPISchemaTableResource",
@@ -856,6 +858,7 @@ from coval_sdk.models.coval_metrics_api_error_response_error import CovalMetrics
 from coval_sdk.models.coval_metrics_api_get_metric_response import CovalMetricsAPIGetMetricResponse as CovalMetricsAPIGetMetricResponse
 from coval_sdk.models.coval_metrics_api_get_metric_template_variables_response import CovalMetricsAPIGetMetricTemplateVariablesResponse as CovalMetricsAPIGetMetricTemplateVariablesResponse
 from coval_sdk.models.coval_metrics_api_get_threshold_response import CovalMetricsAPIGetThresholdResponse as CovalMetricsAPIGetThresholdResponse
+from coval_sdk.models.coval_metrics_api_input_requirements import CovalMetricsAPIInputRequirements as CovalMetricsAPIInputRequirements
 from coval_sdk.models.coval_metrics_api_ivr_flow import CovalMetricsAPIIvrFlow as CovalMetricsAPIIvrFlow
 from coval_sdk.models.coval_metrics_api_ivr_flow_edges_inner import CovalMetricsAPIIvrFlowEdgesInner as CovalMetricsAPIIvrFlowEdgesInner
 from coval_sdk.models.coval_metrics_api_ivr_flow_nodes_inner import CovalMetricsAPIIvrFlowNodesInner as CovalMetricsAPIIvrFlowNodesInner
@@ -887,6 +890,7 @@ from coval_sdk.models.coval_metrics_api_metric_version_change_type import CovalM
 from coval_sdk.models.coval_metrics_api_metric_version_resource import CovalMetricsAPIMetricVersionResource as CovalMetricsAPIMetricVersionResource
 from coval_sdk.models.coval_metrics_api_patch_threshold_request import CovalMetricsAPIPatchThresholdRequest as CovalMetricsAPIPatchThresholdRequest
 from coval_sdk.models.coval_metrics_api_patch_threshold_response import CovalMetricsAPIPatchThresholdResponse as CovalMetricsAPIPatchThresholdResponse
+from coval_sdk.models.coval_metrics_api_python_metric_configuration import CovalMetricsAPIPythonMetricConfiguration as CovalMetricsAPIPythonMetricConfiguration
 from coval_sdk.models.coval_metrics_api_recently_deleted_metric_resource import CovalMetricsAPIRecentlyDeletedMetricResource as CovalMetricsAPIRecentlyDeletedMetricResource
 from coval_sdk.models.coval_metrics_api_schema_column_resource import CovalMetricsAPISchemaColumnResource as CovalMetricsAPISchemaColumnResource
 from coval_sdk.models.coval_metrics_api_schema_table_resource import CovalMetricsAPISchemaTableResource as CovalMetricsAPISchemaTableResource

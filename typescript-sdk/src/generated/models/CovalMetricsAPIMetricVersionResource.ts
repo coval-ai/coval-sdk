@@ -78,7 +78,7 @@ export interface CovalMetricsAPIMetricVersionResource {
      */
     judge_mode?: CovalMetricsAPIJudgeMode;
     /**
-     * Verbatim scoring-config snapshot for this version
+     * Scoring configuration; Python exposes only source, output type, unit and input requirements.
      * @type {{ [key: string]: any; }}
      * @memberof CovalMetricsAPIMetricVersionResource
      */

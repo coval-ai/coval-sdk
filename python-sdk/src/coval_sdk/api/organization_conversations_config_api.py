@@ -59,7 +59,7 @@ class OrganizationConversationsConfigApi:
     ) -> CovalOrganizationAPIConversationMetricsConfig:
         """Get conversation metrics config
 
-        Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+        Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
 
         :param x_coval_workspace_id: Workspace whose conversation metrics configuration is read or updated. When omitted, the organization's active default workspace is used when one can be resolved.
         :type x_coval_workspace_id: str
@@ -130,7 +130,7 @@ class OrganizationConversationsConfigApi:
     ) -> ApiResponse[CovalOrganizationAPIConversationMetricsConfig]:
         """Get conversation metrics config
 
-        Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+        Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
 
         :param x_coval_workspace_id: Workspace whose conversation metrics configuration is read or updated. When omitted, the organization's active default workspace is used when one can be resolved.
         :type x_coval_workspace_id: str
@@ -201,7 +201,7 @@ class OrganizationConversationsConfigApi:
     ) -> RESTResponseType:
         """Get conversation metrics config
 
-        Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+        Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
 
         :param x_coval_workspace_id: Workspace whose conversation metrics configuration is read or updated. When omitted, the organization's active default workspace is used when one can be resolved.
         :type x_coval_workspace_id: str
@@ -609,7 +609,7 @@ class OrganizationConversationsConfigApi:
     ) -> CovalOrganizationAPIConversationMetricsConfig:
         """Update conversation metrics config
 
-        Partially update the selected workspace's conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+        Partially update the selected workspace's conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
 
         :param coval_organization_api_update_conversation_metrics_request: (required)
         :type coval_organization_api_update_conversation_metrics_request: CovalOrganizationAPIUpdateConversationMetricsRequest
@@ -685,7 +685,7 @@ class OrganizationConversationsConfigApi:
     ) -> ApiResponse[CovalOrganizationAPIConversationMetricsConfig]:
         """Update conversation metrics config
 
-        Partially update the selected workspace's conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+        Partially update the selected workspace's conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
 
         :param coval_organization_api_update_conversation_metrics_request: (required)
         :type coval_organization_api_update_conversation_metrics_request: CovalOrganizationAPIUpdateConversationMetricsRequest
@@ -761,7 +761,7 @@ class OrganizationConversationsConfigApi:
     ) -> RESTResponseType:
         """Update conversation metrics config
 
-        Partially update the selected workspace's conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+        Partially update the selected workspace's conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
 
         :param coval_organization_api_update_conversation_metrics_request: (required)
         :type coval_organization_api_update_conversation_metrics_request: CovalOrganizationAPIUpdateConversationMetricsRequest

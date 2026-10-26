@@ -38,7 +38,7 @@ class CovalMetricsAPIMetricVersionResource(BaseModel):
     change_type: CovalMetricsAPIMetricVersionChangeType
     metric_type: CovalMetricsAPIMetricType
     judge_mode: Optional[CovalMetricsAPIJudgeMode] = None
-    metric_metadata: Optional[Dict[str, Any]] = Field(default=None, description="Verbatim scoring-config snapshot for this version")
+    metric_metadata: Optional[Dict[str, Any]] = Field(default=None, description="Scoring configuration; Python exposes only source, output type, unit and input requirements.")
     label: Optional[StrictStr] = Field(default=None, description="Optional user-supplied tag")
     created_by: StrictStr = Field(description="Version author: canonical user ID for system-materialized versions; other entries may contain an email address or an empty string when unknown")
     create_time: Optional[datetime] = Field(default=None, description="When this version became current")

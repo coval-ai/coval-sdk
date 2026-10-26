@@ -526,6 +526,7 @@ export const CovalMetricsAPICreateMetricRequestSuccessEndReasonsEnum = {
     DurationLimit: 'DURATION_LIMIT',
     PersonaDisconnected: 'PERSONA_DISCONNECTED',
     AgentDisconnected: 'AGENT_DISCONNECTED',
+    AgentEndCue: 'AGENT_END_CUE',
     PipelineError: 'PIPELINE_ERROR',
     RepetitionLoop: 'REPETITION_LOOP',
     AudioUploadPlaybackCompleted: 'AUDIO_UPLOAD_PLAYBACK_COMPLETED',

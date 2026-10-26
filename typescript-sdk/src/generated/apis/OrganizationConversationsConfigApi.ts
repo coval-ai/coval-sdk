@@ -63,7 +63,7 @@ export interface OrganizationConversationsConfigApiInterface {
     getConversationMetricsRequestOpts(requestParameters: GetConversationMetricsRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
      * @summary Get conversation metrics config
      * @param {string} [xCovalWorkspaceId] Workspace whose conversation metrics configuration is read or updated. When omitted, the organization\&#39;s active default workspace is used when one can be resolved.
      * @param {*} [options] Override http request option.
@@ -73,7 +73,7 @@ export interface OrganizationConversationsConfigApiInterface {
     getConversationMetricsRaw(requestParameters: GetConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalOrganizationAPIConversationMetricsConfig>>;
 
     /**
-     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
      * Get conversation metrics config
      */
     getConversationMetrics(requestParameters: GetConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalOrganizationAPIConversationMetricsConfig>;
@@ -115,7 +115,7 @@ export interface OrganizationConversationsConfigApiInterface {
     updateConversationMetricsRequestOpts(requestParameters: UpdateConversationMetricsRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
      * @summary Update conversation metrics config
      * @param {CovalOrganizationAPIUpdateConversationMetricsRequest} covalOrganizationAPIUpdateConversationMetricsRequest 
      * @param {string} [xCovalWorkspaceId] Workspace whose conversation metrics configuration is read or updated. When omitted, the organization\&#39;s active default workspace is used when one can be resolved.
@@ -126,7 +126,7 @@ export interface OrganizationConversationsConfigApiInterface {
     updateConversationMetricsRaw(requestParameters: UpdateConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalOrganizationAPIConversationMetricsConfig>>;
 
     /**
-     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
      * Update conversation metrics config
      */
     updateConversationMetrics(requestParameters: UpdateConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalOrganizationAPIConversationMetricsConfig>;
@@ -195,7 +195,7 @@ export class OrganizationConversationsConfigApi extends runtime.BaseAPI implemen
     }
 
     /**
-     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
      * Get conversation metrics config
      */
     async getConversationMetricsRaw(requestParameters: GetConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalOrganizationAPIConversationMetricsConfig>> {
@@ -206,7 +206,7 @@ export class OrganizationConversationsConfigApi extends runtime.BaseAPI implemen
     }
 
     /**
-     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. Each unset workspace field inherits from the organization configuration. If no workspace can be resolved, the organization configuration is returned for compatibility.
+     * Return the conversation metrics configuration for the selected workspace: the default metric IDs run on every conversation, plus the conditional rules that add metrics based on run metadata. The response uses current selectable metric IDs without rewriting stored settings. Unavailable metrics are omitted, along with conditional rules that have no remaining metrics.
      * Get conversation metrics config
      */
     async getConversationMetrics(requestParameters: GetConversationMetricsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalOrganizationAPIConversationMetricsConfig> {
@@ -302,7 +302,7 @@ export class OrganizationConversationsConfigApi extends runtime.BaseAPI implemen
     }
 
     /**
-     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
      * Update conversation metrics config
      */
     async updateConversationMetricsRaw(requestParameters: UpdateConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalOrganizationAPIConversationMetricsConfig>> {
@@ -313,7 +313,7 @@ export class OrganizationConversationsConfigApi extends runtime.BaseAPI implemen
     }
 
     /**
-     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration. If no workspace can be resolved, the organization configuration is updated for compatibility. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration.
+     * Partially update the selected workspace\'s conversation metrics configuration. Every resolved workspace stores its own configuration and must be active. Provide at least one of `default_conversation_metrics` or `conditional_conversation_metrics`; each field provided fully replaces the stored value (a field omitted is left unchanged). Returns the full resulting configuration using current metric IDs. Supplied fields persist those IDs and deduplicate equivalent selections. Unavailable metrics remain invalid selections.
      * Update conversation metrics config
      */
     async updateConversationMetrics(requestParameters: UpdateConversationMetricsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalOrganizationAPIConversationMetricsConfig> {
