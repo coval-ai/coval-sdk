@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.9.5 (2026-10-26)
+
+### Bug Fixes
+
+- **sdks**: Retain persona compatibility models (COVAL-8217)
+  ([#8](https://github.com/coval-ai/coval-sdk/pull/8),
+  [`0b631e2`](https://github.com/coval-ai/coval-sdk/commit/0b631e2ac41d2947dbcecfd0cc94f93be22835bf))
+
+
 ## v0.9.4 (2026-10-23)
 
 ### Bug Fixes
