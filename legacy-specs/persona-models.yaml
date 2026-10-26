@@ -1,0 +1,19 @@
+# Public model exports from coval-sdk 0.9.3. These schemas retain model names
+# without restoring the former persona-create oneOf restriction.
+PersonaWithPrompt:
+  type: object
+  required:
+    - persona_prompt
+  properties:
+    persona_prompt:
+      type: string
+      pattern: '\S'
+SilentPersona:
+  type: object
+  required:
+    - silent_mode
+  properties:
+    silent_mode:
+      type: boolean
+      enum:
+        - true

@@ -271,6 +271,21 @@ const apiCount = patchClientApiSurface();
 const doc = parse(readFileSync(SPEC, 'utf8'));
 const schemas = doc?.components?.schemas ?? {};
 
+// Standalone boolean enums lose their published TypeScript enum declaration.
+const silentModelFile = join(MODELS_DIR, 'SilentPersona.ts');
+let silentModel = readFileSync(silentModelFile, 'utf8');
+const silentEnum = `export const SilentPersonaSilentModeEnum = {
+    True: true
+} as const;
+export type SilentPersonaSilentModeEnum = typeof SilentPersonaSilentModeEnum[keyof typeof SilentPersonaSilentModeEnum];`;
+if (!silentModel.includes(silentEnum)) {
+  if (!silentModel.includes('    silent_mode: boolean;')) {
+    throw new Error('Generated SilentPersona boolean-enum field changed');
+  }
+  silentModel = silentModel.replace('    silent_mode: boolean;', '    silent_mode: SilentPersonaSilentModeEnum;');
+  writeFileSync(silentModelFile, `${silentModel}\n${silentEnum}\n`);
+}
+
 // Convert a property name like `comparison_operator` to PascalCase
 // (`ComparisonOperator`). openapi-generator uses this for enum type names.
 const propToPascal = (s) =>

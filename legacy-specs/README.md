@@ -24,3 +24,5 @@ method names.
 New integrations should use the canonical `UploadedConversationsApi`,
 `SimulatedConversationsApi`, and `AlertsApi`. Remove a legacy spec only in a
 major SDK release, after the API retires its paths.
+
+`persona-models.yaml` retains the public `PersonaWithPrompt` and `SilentPersona` model exports from SDK 0.9.3. The bundler adds these standalone schemas without referencing them from current operations, so persona creation retains the current API's optional-prompt behavior. Retire these exports only through an explicit breaking SDK release. The Python generator patch preserves boolean validation for `SilentPersona`.

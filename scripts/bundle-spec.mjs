@@ -235,4 +235,14 @@ try {
   process.exit(err.status ?? 1);
 }
 
+// Retain published model exports independently of current operation schemas.
+const bundled = parse(readFileSync(OUTPUT, 'utf8'));
+const personaModels = parse(readFileSync(join(repoRoot, 'legacy-specs', 'persona-models.yaml'), 'utf8'));
+bundled.components ??= {};
+bundled.components.schemas ??= {};
+for (const [name, schema] of Object.entries(personaModels)) {
+  bundled.components.schemas[name] ??= schema;
+}
+writeFileSync(OUTPUT, stringify(bundled));
+
 console.log(`\n✓ Bundled spec → ${OUTPUT}`);

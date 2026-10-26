@@ -472,3 +472,28 @@ describe('review project PATCH serialization', () => {
     expect(JSON.parse(JSON.stringify(serialized))).toEqual(payload);
   });
 });
+
+
+describe('published persona compatibility models', () => {
+  it.each([undefined, null, ''])('keeps current persona-create prompt %j valid', (prompt) => {
+    const payload = {
+      name: 'Test persona', voice_name: 'test-voice', language_code: 'en-US',
+      ...(prompt === undefined ? {} : { persona_prompt: prompt }),
+    };
+    const serialized = generatedModels.CovalPersonasAPICreatePersonaRequestToJSON(payload);
+    expect(JSON.parse(JSON.stringify(serialized))).toEqual(payload);
+  });
+
+  it('retains model serializers from the package root and generated surface', async () => {
+    const root = await import('../src/index.js');
+    expect(typeof root.PersonaWithPromptFromJSON).toBe('function');
+    expect(typeof root.SilentPersonaFromJSON).toBe('function');
+    const prompt = { persona_prompt: 'Be concise' };
+    const silent = { silent_mode: true };
+    expect(root.PersonaWithPromptToJSON(root.PersonaWithPromptFromJSON(prompt))).toEqual(prompt);
+    expect(root.SilentPersonaToJSON(root.SilentPersonaFromJSON(silent))).toEqual(silent);
+    expect(root.SilentPersonaSilentModeEnum.True).toBe(true);
+    expect(generatedModels.PersonaWithPromptFromJSON).toBe(root.PersonaWithPromptFromJSON);
+    expect(generatedModels.SilentPersonaFromJSON).toBe(root.SilentPersonaFromJSON);
+  });
+});

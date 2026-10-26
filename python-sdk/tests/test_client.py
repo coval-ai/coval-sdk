@@ -535,3 +535,23 @@ def test_review_project_patch_preserves_skip_policy_values(value) -> None:
 def test_review_project_patch_does_not_reset_omitted_skip_policy() -> None:
   model = generated_models.CovalReviewsAPIUpdateReviewProjectRequest
   assert model.from_dict({"display_name": "Renamed"}).to_dict() == {"display_name": "Renamed"}
+
+
+def test_published_persona_model_exports_remain_compatible() -> None:
+  from coval_sdk import PersonaWithPrompt, SilentPersona
+  from coval_sdk.models.persona_with_prompt import PersonaWithPrompt as PromptModel
+  from coval_sdk.models.silent_persona import SilentPersona as SilentModel
+
+  assert PersonaWithPrompt is PromptModel is generated_models.PersonaWithPrompt
+  assert SilentPersona is SilentModel is generated_models.SilentPersona
+  assert PromptModel.from_dict({"persona_prompt": "Be concise"}).to_dict() == {"persona_prompt": "Be concise"}
+  assert SilentModel.from_dict({"silent_mode": True}).to_dict() == {"silent_mode": True}
+  with pytest.raises(ValueError):
+    SilentModel(silent_mode=False)
+
+
+@pytest.mark.parametrize("prompt", [{}, {"persona_prompt": None}, {"persona_prompt": ""}])
+def test_persona_creation_still_allows_optional_prompt(prompt) -> None:
+  payload = {"name": "Test persona", "voice_name": "test-voice", "language_code": "en-US", **prompt}
+  model = generated_models.CovalPersonasAPICreatePersonaRequest(**payload)
+  assert model.to_dict() == payload
