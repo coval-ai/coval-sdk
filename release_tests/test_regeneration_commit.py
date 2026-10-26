@@ -59,6 +59,7 @@ def checkout(tmp_path):
 
 def publish(root, promote=True, **overrides):
     candidate = root.parent / "candidate"
+    # Separate commit dates prevent preparation and promotion from sharing an ID.
     result = run(
         root,
         "bash",
@@ -70,6 +71,7 @@ def publish(root, promote=True, **overrides):
             "DETERMINISM": "success",
             "TYPESCRIPT_VALIDATION": "success",
             "PYTHON_VALIDATION": "success",
+            "GIT_COMMITTER_DATE": "2000-01-01T00:00:00+0000",
             **overrides,
         },
     )
@@ -81,6 +83,7 @@ def publish(root, promote=True, **overrides):
         writer, "python3", str(ROOT / "scripts/release_candidate.py"),
         "prepare", "regeneration", str(candidate), "--source", SOURCE,
         "--base", git(root, "rev-parse", "HEAD^"), check=False,
+        GIT_COMMITTER_DATE="2000-01-01T00:00:01+0000",
     )
     if prepared.returncode:
         return prepared
@@ -103,6 +106,8 @@ def test_validated_output_updates_main_without_unrelated_files(checkout):
     assert result.returncode == 0, result.stderr
     head = remote_head(checkout)
     assert head != previous
+    assert head != git(checkout, "rev-parse", "HEAD")
+    git(checkout, "fetch", "origin", "main")
     assert git(
         checkout, "diff-tree", "--no-commit-id", "--name-only", "-r", head
     ).splitlines() == [
