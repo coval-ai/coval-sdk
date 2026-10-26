@@ -416,6 +416,24 @@ def patch_submit_conversation_response_compatibility() -> None:
 
 
 def main() -> None:
+  # Standalone boolean enum models lack a generated Python validator.
+  silent_model = MODELS / "silent_persona.py"
+  contents = silent_model.read_text()
+  validator = (
+    "    @field_validator('silent_mode')\n"
+    "    def silent_mode_validate_enum(cls, value):\n"
+    "        if value is not True:\n"
+    "            raise ValueError(\"silent_mode must be true\")\n"
+    "        return value\n\n"
+  )
+  if validator not in contents:
+    anchor = "    model_config = ConfigDict("
+    imports = "from pydantic import BaseModel, ConfigDict, StrictBool"
+    if anchor not in contents or imports not in contents:
+      raise RuntimeError("Generated SilentPersona boolean-enum anchors changed")
+    contents = contents.replace(imports, f"{imports}, field_validator", 1)
+    contents = contents.replace(anchor, validator + anchor, 1)
+    silent_model.write_text(contents)
   patch_api_client()
   patched_lists = patch_response_model_lists()
   patched_imports = patch_missing_list_import()

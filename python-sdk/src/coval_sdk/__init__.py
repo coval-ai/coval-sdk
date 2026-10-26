@@ -592,6 +592,7 @@ __all__ = [
     "ListTestSets200Response",
     "ListUploadedConversations200Response",
     "NonSCRIPTTestCase",
+    "PersonaWithPrompt",
     "PythonMetricsAPICreatePythonMetricDraftRequest",
     "PythonMetricsAPIInputRequirements",
     "PythonMetricsAPIPreviewPythonMetricBody",
@@ -605,6 +606,7 @@ __all__ = [
     "SCRIPTTestCaseWithLegacyNestedTurns",
     "SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput",
     "SCRIPTTestCaseWithTopLevelTurns",
+    "SilentPersona",
     "SimulationsGetMetric200Response",
     "SubmitConversation200Response",
     "SubmitUploadedConversation200Response",
@@ -1219,6 +1221,7 @@ from coval_sdk.models.list_test_cases200_response import ListTestCases200Respons
 from coval_sdk.models.list_test_sets200_response import ListTestSets200Response as ListTestSets200Response
 from coval_sdk.models.list_uploaded_conversations200_response import ListUploadedConversations200Response as ListUploadedConversations200Response
 from coval_sdk.models.non_script_test_case import NonSCRIPTTestCase as NonSCRIPTTestCase
+from coval_sdk.models.persona_with_prompt import PersonaWithPrompt as PersonaWithPrompt
 from coval_sdk.models.python_metrics_api_create_python_metric_draft_request import PythonMetricsAPICreatePythonMetricDraftRequest as PythonMetricsAPICreatePythonMetricDraftRequest
 from coval_sdk.models.python_metrics_api_input_requirements import PythonMetricsAPIInputRequirements as PythonMetricsAPIInputRequirements
 from coval_sdk.models.python_metrics_api_preview_python_metric_body import PythonMetricsAPIPreviewPythonMetricBody as PythonMetricsAPIPreviewPythonMetricBody
@@ -1232,6 +1235,7 @@ from coval_sdk.models.python_metrics_api_python_metric_previews_response import 
 from coval_sdk.models.script_test_case_with_legacy_nested_turns import SCRIPTTestCaseWithLegacyNestedTurns as SCRIPTTestCaseWithLegacyNestedTurns
 from coval_sdk.models.script_test_case_with_legacy_nested_turns_simulation_metadata_input import SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput as SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput
 from coval_sdk.models.script_test_case_with_top_level_turns import SCRIPTTestCaseWithTopLevelTurns as SCRIPTTestCaseWithTopLevelTurns
+from coval_sdk.models.silent_persona import SilentPersona as SilentPersona
 from coval_sdk.models.simulations_get_metric200_response import SimulationsGetMetric200Response as SimulationsGetMetric200Response
 from coval_sdk.models.submit_conversation200_response import SubmitConversation200Response as SubmitConversation200Response
 from coval_sdk.models.submit_uploaded_conversation200_response import SubmitUploadedConversation200Response as SubmitUploadedConversation200Response
