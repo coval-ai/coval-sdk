@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.9.10 (2026-10-27)
+
+### Bug Fixes
+
+- **python**: Bound requests with a default timeout (COVAL-8318)
+  ([#11](https://github.com/coval-ai/coval-sdk/pull/11),
+  [`4a2ae86`](https://github.com/coval-ai/coval-sdk/commit/4a2ae86c9956986ddbea6d66413dca8e354f23a0))
+
+
 ## v0.9.9 (2026-10-27)
 
 ### Bug Fixes
