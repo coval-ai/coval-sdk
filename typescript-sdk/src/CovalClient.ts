@@ -21,6 +21,7 @@ import {
   AlertEventsApi,
   AlertsApi,
   AudioApi,
+  ConversationCommentsApi,
   ConversationsApi,
   DashboardsApi,
   IntegrationsApi,
@@ -32,6 +33,7 @@ import {
   OrganizationConversationsConfigApi,
   OrganizationUsersApi,
   PersonasApi,
+  PythonAudioAnalysisApi,
   PythonMetricsApi,
   ReportsApi,
   ReviewAnnotationsApi,
@@ -83,6 +85,7 @@ export const GENERATED_API_PROPERTY_NAMES = [
   'alertEvents',
   'alerts',
   'audio',
+  'conversationComments',
   'conversations',
   'dashboards',
   'integrations',
@@ -94,6 +97,7 @@ export const GENERATED_API_PROPERTY_NAMES = [
   'organizationConversationsConfig',
   'organizationUsers',
   'personas',
+  'pythonAudioAnalysis',
   'pythonMetrics',
   'reports',
   'reviewAnnotations',
@@ -122,6 +126,7 @@ export class CovalClient {
   readonly alertEvents: AlertEventsApi;
   readonly alerts: AlertsApi;
   readonly audio: AudioApi;
+  readonly conversationComments: ConversationCommentsApi;
   readonly conversations: ConversationsApi;
   readonly dashboards: DashboardsApi;
   readonly integrations: IntegrationsApi;
@@ -133,6 +138,7 @@ export class CovalClient {
   readonly organizationConversationsConfig: OrganizationConversationsConfigApi;
   readonly organizationUsers: OrganizationUsersApi;
   readonly personas: PersonasApi;
+  readonly pythonAudioAnalysis: PythonAudioAnalysisApi;
   readonly pythonMetrics: PythonMetricsApi;
   readonly reports: ReportsApi;
   readonly reviewAnnotations: ReviewAnnotationsApi;
@@ -197,6 +203,7 @@ export class CovalClient {
     this.alertEvents = new AlertEventsApi(this.configuration);
     this.alerts = new AlertsApi(this.configuration);
     this.audio = new AudioApi(this.configuration);
+    this.conversationComments = new ConversationCommentsApi(this.configuration);
     this.conversations = new ConversationsApi(this.configuration);
     this.dashboards = new DashboardsApi(this.configuration);
     this.integrations = new IntegrationsApi(this.configuration);
@@ -208,6 +215,7 @@ export class CovalClient {
     this.organizationConversationsConfig = new OrganizationConversationsConfigApi(this.configuration);
     this.organizationUsers = new OrganizationUsersApi(this.configuration);
     this.personas = new PersonasApi(this.configuration);
+    this.pythonAudioAnalysis = new PythonAudioAnalysisApi(this.configuration);
     this.pythonMetrics = new PythonMetricsApi(this.configuration);
     this.reports = new ReportsApi(this.configuration);
     this.reviewAnnotations = new ReviewAnnotationsApi(this.configuration);

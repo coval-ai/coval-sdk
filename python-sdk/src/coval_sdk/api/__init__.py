@@ -6,6 +6,7 @@ from coval_sdk.api.agents_api import AgentsApi
 from coval_sdk.api.alert_events_api import AlertEventsApi
 from coval_sdk.api.alerts_api import AlertsApi
 from coval_sdk.api.audio_api import AudioApi
+from coval_sdk.api.conversation_comments_api import ConversationCommentsApi
 from coval_sdk.api.conversations_api import ConversationsApi
 from coval_sdk.api.dashboards_api import DashboardsApi
 from coval_sdk.api.integrations_api import IntegrationsApi
@@ -17,6 +18,7 @@ from coval_sdk.api.mutations_api import MutationsApi
 from coval_sdk.api.organization_conversations_config_api import OrganizationConversationsConfigApi
 from coval_sdk.api.organization_users_api import OrganizationUsersApi
 from coval_sdk.api.personas_api import PersonasApi
+from coval_sdk.api.python_audio_analysis_api import PythonAudioAnalysisApi
 from coval_sdk.api.python_metrics_api import PythonMetricsApi
 from coval_sdk.api.reports_api import ReportsApi
 from coval_sdk.api.review_annotations_api import ReviewAnnotationsApi

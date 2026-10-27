@@ -121,6 +121,7 @@ AuthSettings = TypedDict(
         "Coval_Agent_Mutations_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Organization_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Personas_API_ApiKeyAuth": APIKeyAuthSetting,
+        "Python_Audio_Analysis_API_ApiKeyAuth": APIKeyAuthSetting,
         "Python_Metrics_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Reports_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Reviews_API_ApiKeyAuth": APIKeyAuthSetting,
@@ -641,6 +642,15 @@ conf = coval_sdk.Configuration(
                 'key': 'X-API-Key',
                 'value': self.get_api_key_with_prefix(
                     'Coval_Personas_API_ApiKeyAuth',
+                ),
+            }
+        if 'Python_Audio_Analysis_API_ApiKeyAuth' in self.api_key:
+            auth['Python_Audio_Analysis_API_ApiKeyAuth'] = {
+                'type': 'api_key',
+                'in': 'header',
+                'key': 'x-api-key',
+                'value': self.get_api_key_with_prefix(
+                    'Python_Audio_Analysis_API_ApiKeyAuth',
                 ),
             }
         if 'Python_Metrics_API_ApiKeyAuth' in self.api_key:

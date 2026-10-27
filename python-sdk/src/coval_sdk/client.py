@@ -19,6 +19,7 @@ from coval_sdk.api import (
   AlertEventsApi,
   AlertsApi,
   AudioApi,
+  ConversationCommentsApi,
   ConversationsApi,
   DashboardsApi,
   IntegrationsApi,
@@ -30,6 +31,7 @@ from coval_sdk.api import (
   OrganizationConversationsConfigApi,
   OrganizationUsersApi,
   PersonasApi,
+  PythonAudioAnalysisApi,
   PythonMetricsApi,
   ReportsApi,
   ReviewAnnotationsApi,
@@ -64,6 +66,7 @@ API_PROPERTY_NAMES = (
   "alert_events",
   "alerts",
   "audio",
+  "conversation_comments",
   "conversations",
   "dashboards",
   "integrations",
@@ -75,6 +78,7 @@ API_PROPERTY_NAMES = (
   "organization_conversations_config",
   "organization_users",
   "personas",
+  "python_audio_analysis",
   "python_metrics",
   "reports",
   "review_annotations",
@@ -264,6 +268,7 @@ class CovalClient:
     self.alert_events = AlertEventsApi(self.api_client)
     self.alerts = AlertsApi(self.api_client)
     self.audio = AudioApi(self.api_client)
+    self.conversation_comments = ConversationCommentsApi(self.api_client)
     self.conversations = ConversationsApi(self.api_client)
     self.dashboards = DashboardsApi(self.api_client)
     self.integrations = IntegrationsApi(self.api_client)
@@ -275,6 +280,7 @@ class CovalClient:
     self.organization_conversations_config = OrganizationConversationsConfigApi(self.api_client)
     self.organization_users = OrganizationUsersApi(self.api_client)
     self.personas = PersonasApi(self.api_client)
+    self.python_audio_analysis = PythonAudioAnalysisApi(self.api_client)
     self.python_metrics = PythonMetricsApi(self.api_client)
     self.reports = ReportsApi(self.api_client)
     self.review_annotations = ReviewAnnotationsApi(self.api_client)
