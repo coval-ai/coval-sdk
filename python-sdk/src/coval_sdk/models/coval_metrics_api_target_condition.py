@@ -33,7 +33,7 @@ class CovalMetricsAPITargetCondition(BaseModel):
     target_float: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Target number for the numeric operators (eq/neq/gt/gte/lt/lte).")
     target_values: Optional[Annotated[List[StrictStr], Field(min_length=1, max_length=50)]] = Field(default=None, description="Target value(s) for the membership operators (in/nin), e.g. `[\"YES\"]`.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = []
+    __properties: ClassVar[List[str]] = ["comparison_operator", "target_float", "target_values"]
 
     @field_validator('comparison_operator')
     def comparison_operator_validate_enum(cls, value):
@@ -88,6 +88,16 @@ class CovalMetricsAPITargetCondition(BaseModel):
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
 
+        # set to None if target_float (nullable) is None
+        # and model_fields_set contains the field
+        if self.target_float is None and "target_float" in self.model_fields_set:
+            _dict['target_float'] = None
+
+        # set to None if target_values (nullable) is None
+        # and model_fields_set contains the field
+        if self.target_values is None and "target_values" in self.model_fields_set:
+            _dict['target_values'] = None
+
         return _dict
 
     @classmethod
@@ -100,6 +110,9 @@ class CovalMetricsAPITargetCondition(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "comparison_operator": obj.get("comparison_operator"),
+            "target_float": obj.get("target_float"),
+            "target_values": obj.get("target_values")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

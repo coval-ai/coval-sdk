@@ -122,3 +122,79 @@ def test_warning_can_restore_strict_behavior() -> None:
     warnings.simplefilter("error", InvalidListItemWarning)
     with pytest.raises(InvalidListItemWarning):
       _deserialize_test_sets(_test_sets_payload())
+
+
+def _deserialize(payload, response_type):
+  raw_response = SimpleNamespace(
+    data=json.dumps(payload).encode(),
+    status=200,
+    headers={"content-type": "application/json"},
+  )
+  client = CovalClient("test-key", strict_response_validation=True)
+  try:
+    return client.api_client.response_deserialize(
+      response_data=raw_response,
+      response_types_map={"200": response_type},
+    ).data
+  finally:
+    client.close()
+
+
+def _metric(metric_id, target_condition):
+  return {
+    "name": f"metrics/{metric_id}",
+    "id": metric_id,
+    "metric_name": "Synthetic metric",
+    "description": "Synthetic metric",
+    "metric_type": "METRIC_LLM_BINARY",
+    "target_condition": target_condition,
+    "create_time": "2026-10-05T00:00:00Z",
+    "created_at": "2026-10-05T00:00:00Z",
+    "created_by": None,
+    "updated_at": "2026-10-05T00:00:00Z",
+    "updated_by": None,
+  }
+
+
+def test_metrics_with_target_conditions_deserialize() -> None:
+  response = _deserialize(
+    {
+      "metrics": [
+        _metric("aaaaaaaaaaaaaaaaaaaaaa", {"comparison_operator": "in", "target_float": None, "target_values": ["YES"]}),
+        _metric("bbbbbbbbbbbbbbbbbbbbbb", {"comparison_operator": "lt", "target_float": 1.0, "target_values": None}),
+        _metric("cccccccccccccccccccccc", None),
+      ],
+    },
+    "CovalMetricsAPIListMetricsResponse",
+  )
+
+  conditions = [metric.target_condition for metric in response.metrics]
+  assert conditions[0].comparison_operator == "in"
+  assert conditions[0].target_values == ["YES"]
+  assert conditions[1].comparison_operator == "lt"
+  assert conditions[1].target_float == 1.0
+  assert conditions[2] is None
+  assert conditions[0].to_dict() == {"comparison_operator": "in", "target_float": None, "target_values": ["YES"]}
+
+
+def test_simulation_transcript_offsets_accept_fractional_seconds() -> None:
+  response = _deserialize(
+    {
+      "simulation": {
+        "name": "simulations/synthetic",
+        "simulation_id": "synthetic",
+        "run_id": "synthetic-run",
+        "status": "COMPLETED",
+        "create_time": "2026-10-05T00:00:00Z",
+        "has_audio": True,
+        "transcript": [
+          {"role": "assistant", "content": "Hello", "start_offset": 0.72, "end_offset": 1.68},
+          {"role": "user", "content": "Hi", "start_offset": 2, "end_offset": 3},
+        ],
+      },
+    },
+    "CovalSimulationsAPIGetSimulationResponse",
+  )
+
+  offsets = [(message.start_offset, message.end_offset) for message in response.simulation.transcript]
+  assert offsets == [(0.72, 1.68), (2, 3)]

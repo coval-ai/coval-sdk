@@ -39,6 +39,25 @@ export interface CovalMetricsAPITargetCondition {
     target_values?: Array<string> | null;
 }
 
+
+/**
+ * @export
+ */
+export const CovalMetricsAPITargetConditionComparisonOperatorEnum = {
+    Eq: 'eq',
+    Neq: 'neq',
+    Gt: 'gt',
+    Gte: 'gte',
+    Lt: 'lt',
+    Lte: 'lte',
+    In: 'in',
+    Nin: 'nin',
+    Bt: 'bt',
+    Nbt: 'nbt'
+} as const;
+export type CovalMetricsAPITargetConditionComparisonOperatorEnum = typeof CovalMetricsAPITargetConditionComparisonOperatorEnum[keyof typeof CovalMetricsAPITargetConditionComparisonOperatorEnum];
+
+
 /**
  * Check if a given object implements the CovalMetricsAPITargetCondition interface.
  */
@@ -80,19 +99,3 @@ export function CovalMetricsAPITargetConditionToJSONTyped(value?: CovalMetricsAP
     };
 }
 
-
-
-/** @export */
-export const CovalMetricsAPITargetConditionComparisonOperatorEnum = {
-    Eq: "eq" as const,
-    Neq: "neq" as const,
-    Gt: "gt" as const,
-    Gte: "gte" as const,
-    Lt: "lt" as const,
-    Lte: "lte" as const,
-    In: "in" as const,
-    Nin: "nin" as const,
-    Bt: "bt" as const,
-    Nbt: "nbt" as const,
-} as const;
-export type CovalMetricsAPITargetConditionComparisonOperatorEnum = typeof CovalMetricsAPITargetConditionComparisonOperatorEnum[keyof typeof CovalMetricsAPITargetConditionComparisonOperatorEnum];

@@ -52,13 +52,13 @@ export interface CovalSimulationsAPITranscriptMessage {
      */
     end_timestamp?: string;
     /**
-     * Start offset in milliseconds
+     * Start offset in seconds from the beginning of the conversation
      * @type {number}
      * @memberof CovalSimulationsAPITranscriptMessage
      */
     start_offset?: number;
     /**
-     * End offset in milliseconds
+     * End offset in seconds from the beginning of the conversation
      * @type {number}
      * @memberof CovalSimulationsAPITranscriptMessage
      */
