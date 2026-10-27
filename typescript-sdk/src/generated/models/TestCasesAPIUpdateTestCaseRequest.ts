@@ -40,7 +40,7 @@ export interface TestCasesAPIUpdateTestCaseRequest {
      */
     test_set_id?: string;
     /**
-     * Expected behaviors (list of strings). This is the preferred field.
+     * Expected behaviors (at most 25 strings). This is the preferred field. An empty array clears the behaviors.
      * @type {Array<string>}
      * @memberof TestCasesAPIUpdateTestCaseRequest
      */

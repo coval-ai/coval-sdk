@@ -68,7 +68,7 @@ export interface TestCasesAPICreateTestCaseRequest {
      */
     test_set_id: string;
     /**
-     * Expected behaviors (list of strings). This is the preferred field.
+     * Expected behaviors (at most 25 strings). This is the preferred field.
      * @type {Array<string>}
      * @memberof TestCasesAPICreateTestCaseRequest
      */

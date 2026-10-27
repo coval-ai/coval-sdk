@@ -32,7 +32,7 @@ class TestCasesAPIUpdateTestCaseRequest(BaseModel):
     """ # noqa: E501
     input_str: Optional[Annotated[str, Field(min_length=1, strict=True)]] = Field(default=None, description="Input for the test case")
     test_set_id: Optional[Annotated[str, Field(min_length=8, strict=True, max_length=8)]] = Field(default=None, description="Test set ID (can move to different test set)")
-    expected_behaviors: Optional[List[StrictStr]] = Field(default=None, description="Expected behaviors (list of strings). This is the preferred field.")
+    expected_behaviors: Optional[Annotated[List[StrictStr], Field(max_length=25)]] = Field(default=None, description="Expected behaviors (at most 25 strings). This is the preferred field. An empty array clears the behaviors.")
     expected_output_str: Optional[StrictStr] = Field(default=None, description="DEPRECATED: Use expected_behaviors instead. If provided and expected_behaviors is not, this value will be wrapped in a list and used as expected_behaviors. ")
     expected_output_json: Optional[Dict[str, Any]] = Field(default=None, description="Expected output as JSON object")
     description: Optional[StrictStr] = Field(default=None, description="Human-readable description")
