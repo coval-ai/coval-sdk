@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.9.9 (2026-10-27)
+
+### Bug Fixes
+
+- **sdks**: Accept fractional transcript offsets and metric target conditions (COVAL-8318)
+  ([#10](https://github.com/coval-ai/coval-sdk/pull/10),
+  [`d89d4b2`](https://github.com/coval-ai/coval-sdk/commit/d89d4b2a55c5c76a5d13f4c2a9ed1bd0861b2f77))
+
+
 ## v0.9.8 (2026-10-27)
 
 ### Bug Fixes
