@@ -7,6 +7,7 @@ import time
 from typing import Union
 
 import pytest
+from urllib3.exceptions import ReadTimeoutError
 from urllib3.util import Retry
 
 import coval_sdk
@@ -16,6 +17,7 @@ from coval_sdk import models as generated_models
 from coval_sdk.client import (
   API_PROPERTY_NAMES,
   DEFAULT_MAX_IDLE_SECONDS,
+  DEFAULT_TIMEOUT,
   _IdleExpiryPoolMixin,
 )
 from coval_sdk.models.submit_conversation200_response import SubmitConversation200Response
@@ -555,3 +557,84 @@ def test_persona_creation_still_allows_optional_prompt(prompt) -> None:
   payload = {"name": "Test persona", "voice_name": "test-voice", "language_code": "en-US", **prompt}
   model = generated_models.CovalPersonasAPICreatePersonaRequest(**payload)
   assert model.to_dict() == payload
+
+
+def _silent_server():
+  """A server that accepts connections and reads requests but never responds."""
+  accepted = []
+
+  def serve(sock: socket.socket) -> None:
+    while True:
+      try:
+        conn, _ = sock.accept()
+      except OSError:
+        return
+      accepted.append(conn)
+
+  server = socket.socket()
+  server.bind(("127.0.0.1", 0))
+  server.listen(8)
+  threading.Thread(target=serve, args=(server,), daemon=True).start()
+  return server, accepted
+
+
+def test_default_timeout_ends_a_stalled_request() -> None:
+  server, accepted = _silent_server()
+  port = server.getsockname()[1]
+  client = CovalClient("test-key", base_url=f"http://127.0.0.1:{port}/v1", retries=False, timeout=(1.0, 0.2))
+  try:
+    started = time.monotonic()
+    with pytest.raises(ReadTimeoutError):
+      client.runs.get_run("aaaaaaaaaaaaaaaaaaaaaa")
+    assert time.monotonic() - started < 5
+  finally:
+    client.close()
+    server.close()
+    for conn in accepted:
+      conn.close()
+
+
+def _captured_timeouts(client: CovalClient, monkeypatch) -> list:
+  seen = []
+
+  def request(*args, timeout=None, **kwargs):
+    seen.append(timeout)
+    raise RuntimeError("stop before network")
+
+  monkeypatch.setattr(client.api_client.rest_client.pool_manager, "request", request)
+  return seen
+
+
+def test_default_timeout_applies_to_generated_operations(monkeypatch) -> None:
+  client = CovalClient("test-key")
+  seen = _captured_timeouts(client, monkeypatch)
+  try:
+    with pytest.raises(RuntimeError, match="stop before network"):
+      client.runs.get_run("aaaaaaaaaaaaaaaaaaaaaa")
+    with pytest.raises(RuntimeError, match="stop before network"):
+      client.runs.get_run("aaaaaaaaaaaaaaaaaaaaaa", _request_timeout=3.5)
+  finally:
+    client.close()
+
+  assert DEFAULT_TIMEOUT == (10.0, 60.0)
+  assert (seen[0].connect_timeout, seen[0].read_timeout) == DEFAULT_TIMEOUT
+  assert seen[1].total == 3.5
+
+
+def test_timeout_can_be_disabled(monkeypatch) -> None:
+  client = CovalClient("test-key", timeout=None)
+  seen = _captured_timeouts(client, monkeypatch)
+  try:
+    with pytest.raises(RuntimeError, match="stop before network"):
+      client.runs.get_run("aaaaaaaaaaaaaaaaaaaaaa")
+  finally:
+    client.close()
+
+  assert client.timeout is None
+  assert seen == [None]
+
+
+@pytest.mark.parametrize("value", [0, -1.0, (5.0,), (5.0, 0), (1, 2, 3), True, "30"])
+def test_invalid_timeout_is_rejected(value) -> None:
+  with pytest.raises(ValueError, match="timeout"):
+    CovalClient("test-key", timeout=value)

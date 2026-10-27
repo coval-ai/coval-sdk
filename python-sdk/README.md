@@ -48,6 +48,15 @@ coval = CovalClient(api_key, retries=False)
 staging = CovalClient(api_key, base_url="https://staging.api.coval.dev/v1")
 ```
 
+## Timeouts
+
+Each request waits at most 10 seconds to connect and 60 seconds between reads by default, so a stalled connection raises `urllib3.exceptions.ReadTimeoutError` (or a retry error once read retries are exhausted) instead of blocking forever. Pass a `(connect, read)` pair, a single number bounding each whole request, or `None` to wait indefinitely. A per-call `_request_timeout` overrides the client default.
+
+```python
+coval = CovalClient(api_key, timeout=(5.0, 30.0))
+run = coval.runs.get_run(run_id, _request_timeout=120)
+```
+
 ## Connection reuse
 
 Pooled connections idle for longer than `max_idle_seconds` (default `5.0`) are
