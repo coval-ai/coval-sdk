@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from urllib3 import HTTPConnectionPool, HTTPSConnectionPool
 from urllib3.util import Retry
@@ -58,6 +58,12 @@ from coval_sdk.configuration import Configuration
 
 DEFAULT_BASE_URL = "https://api.coval.dev/v1"
 RetryConfig = Union[Retry, int, bool]
+TimeoutConfig = Union[float, Tuple[float, float]]
+
+# (connect, read) seconds. Without a timeout urllib3 waits forever on a stalled
+# connection. The API gateway ends every request within 30 seconds, so these
+# bounds cannot cut off a response the API would still deliver.
+DEFAULT_TIMEOUT: Tuple[float, float] = (10.0, 60.0)
 
 API_PROPERTY_NAMES = (
   # sdk-api-property-names:start
@@ -216,6 +222,17 @@ def _retry_policy(total_retries: int = 2) -> Retry:
   )
 
 
+def _validate_timeout(timeout: Optional[TimeoutConfig]) -> Optional[TimeoutConfig]:
+  if timeout is None:
+    return None
+  values = timeout if isinstance(timeout, tuple) else (timeout,)
+  if len(values) != (2 if isinstance(timeout, tuple) else 1) or not all(
+    isinstance(value, (int, float)) and not isinstance(value, bool) and value > 0 for value in values
+  ):
+    raise ValueError("CovalClient: timeout must be a positive number, a (connect, read) pair of them, or None")
+  return timeout
+
+
 def _normalize_retries(retries: Optional[RetryConfig]) -> Union[Retry, bool]:
   if retries is None or retries is True:
     return _retry_policy()
@@ -239,11 +256,13 @@ class CovalClient:
     retries: Optional[RetryConfig] = None,
     strict_response_validation: bool = False,
     max_idle_seconds: Optional[float] = DEFAULT_MAX_IDLE_SECONDS,
+    timeout: Optional[TimeoutConfig] = DEFAULT_TIMEOUT,
   ) -> None:
     if not api_key:
       raise ValueError("CovalClient: api_key is required")
     if max_idle_seconds is not None and max_idle_seconds <= 0:
       raise ValueError("CovalClient: max_idle_seconds must be positive, or None to disable")
+    self.timeout = _validate_timeout(timeout)
 
     self.configuration = Configuration(
       host=base_url.rstrip("/"),
@@ -261,6 +280,9 @@ class CovalClient:
       self.api_client.rest_client.pool_manager.pool_classes_by_scheme = _expiring_pool_classes(
         max_idle_seconds, self.connection_stats
       )
+
+    if self.timeout is not None:
+      self._apply_default_timeout(self.timeout)
 
     # sdk-api-properties:start
     self.api_keys = APIKeysApi(self.api_client)
@@ -300,6 +322,20 @@ class CovalClient:
     self.widgets = WidgetsApi(self.api_client)
     self.workspaces = WorkspacesApi(self.api_client)
     # sdk-api-properties:end
+
+  def _apply_default_timeout(self, timeout: TimeoutConfig) -> None:
+    # Generated operations pass _request_timeout=None unless the caller sets
+    # one, and the REST client then sends an explicit no-timeout to urllib3,
+    # overriding any pool-level default. Supply ours at that single seam.
+    rest_client = self.api_client.rest_client
+    request = rest_client.request
+
+    def request_with_default_timeout(*args: Any, _request_timeout: Any = None, **kwargs: Any) -> Any:
+      if _request_timeout is None:
+        _request_timeout = timeout
+      return request(*args, _request_timeout=_request_timeout, **kwargs)
+
+    rest_client.request = request_with_default_timeout
 
   def close(self) -> None:
     """Release pooled HTTP connections."""
