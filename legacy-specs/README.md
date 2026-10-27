@@ -15,6 +15,8 @@ Source: `coval-ai/docs@4aa9515202a3e841e5429cd9f6d685b1d440cff2`
 (`api-reference/v1/`), the last revision the weekly regeneration published
 before the rename. The files are byte-for-byte copies; do not edit them.
 
+`scripts/bundle-spec.mjs` corrects fields whose frozen description does not match what the API serves, such as `TranscriptMessage.start_offset`/`end_offset` in `simulations-v1.yaml`, which the API returns as fractional seconds. Each correction checks the frozen definition first, so the files stay unmodified and a changed source fails the bundle.
+
 `scripts/bundle-spec.mjs` merges them after the canonical specs. Canonical
 specs win: a legacy path or tag definition a canonical spec also defines is
 dropped from the legacy copy. Legacy operations keep their docs filename slug,

@@ -18,8 +18,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from coval_sdk.models.coval_simulations_api_transcript_message_content import CovalSimulationsAPITranscriptMessageContent
 from typing import Optional, Set
 from typing_extensions import Self
@@ -33,8 +33,8 @@ class CovalSimulationsAPITranscriptMessage(BaseModel):
     content: CovalSimulationsAPITranscriptMessageContent
     start_timestamp: Optional[StrictStr] = Field(default=None, description="Start timestamp in seconds")
     end_timestamp: Optional[StrictStr] = Field(default=None, description="End timestamp in seconds")
-    start_offset: Optional[StrictInt] = Field(default=None, description="Start offset in milliseconds")
-    end_offset: Optional[StrictInt] = Field(default=None, description="End offset in milliseconds")
+    start_offset: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Start offset in seconds from the beginning of the conversation")
+    end_offset: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="End offset in seconds from the beginning of the conversation")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["role", "content", "start_timestamp", "end_timestamp", "start_offset", "end_offset"]
 

@@ -96,6 +96,80 @@ const HTTP_METHODS = new Set([
 
 const slugFromFile = (filename) => basename(filename, '.yaml').replace(/-v1$/, '');
 
+// The frozen legacy files stay byte-for-byte copies; these corrections apply
+// where they misdescribe what the API serves. Each one asserts the frozen
+// shape first, so a changed source fails instead of being silently patched.
+const LEGACY_SCHEMA_CORRECTIONS = {
+  'simulations-v1.yaml': [
+    {
+      // GET /simulations/{id} returns fractional seconds, such as 0.7229343.
+      schema: 'TranscriptMessage',
+      properties: {
+        start_offset: {
+          frozen: { type: 'integer', description: 'Start offset in milliseconds' },
+          corrected: { type: 'number', description: 'Start offset in seconds from the beginning of the conversation', example: 0.0 },
+        },
+        end_offset: {
+          frozen: { type: 'integer', description: 'End offset in milliseconds' },
+          corrected: { type: 'number', description: 'End offset in seconds from the beginning of the conversation', example: 2.5 },
+        },
+      },
+    },
+  ],
+};
+
+const applyLegacyCorrections = (doc, filename) => {
+  for (const { schema, properties } of LEGACY_SCHEMA_CORRECTIONS[filename] ?? []) {
+    const target = doc.components?.schemas?.[schema]?.properties;
+    for (const [name, { frozen, corrected }] of Object.entries(properties)) {
+      const current = target?.[name];
+      if (!current || current.type !== frozen.type || current.description !== frozen.description) {
+        console.error(`Legacy correction for ${filename} ${schema}.${name} no longer matches its frozen source`);
+        process.exit(1);
+      }
+      target[name] = corrected;
+      console.log(`Corrected legacy ${filename} ${schema}.${name}: ${frozen.type} -> ${corrected.type}`);
+    }
+  }
+};
+
+// openapi-generator's Python client turns an object schema whose oneOf/anyOf
+// branches only list required properties into a model with no fields, which
+// then rejects every valid payload. Those branches only constrain which
+// optional properties accompany each other, so drop them before generation.
+const requiredOnlyBranch = (branch) =>
+  branch !== null
+  && typeof branch === 'object'
+  && Object.keys(branch).length > 0
+  && Object.keys(branch).every((key) => key === 'required' || key === 'description');
+
+const dropRequiredOnlyCompositions = (doc, key) => {
+  const schemas = doc.components?.schemas ?? {};
+  const normalized = new Set();
+  for (const [name, schema] of Object.entries(schemas)) {
+    if (!schema?.properties) continue;
+    for (const composition of ['oneOf', 'anyOf']) {
+      const branches = schema[composition];
+      if (Array.isArray(branches) && branches.length > 0 && branches.every(requiredOnlyBranch)) {
+        delete schema[composition];
+        normalized.add(`#/components/schemas/${name}`);
+        console.log(`Dropped required-only ${composition} from ${key} ${name}`);
+      }
+    }
+  }
+  // The generators treated properties referencing a composed schema as
+  // nullable, and the API accepts null there (a PATCH null clears the value).
+  // Keep that public type when the composition is dropped.
+  for (const schema of Object.values(schemas)) {
+    for (const property of Object.values(schema?.properties ?? {})) {
+      const refs = [property?.$ref, ...(property?.allOf ?? []).map((part) => part?.$ref)];
+      if (refs.some((ref) => normalized.has(ref)) && property.nullable === undefined) {
+        property.nullable = true;
+      }
+    }
+  }
+};
+
 const seenOperationIds = new Map();
 const renamed = [];
 const normalizedPaths = [];
@@ -111,6 +185,8 @@ process.once('exit', () => rmSync(tmpRoot, { recursive: true, force: true }));
 for (const { key, filename, filepath, legacy } of sources) {
   const doc = parse(readFileSync(filepath, 'utf8'));
   const slug = slugFromFile(filename);
+  if (legacy) applyLegacyCorrections(doc, filename);
+  dropRequiredOnlyCompositions(doc, key);
 
   const sourceServers = (doc.servers ?? []).map((server) => server?.url).filter(Boolean);
   const unexpectedServers = sourceServers.filter((url) => !ALLOWED_SOURCE_SERVERS.has(url));
