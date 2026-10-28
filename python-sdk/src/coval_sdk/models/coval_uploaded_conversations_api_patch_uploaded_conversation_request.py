@@ -18,21 +18,37 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
 from pydantic_core import to_jsonable_python
 
 class CovalUploadedConversationsAPIPatchUploadedConversationRequest(BaseModel):
     """
-    Request to attach audio to, or add metadata to, an already-submitted conversation.  **Exactly one** of `audio_url`, `audio` or `metadata` must be provided. Submitting more than one, or none, returns `400 INVALID_ARGUMENT`. Audio and metadata are patched in separate calls so a rejected metadata key can never leave audio half-attached.  **Idempotency:** Audio can be attached only once per conversation. A second PATCH on a conversation that already has audio returns `409 ALREADY_EXISTS`. Conversations that were submitted with audio via `POST /v1/conversations/uploaded:submit` already have audio attached and cannot be PATCHed. Metadata follows the same rule per key: adding a new key succeeds, overwriting an existing one returns `409 ALREADY_EXISTS`. 
+    Request to attach audio to, add metadata to, or assign an agent to an already-submitted conversation.  **Exactly one** of `audio_url`, `audio`, `metadata` or `agent_id` must be provided. Submitting more than one, or none, returns `400 INVALID_ARGUMENT`. Each target is patched in a separate call so a rejected value can never leave another target half-applied.  **Idempotency:** Audio can be attached only once per conversation. A second PATCH on a conversation that already has audio returns `409 ALREADY_EXISTS`. Conversations that were submitted with audio via `POST /v1/conversations/uploaded:submit` already have audio attached and cannot be PATCHed. Metadata follows the same rule per key: adding a new key succeeds, overwriting an existing one returns `409 ALREADY_EXISTS`. An agent can be assigned once; a different agent returns `409 ALREADY_EXISTS`. 
     """ # noqa: E501
+    agent_channel: Optional[Annotated[int, Field(le=1, strict=True, ge=0)]] = Field(default=None, description="Channel containing the agent in the input stereo recording: 0 is left, 1 is right. With channel selection enabled for the organization, omitted or null uses the organization default. Otherwise the legacy mapping applies and explicit overrides are rejected. Requires an audio input. No effect on mono recordings or supplied transcript roles. The effective choice is captured for this audio. ")
     audio_url: Optional[StrictStr] = Field(default=None, description="Presigned URL to the audio recording. Same validation rules as `audio_url` on `POST /v1/conversations/uploaded:submit` (WAV or MP3, 5 s to 60 min, 200 MB max). Supports AWS S3, GCP Cloud Storage, Azure Blob Storage, or any public/presigned HTTP/HTTPS URL. Raw `s3://bucket/key` URLs are limited to Coval-issued uploads in the shared or organization-specific audio bucket under `audio/<authenticated_organization_id>/`. For other storage locations, supply a presigned HTTPS URL. HTTP/HTTPS URLs must resolve entirely to publicly routable addresses; redirects are rejected. ")
     audio: Optional[StrictStr] = Field(default=None, description="Base64-encoded audio bytes. Same format and size limits as `audio_url`. Prefer `audio_url` for anything other than very small clips. ")
     metadata: Optional[Dict[str, Any]] = Field(default=None, description="Metadata keys to add to the conversation, merged into any metadata sent at submit. Values may be strings, numbers, booleans, arrays or objects.  Additive only. A key that already holds a value returns `409 ALREADY_EXISTS`, and keys that identify the conversation (`conversation_id`, `external_conversation_id`, `call_id`, `trace_id`, `langfuse_trace_id`, `observation_id`, `langfuse_observation_id`, `project_id`, `environment`, `occurred_at`) return `400 INVALID_ARGUMENT`.  At most 100 keys per request; key names are limited to 200 characters. ")
+    agent_id: Optional[Annotated[str, Field(strict=True)]] = Field(default=None, description="Agent to assign to a conversation that was submitted without one. The agent must exist and be active in your organization for a new assignment, otherwise `404 NOT_FOUND`. Supply a 22-character agent resource ID (letters, digits, or hyphens); malformed IDs return `400 INVALID_ARGUMENT`.  Set-once. Repeating the conversation's current agent succeeds without change; a different agent returns `409 ALREADY_EXISTS`. Does not run or re-run any metric. ")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["audio_url", "audio", "metadata"]
+    __properties: ClassVar[List[str]] = ["agent_channel", "audio_url", "audio", "metadata", "agent_id"]
+
+    @field_validator('agent_id')
+    def agent_id_validate_regular_expression(cls, value):
+        """Validates the regular expression"""
+        if value is None:
+            return value
+
+        if not isinstance(value, str):
+            value = str(value)
+
+        if not re.match(r"^[A-Za-z0-9-]{22}$", value):
+            raise ValueError(r"must validate the regular expression /^[A-Za-z0-9-]{22}$/")
+        return value
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -80,6 +96,11 @@ class CovalUploadedConversationsAPIPatchUploadedConversationRequest(BaseModel):
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
 
+        # set to None if agent_channel (nullable) is None
+        # and model_fields_set contains the field
+        if self.agent_channel is None and "agent_channel" in self.model_fields_set:
+            _dict['agent_channel'] = None
+
         return _dict
 
     @classmethod
@@ -92,9 +113,11 @@ class CovalUploadedConversationsAPIPatchUploadedConversationRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "agent_channel": obj.get("agent_channel"),
             "audio_url": obj.get("audio_url"),
             "audio": obj.get("audio"),
-            "metadata": obj.get("metadata")
+            "metadata": obj.get("metadata"),
+            "agent_id": obj.get("agent_id")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

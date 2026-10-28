@@ -14,25 +14,38 @@
 
 import { mapValues } from '../runtime.js';
 /**
- * Request to attach audio to, or add metadata to, an already-submitted
- * conversation.
+ * Request to attach audio to, add metadata to, or assign an agent to an
+ * already-submitted conversation.
  * 
- * **Exactly one** of `audio_url`, `audio` or `metadata` must be provided.
- * Submitting more than one, or none, returns `400 INVALID_ARGUMENT`. Audio
- * and metadata are patched in separate calls so a rejected metadata key can
- * never leave audio half-attached.
+ * **Exactly one** of `audio_url`, `audio`, `metadata` or `agent_id` must be
+ * provided. Submitting more than one, or none, returns `400 INVALID_ARGUMENT`.
+ * Each target is patched in a separate call so a rejected value can never
+ * leave another target half-applied.
  * 
  * **Idempotency:** Audio can be attached only once per conversation. A
  * second PATCH on a conversation that already has audio returns
  * `409 ALREADY_EXISTS`. Conversations that were submitted with audio via
  * `POST /v1/conversations/uploaded:submit` already have audio attached and cannot
  * be PATCHed. Metadata follows the same rule per key: adding a new key
- * succeeds, overwriting an existing one returns `409 ALREADY_EXISTS`.
+ * succeeds, overwriting an existing one returns `409 ALREADY_EXISTS`. An agent
+ * can be assigned once; a different agent returns `409 ALREADY_EXISTS`.
  * 
  * @export
  * @interface CovalUploadedConversationsAPIPatchUploadedConversationRequest
  */
 export interface CovalUploadedConversationsAPIPatchUploadedConversationRequest {
+    /**
+     * Channel containing the agent in the input stereo recording: 0 is
+     * left, 1 is right. With channel selection enabled for the organization,
+     * omitted or null uses the organization default. Otherwise the legacy
+     * mapping applies and explicit overrides are rejected.
+     * Requires an audio input. No effect on mono recordings or supplied
+     * transcript roles. The effective choice is captured for this audio.
+     * 
+     * @type {number}
+     * @memberof CovalUploadedConversationsAPIPatchUploadedConversationRequest
+     */
+    agent_channel?: number | null;
     /**
      * Presigned URL to the audio recording. Same validation rules as
      * `audio_url` on `POST /v1/conversations/uploaded:submit` (WAV or MP3, 5 s to
@@ -72,6 +85,20 @@ export interface CovalUploadedConversationsAPIPatchUploadedConversationRequest {
      * @memberof CovalUploadedConversationsAPIPatchUploadedConversationRequest
      */
     metadata?: { [key: string]: any; };
+    /**
+     * Agent to assign to a conversation that was submitted without one. The
+     * agent must exist and be active in your organization for a new assignment, otherwise
+     * `404 NOT_FOUND`. Supply a 22-character agent resource ID (letters, digits, or hyphens);
+     * malformed IDs return `400 INVALID_ARGUMENT`.
+     * 
+     * Set-once. Repeating the conversation's current agent succeeds without
+     * change; a different agent returns `409 ALREADY_EXISTS`. Does not run or
+     * re-run any metric.
+     * 
+     * @type {string}
+     * @memberof CovalUploadedConversationsAPIPatchUploadedConversationRequest
+     */
+    agent_id?: string;
 }
 
 /**
@@ -91,9 +118,11 @@ export function CovalUploadedConversationsAPIPatchUploadedConversationRequestFro
     }
     return {
         
+        'agent_channel': json['agent_channel'] == null ? undefined : json['agent_channel'],
         'audio_url': json['audio_url'] == null ? undefined : json['audio_url'],
         'audio': json['audio'] == null ? undefined : json['audio'],
         'metadata': json['metadata'] == null ? undefined : json['metadata'],
+        'agent_id': json['agent_id'] == null ? undefined : json['agent_id'],
     };
 }
 
@@ -108,9 +137,11 @@ export function CovalUploadedConversationsAPIPatchUploadedConversationRequestToJ
 
     return {
         
+        'agent_channel': value['agent_channel'],
         'audio_url': value['audio_url'],
         'audio': value['audio'],
         'metadata': value['metadata'],
+        'agent_id': value['agent_id'],
     };
 }
 

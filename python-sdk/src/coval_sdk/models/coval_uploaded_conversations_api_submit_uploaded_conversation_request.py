@@ -31,6 +31,7 @@ class CovalUploadedConversationsAPISubmitUploadedConversationRequest(BaseModel):
     """
     Request to submit an uploaded conversation for evaluation.  **Requirements:** - At least one of: `transcript`, `audio_url`, or `upload_id` must be provided - `audio_url` and `upload_id` are mutually exclusive  **Payload Size Limit:** The combined queued payload is subject to a 256 KB limit (including large `metadata` values); oversized payloads return 413 `PAYLOAD_TOO_LARGE`.  **Best Practices:** - Provide both transcript and audio_url (or upload_id) when available (enables audio metrics) - **Include `start_time` and `end_time` in transcript messages when submitting audio_url** to avoid automatic retranscription - Include `external_conversation_id` for correlation with external systems - Add metadata for conditional metrics and analytics  **Audio + Transcript Behavior:** - If you submit both `transcript` and `audio_url`:   - **WITH timing** (`start_time`/`end_time` on each message): Transcript is used as-is, audio metrics computed from timing   - **WITHOUT timing**: Audio is automatically transcribed and diarized, provided transcript is ignored for metrics 
     """ # noqa: E501
+    agent_channel: Optional[Annotated[int, Field(le=1, strict=True, ge=0)]] = Field(default=None, description="Channel containing the agent in the input stereo recording: 0 is left, 1 is right. With channel selection enabled for the organization, omitted or null uses the organization default. Otherwise the legacy mapping applies and explicit overrides are rejected. Requires an audio input. No effect on mono recordings or supplied transcript roles. The effective choice is captured for this audio. ")
     transcript: Optional[Annotated[List[CovalUploadedConversationsAPITranscriptMessage], Field(min_length=1)]] = Field(default=None, description="Conversation transcript as array of messages")
     audio_url: Optional[StrictStr] = Field(default=None, description="Public or presigned HTTP/HTTPS URL to audio from any cloud provider. Every resolved address must be publicly routable. Redirects are rejected.  Raw `s3://bucket/key` URLs are limited to Coval-issued uploads in the shared or organization-specific audio bucket under `audio/<authenticated_organization_id>/`. For other storage locations, supply a presigned HTTPS URL or use `upload_id` from `POST /v1/audio:upload`.  **Audio Validation Requirements:** - **Formats**: WAV or MP3 ONLY (detected via magic bytes, not file extension) - **Channels**: Stereo (recommended) or mono. Stereo assigns speaker roles deterministically from channel position (channel 0 = agent, channel 1 = user); mono infers roles by classifying transcript content, which is typically accurate but less reliable than channel-based mapping. - **Duration**: 5 seconds minimum, 1 hour (3600 seconds) maximum - **File Size**: 200 MB maximum - **Validation**: Audio is validated BEFORE processing begins - **Rejected Formats**: MP4, M4A, FLAC, OGG, AAC, etc.  **Supported URL Formats:** - AWS S3: https://bucket.s3.amazonaws.com/... - GCP Cloud Storage: https://storage.googleapis.com/... - Azure Blob Storage: https://account.blob.core.windows.net/... - Any Public or Presigned HTTPS URL  **Validation Errors** (400 INVALID_ARGUMENT): - \"Audio file is empty.\" - \"Unsupported audio format: {format}. Only WAV and MP3 files are supported.\" - \"Audio too short: {X} seconds. Minimum duration is 5 seconds.\" - \"Audio too long: {X} minutes. Maximum duration is 60 minutes.\" - \"Audio file too large: {X} MB. Maximum size is 200 MB.\" - \"Invalid or corrupt audio file. Unable to detect audio format. Supported formats: WAV and MP3.\" - \"Invalid or corrupt audio file. Unable to read audio metadata.\" - \"Audio URL not found (404)\" or \"Failed to retrieve audio from URL\" ")
     upload_id: Optional[Annotated[str, Field(strict=True)]] = Field(default=None, description="Reference to a previously issued direct upload from `POST /v1/audio:upload`.  Use this when you've uploaded audio bytes directly via a Coval-issued presigned PUT URL. The Coval backend resolves the staged upload, validates it, and promotes it into managed recordings storage.  **Mutually exclusive** with `audio` and `audio_url` — provide exactly one audio source.  **Validation Errors:** - 404 NOT_FOUND: `upload_id` does not exist, has expired, has already been consumed,   or belongs to a different organization (404 is returned in all four cases to   avoid leaking ID existence across organizations). - 400 INVALID_ARGUMENT: Mutually exclusive audio sources provided. ")
@@ -41,7 +42,7 @@ class CovalUploadedConversationsAPISubmitUploadedConversationRequest(BaseModel):
     occurred_at: Optional[datetime] = Field(default=None, description="The instant the audio recording begins, in ISO 8601 with sub-second precision. Coval uses it to align the recording with trace spans in the trace viewer and to locate traces around the call.  Optional. Without it, the trace viewer draws the recording without aligning it to spans. ")
     agent_id: Optional[Annotated[str, Field(strict=True)]] = Field(default=None, description="Agent resource ID (22-character ShortUUID) to associate with this conversation.  Must reference an existing agent within your organization. The agent is validated at submission time: - **400 INVALID_ARGUMENT**: Malformed ID (wrong length or characters). - **404 NOT_FOUND**: Agent does not exist or belongs to a different organization. ")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["transcript", "audio_url", "upload_id", "metrics", "metadata", "tags", "external_conversation_id", "occurred_at", "agent_id"]
+    __properties: ClassVar[List[str]] = ["agent_channel", "transcript", "audio_url", "upload_id", "metrics", "metadata", "tags", "external_conversation_id", "occurred_at", "agent_id"]
 
     @field_validator('upload_id')
     def upload_id_validate_regular_expression(cls, value):
@@ -122,6 +123,11 @@ class CovalUploadedConversationsAPISubmitUploadedConversationRequest(BaseModel):
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
 
+        # set to None if agent_channel (nullable) is None
+        # and model_fields_set contains the field
+        if self.agent_channel is None and "agent_channel" in self.model_fields_set:
+            _dict['agent_channel'] = None
+
         # set to None if agent_id (nullable) is None
         # and model_fields_set contains the field
         if self.agent_id is None and "agent_id" in self.model_fields_set:
@@ -139,6 +145,7 @@ class CovalUploadedConversationsAPISubmitUploadedConversationRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "agent_channel": obj.get("agent_channel"),
             "transcript": [CovalUploadedConversationsAPITranscriptMessage.from_dict(_item) for _item in obj["transcript"]] if obj.get("transcript") is not None else None,
             "audio_url": obj.get("audio_url"),
             "upload_id": obj.get("upload_id"),

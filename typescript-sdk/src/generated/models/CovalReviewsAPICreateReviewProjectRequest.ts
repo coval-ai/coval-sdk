@@ -77,6 +77,14 @@ export function CovalReviewsAPICreateReviewProjectRequestToJSONTyped(value?: Cov
 
 
 /** @export */
+export const CovalReviewsAPICreateReviewProjectRequestBatchAssignmentModeEnum = {
+    SELF: "SELF" as const,
+    MANAGER: "MANAGER" as const,
+} as const;
+export type CovalReviewsAPICreateReviewProjectRequestBatchAssignmentModeEnum = typeof CovalReviewsAPICreateReviewProjectRequestBatchAssignmentModeEnum[keyof typeof CovalReviewsAPICreateReviewProjectRequestBatchAssignmentModeEnum];
+
+
+/** @export */
 export const CovalReviewsAPICreateReviewProjectRequestReviewLabelInputModeEnum = {
     OPTIONONLY: "OPTION_ONLY" as const,
     CUSTOMONLY: "CUSTOM_ONLY" as const,

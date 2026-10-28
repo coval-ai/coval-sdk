@@ -84,6 +84,9 @@ export interface TestCasesAPIUpdateTestCaseRequest {
     /**
      * Legacy simulation metadata. For SCRIPT cases, use the top-level script_turns field.
      * A nested script_turns input remains accepted for backward compatibility but is deprecated.
+     * API-wrapper headers accept strings to set or replace credentials and opaque saved objects to retain them.
+     * Removing a header deletes its credential. Encrypted credentials require replacement values when the HTTPS origin changes.
+     * While encrypted writes are disabled, entirely legacy configurations retain their existing storage and execution behavior.
      * 
      * @type {{ [key: string]: any; }}
      * @memberof TestCasesAPIUpdateTestCaseRequest

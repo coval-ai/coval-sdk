@@ -130,6 +130,18 @@ export interface CovalReviewsAPIUpdateReviewProjectRequest {
      */
     skippable_metric_ids?: Array<string> | null;
     /**
+     * Who forms reviewer batches on an enforced collaborative project: SELF (reviewers start their own) or MANAGER (managers assign them). Null restores SELF; omission preserves the current value.
+     * @type {CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum}
+     * @memberof CovalReviewsAPIUpdateReviewProjectRequest
+     */
+    batch_assignment_mode?: CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum | null;
+    /**
+     * Conversations per reviewer batch, from 1 to 50. Null restores 10; omission preserves the current value.
+     * @type {number}
+     * @memberof CovalReviewsAPIUpdateReviewProjectRequest
+     */
+    batch_size?: number | null;
+    /**
      * 
      * @type {string}
      * @memberof CovalReviewsAPIUpdateReviewProjectRequest
@@ -170,6 +182,15 @@ export const CovalReviewsAPIUpdateReviewProjectRequestMetricAdditionCompletionAc
     ReopenCompleted: 'REOPEN_COMPLETED'
 } as const;
 export type CovalReviewsAPIUpdateReviewProjectRequestMetricAdditionCompletionActionEnum = typeof CovalReviewsAPIUpdateReviewProjectRequestMetricAdditionCompletionActionEnum[keyof typeof CovalReviewsAPIUpdateReviewProjectRequestMetricAdditionCompletionActionEnum];
+
+/**
+ * @export
+ */
+export const CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum = {
+    Self: 'SELF',
+    Manager: 'MANAGER'
+} as const;
+export type CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum = typeof CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum[keyof typeof CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum];
 
 /**
  * @export
@@ -225,6 +246,8 @@ export function CovalReviewsAPIUpdateReviewProjectRequestFromJSONTyped(json: any
         'enforced_collaboration': json['enforced_collaboration'] == null ? undefined : json['enforced_collaboration'],
         'allow_metric_skipping': json['allow_metric_skipping'] == null ? undefined : json['allow_metric_skipping'],
         'skippable_metric_ids': json['skippable_metric_ids'],
+        'batch_assignment_mode': json['batch_assignment_mode'] == null ? undefined : json['batch_assignment_mode'],
+        'batch_size': json['batch_size'] == null ? undefined : json['batch_size'],
         'project_type': json['project_type'] == null ? undefined : json['project_type'],
         'review_label_enabled': json['review_label_enabled'] == null ? undefined : json['review_label_enabled'],
         'review_label_input_mode': json['review_label_input_mode'] == null ? undefined : json['review_label_input_mode'],
@@ -261,6 +284,8 @@ export function CovalReviewsAPIUpdateReviewProjectRequestToJSONTyped(value?: Cov
         'enforced_collaboration': value['enforced_collaboration'],
         'allow_metric_skipping': value['allow_metric_skipping'],
         'skippable_metric_ids': value['skippable_metric_ids'],
+        'batch_assignment_mode': value['batch_assignment_mode'],
+        'batch_size': value['batch_size'],
         'project_type': value['project_type'],
         'review_label_enabled': value['review_label_enabled'],
         'review_label_input_mode': value['review_label_input_mode'],

@@ -149,6 +149,18 @@ export interface CovalReviewsAPIReviewProjectResource {
      */
     skippable_metric_ids?: Array<string> | null;
     /**
+     * Who forms reviewer batches on an enforced collaborative project: SELF (reviewers start their own) or MANAGER (managers assign them). Null means SELF.
+     * @type {CovalReviewsAPIReviewProjectResourceBatchAssignmentModeEnum}
+     * @memberof CovalReviewsAPIReviewProjectResource
+     */
+    batch_assignment_mode?: CovalReviewsAPIReviewProjectResourceBatchAssignmentModeEnum | null;
+    /**
+     * Conversations per reviewer batch, from 1 to 50. Null means 10.
+     * @type {number}
+     * @memberof CovalReviewsAPIReviewProjectResource
+     */
+    batch_size?: number | null;
+    /**
      * Creation timestamp (ISO 8601)
      * @type {Date}
      * @memberof CovalReviewsAPIReviewProjectResource
@@ -204,6 +216,15 @@ export interface CovalReviewsAPIReviewProjectResource {
     review_label_selection_mode?: CovalReviewsAPIReviewProjectResourceReviewLabelSelectionModeEnum | null;
 }
 
+
+/**
+ * @export
+ */
+export const CovalReviewsAPIReviewProjectResourceBatchAssignmentModeEnum = {
+    Self: 'SELF',
+    Manager: 'MANAGER'
+} as const;
+export type CovalReviewsAPIReviewProjectResourceBatchAssignmentModeEnum = typeof CovalReviewsAPIReviewProjectResourceBatchAssignmentModeEnum[keyof typeof CovalReviewsAPIReviewProjectResourceBatchAssignmentModeEnum];
 
 /**
  * @export
@@ -275,6 +296,8 @@ export function CovalReviewsAPIReviewProjectResourceFromJSONTyped(json: any, ign
         'enforced_collaboration': json['enforced_collaboration'] == null ? undefined : json['enforced_collaboration'],
         'allow_metric_skipping': json['allow_metric_skipping'] == null ? undefined : json['allow_metric_skipping'],
         'skippable_metric_ids': json['skippable_metric_ids'] == null ? undefined : json['skippable_metric_ids'],
+        'batch_assignment_mode': json['batch_assignment_mode'] == null ? undefined : json['batch_assignment_mode'],
+        'batch_size': json['batch_size'] == null ? undefined : json['batch_size'],
         'create_time': (new Date(json['create_time'])),
         'update_time': (new Date(json['update_time'])),
         'blind_labeling_shown_metric_ids': json['blind_labeling_shown_metric_ids'] == null ? undefined : json['blind_labeling_shown_metric_ids'],
@@ -313,6 +336,8 @@ export function CovalReviewsAPIReviewProjectResourceToJSONTyped(value?: Omit<Cov
         'enforced_collaboration': value['enforced_collaboration'],
         'allow_metric_skipping': value['allow_metric_skipping'],
         'skippable_metric_ids': value['skippable_metric_ids'],
+        'batch_assignment_mode': value['batch_assignment_mode'],
+        'batch_size': value['batch_size'],
         'create_time': value['create_time'].toISOString(),
         'update_time': value['update_time'].toISOString(),
         'blind_labeling_shown_metric_ids': value['blind_labeling_shown_metric_ids'],

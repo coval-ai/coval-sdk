@@ -108,6 +108,9 @@ export interface TestCasesAPITestCaseResource {
     /**
      * Legacy simulation metadata. For SCRIPT and IVR_CRAWL cases, script_turns may also be returned here for backward
      * compatibility; new integrations should use the top-level script_turns field.
+     * API-wrapper headers contain opaque saved credentials, never plaintext values. Return those objects unchanged
+     * to retain them. Encrypted credentials are bound to organization, workspace, HTTPS origin, and header name.
+     * Legacy values remain in plaintext storage until encrypted writes are activated.
      * 
      * @type {{ [key: string]: any; }}
      * @memberof TestCasesAPITestCaseResource

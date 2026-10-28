@@ -46,6 +46,18 @@ import {
  */
 export interface CovalUploadedConversationsAPISubmitUploadedConversationRequest {
     /**
+     * Channel containing the agent in the input stereo recording: 0 is
+     * left, 1 is right. With channel selection enabled for the organization,
+     * omitted or null uses the organization default. Otherwise the legacy
+     * mapping applies and explicit overrides are rejected.
+     * Requires an audio input. No effect on mono recordings or supplied
+     * transcript roles. The effective choice is captured for this audio.
+     * 
+     * @type {number}
+     * @memberof CovalUploadedConversationsAPISubmitUploadedConversationRequest
+     */
+    agent_channel?: number | null;
+    /**
      * Conversation transcript as array of messages
      * @type {Array<CovalUploadedConversationsAPITranscriptMessage>}
      * @memberof CovalUploadedConversationsAPISubmitUploadedConversationRequest
@@ -199,6 +211,7 @@ export function CovalUploadedConversationsAPISubmitUploadedConversationRequestFr
     }
     return {
         
+        'agent_channel': json['agent_channel'] == null ? undefined : json['agent_channel'],
         'transcript': json['transcript'] == null ? undefined : ((json['transcript'] as Array<any>).map(CovalUploadedConversationsAPITranscriptMessageFromJSON)),
         'audio_url': json['audio_url'] == null ? undefined : json['audio_url'],
         'upload_id': json['upload_id'] == null ? undefined : json['upload_id'],
@@ -222,6 +235,7 @@ export function CovalUploadedConversationsAPISubmitUploadedConversationRequestTo
 
     return {
         
+        'agent_channel': value['agent_channel'],
         'transcript': value['transcript'] == null ? undefined : ((value['transcript'] as Array<any>).map(CovalUploadedConversationsAPITranscriptMessageToJSON)),
         'audio_url': value['audio_url'],
         'upload_id': value['upload_id'],
