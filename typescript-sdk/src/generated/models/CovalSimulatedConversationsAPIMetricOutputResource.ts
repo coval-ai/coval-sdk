@@ -96,7 +96,7 @@ export interface CovalSimulatedConversationsAPIMetricOutputResource {
      */
     subvalues_by_timestamp?: Array<CovalSimulatedConversationsAPISubvalueByTimestamp> | null;
     /**
-     * Structured metric result. Its keys depend on the metric type — for example llm for LLM-judge metrics, or stats/count for numeric metrics. The llm key is present only for LLM-judge metrics: the judge's reasoning is at result.llm.answer_explanation and the evaluation prompt at result.llm.prompt. Null for metrics that produce no structured result.
+     * Eligible Coval Judge results may include judge_confidence with answer probabilities, panel agreement and explicit alignment (aligned, disagrees, inconclusive or unavailable). review_required is true when the estimate disagrees with the panel answer or the comparison is inconclusive. Other result keys depend on the metric type — for example llm for LLM-judge metrics, or stats/count for numeric metrics. The llm key is present only for LLM-judge metrics: the judge's reasoning is at result.llm.answer_explanation and the evaluation prompt at result.llm.prompt. Null for metrics that produce no structured result.
      * @type {{ [key: string]: any; }}
      * @memberof CovalSimulatedConversationsAPIMetricOutputResource
      */

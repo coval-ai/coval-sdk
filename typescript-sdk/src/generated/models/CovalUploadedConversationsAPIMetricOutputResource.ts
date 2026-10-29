@@ -91,7 +91,7 @@ export interface CovalUploadedConversationsAPIMetricOutputResource {
      */
     evidence_references?: Array<CovalUploadedConversationsAPIMetricOutputResourceEvidenceReferencesInner> | null;
     /**
-     * Structured metric result. Its keys depend on the metric type — for LLM-judge metrics the judge's reasoning is at result.llm.answer_explanation and the evaluation prompt at result.llm.prompt. Null for metrics that produce no structured result.
+     * Eligible Coval Judge results may include judge_confidence with answer probabilities, panel agreement and explicit alignment (aligned, disagrees, inconclusive or unavailable). review_required is true when the estimate disagrees with the panel answer or the comparison is inconclusive. Other result keys depend on the metric type — for LLM-judge metrics the judge's reasoning is at result.llm.answer_explanation and the evaluation prompt at result.llm.prompt. Null for metrics that produce no structured result.
      * @type {{ [key: string]: any; }}
      * @memberof CovalUploadedConversationsAPIMetricOutputResource
      */

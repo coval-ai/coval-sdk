@@ -96,7 +96,7 @@ export interface CovalMetricsAPISimpleMetricOutput {
      */
     subvalues_by_timestamp?: Array<CovalMetricsAPISubvalueByTimestamp> | null;
     /**
-     * Structured metric result. Its keys depend on the metric type. Null for metrics that produce no structured result.
+     * Structured metric result. Its keys depend on the metric type. Eligible Coval Judge results may include judge_confidence with answer probabilities, panel agreement and explicit alignment (aligned, disagrees, inconclusive or unavailable). review_required is true when the estimate disagrees with the panel answer or the comparison is inconclusive. Null for metrics that produce no structured result.
      * @type {{ [key: string]: any; }}
      * @memberof CovalMetricsAPISimpleMetricOutput
      */

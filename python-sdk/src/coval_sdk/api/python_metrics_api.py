@@ -1272,7 +1272,7 @@ class PythonMetricsApi:
     ) -> PythonMetricsAPIPythonMetricPreviewsResponse:
         """Evaluate a draft on a historical conversation
 
-        Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+        Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
 
         :param draft_id: (required)
         :type draft_id: str
@@ -1352,7 +1352,7 @@ class PythonMetricsApi:
     ) -> ApiResponse[PythonMetricsAPIPythonMetricPreviewsResponse]:
         """Evaluate a draft on a historical conversation
 
-        Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+        Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
 
         :param draft_id: (required)
         :type draft_id: str
@@ -1432,7 +1432,7 @@ class PythonMetricsApi:
     ) -> RESTResponseType:
         """Evaluate a draft on a historical conversation
 
-        Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+        Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
 
         :param draft_id: (required)
         :type draft_id: str

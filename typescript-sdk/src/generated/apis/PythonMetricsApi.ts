@@ -204,7 +204,7 @@ export interface PythonMetricsApiInterface {
     previewPythonMetricRequestOpts(requestParameters: PreviewPythonMetricRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+     * Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
      * @summary Evaluate a draft on a historical conversation
      * @param {string} draftId 
      * @param {PythonMetricsAPIPreviewPythonMetricBody} pythonMetricsAPIPreviewPythonMetricBody 
@@ -216,7 +216,7 @@ export interface PythonMetricsApiInterface {
     previewPythonMetricRaw(requestParameters: PreviewPythonMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonMetricsAPIPythonMetricPreviewsResponse>>;
 
     /**
-     * Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+     * Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
      * Evaluate a draft on a historical conversation
      */
     previewPythonMetric(requestParameters: PreviewPythonMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPythonMetricPreviewsResponse>;
@@ -540,7 +540,7 @@ export class PythonMetricsApi extends runtime.BaseAPI implements PythonMetricsAp
     }
 
     /**
-     * Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+     * Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
      * Evaluate a draft on a historical conversation
      */
     async previewPythonMetricRaw(requestParameters: PreviewPythonMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonMetricsAPIPythonMetricPreviewsResponse>> {
@@ -551,7 +551,7 @@ export class PythonMetricsApi extends runtime.BaseAPI implements PythonMetricsAp
     }
 
     /**
-     * Queue a historical conversation evaluation. Poll the returned preview ID for the durable result.
+     * Reuse an active preview for the same authorized draft version, recording occurrence, and execution lane. Resimulating the recording permits a new preview and obsolete queued setup is cancelled. A terminal preview permits a new run. Poll the returned preview ID for completion. A submission with an error stating that queue admission is unconfirmed may still run; retain and poll that preview ID before retrying. Recovery of an interrupted pending submission retains its preview ID. Run setup rejects a definition that changed after admission.
      * Evaluate a draft on a historical conversation
      */
     async previewPythonMetric(requestParameters: PreviewPythonMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPythonMetricPreviewsResponse> {
