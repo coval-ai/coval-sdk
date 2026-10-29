@@ -367,7 +367,7 @@ class TestSetsApi:
     ) -> CreateTestSet201Response:
         """Create test set
 
-        Create a new test set.
+        Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
 
         :param test_sets_api_create_test_set_request: (required)
         :type test_sets_api_create_test_set_request: TestSetsAPICreateTestSetRequest
@@ -408,6 +408,7 @@ class TestSetsApi:
             '201': "CreateTestSet201Response",
             '400': "TestSetsAPIErrorResponse",
             '401': "TestSetsAPIErrorResponse",
+            '403': "TestSetsAPIErrorResponse",
             '409': "TestSetsAPIErrorResponse",
             '500': "TestSetsAPIErrorResponse",
         }
@@ -442,7 +443,7 @@ class TestSetsApi:
     ) -> ApiResponse[CreateTestSet201Response]:
         """Create test set
 
-        Create a new test set.
+        Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
 
         :param test_sets_api_create_test_set_request: (required)
         :type test_sets_api_create_test_set_request: TestSetsAPICreateTestSetRequest
@@ -483,6 +484,7 @@ class TestSetsApi:
             '201': "CreateTestSet201Response",
             '400': "TestSetsAPIErrorResponse",
             '401': "TestSetsAPIErrorResponse",
+            '403': "TestSetsAPIErrorResponse",
             '409': "TestSetsAPIErrorResponse",
             '500': "TestSetsAPIErrorResponse",
         }
@@ -517,7 +519,7 @@ class TestSetsApi:
     ) -> RESTResponseType:
         """Create test set
 
-        Create a new test set.
+        Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
 
         :param test_sets_api_create_test_set_request: (required)
         :type test_sets_api_create_test_set_request: TestSetsAPICreateTestSetRequest
@@ -558,6 +560,7 @@ class TestSetsApi:
             '201': "CreateTestSet201Response",
             '400': "TestSetsAPIErrorResponse",
             '401': "TestSetsAPIErrorResponse",
+            '403': "TestSetsAPIErrorResponse",
             '409': "TestSetsAPIErrorResponse",
             '500': "TestSetsAPIErrorResponse",
         }

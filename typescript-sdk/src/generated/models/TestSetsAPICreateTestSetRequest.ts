@@ -13,12 +13,26 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { TestSetsAPIInitialTestCaseInput } from './TestSetsAPIInitialTestCaseInput.js';
+import {
+    TestSetsAPIInitialTestCaseInputFromJSON,
+    TestSetsAPIInitialTestCaseInputFromJSONTyped,
+    TestSetsAPIInitialTestCaseInputToJSON,
+    TestSetsAPIInitialTestCaseInputToJSONTyped,
+} from './TestSetsAPIInitialTestCaseInput.js';
+
 /**
  * Request body for creating a test set
  * @export
  * @interface TestSetsAPICreateTestSetRequest
  */
 export interface TestSetsAPICreateTestSetRequest {
+    /**
+     * Initial cases saved atomically with the set. Omitted or [] creates an empty set; null is invalid.
+     * @type {Array<TestSetsAPIInitialTestCaseInput>}
+     * @memberof TestSetsAPICreateTestSetRequest
+     */
+    test_cases?: Array<TestSetsAPIInitialTestCaseInput>;
     /**
      * Human-readable test set name
      * @type {string}
@@ -81,6 +95,7 @@ export function TestSetsAPICreateTestSetRequestFromJSONTyped(json: any, ignoreDi
     }
     return {
         
+        'test_cases': json['test_cases'] == null ? undefined : ((json['test_cases'] as Array<any>).map(TestSetsAPIInitialTestCaseInputFromJSON)),
         'display_name': json['display_name'],
         'slug': json['slug'] == null ? undefined : json['slug'],
         'description': json['description'] == null ? undefined : json['description'],
@@ -102,6 +117,7 @@ export function TestSetsAPICreateTestSetRequestToJSONTyped(value?: TestSetsAPICr
 
     return {
         
+        'test_cases': value['test_cases'] == null ? undefined : ((value['test_cases'] as Array<any>).map(TestSetsAPIInitialTestCaseInputToJSON)),
         'display_name': value['display_name'],
         'slug': value['slug'],
         'description': value['description'],

@@ -163,7 +163,7 @@ export interface TestSetsApiInterface {
     createTestSetRequestOpts(requestParameters: CreateTestSetRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Create a new test set.
+     * Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
      * @summary Create test set
      * @param {TestSetsAPICreateTestSetRequest} testSetsAPICreateTestSetRequest 
      * @param {string} [xCovalWorkspaceId] Workspace that scopes this operation. When omitted, the organization\&#39;s active default workspace is used when one can be resolved.
@@ -174,7 +174,7 @@ export interface TestSetsApiInterface {
     createTestSetRaw(requestParameters: CreateTestSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateTestSet201Response>>;
 
     /**
-     * Create a new test set.
+     * Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
      * Create test set
      */
     createTestSet(requestParameters: CreateTestSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateTestSet201Response>;
@@ -547,7 +547,7 @@ export class TestSetsApi extends runtime.BaseAPI implements TestSetsApiInterface
     }
 
     /**
-     * Create a new test set.
+     * Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
      * Create test set
      */
     async createTestSetRaw(requestParameters: CreateTestSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateTestSet201Response>> {
@@ -558,7 +558,7 @@ export class TestSetsApi extends runtime.BaseAPI implements TestSetsApiInterface
     }
 
     /**
-     * Create a new test set.
+     * Create a new test set, optionally with up to 50 initial cases in one atomic write. Initial cases require both test-sets:write and test-cases:write permissions. A failure creates neither the set nor its cases. Existing name/slug conflict rules apply to retries.
      * Create test set
      */
     async createTestSet(requestParameters: CreateTestSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateTestSet201Response> {

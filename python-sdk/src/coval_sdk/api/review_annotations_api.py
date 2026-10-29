@@ -110,6 +110,7 @@ class ReviewAnnotationsApi:
             '401': "CovalReviewsAPIErrorResponse",
             '403': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -187,6 +188,7 @@ class ReviewAnnotationsApi:
             '401': "CovalReviewsAPIErrorResponse",
             '403': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -264,6 +266,7 @@ class ReviewAnnotationsApi:
             '401': "CovalReviewsAPIErrorResponse",
             '403': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -417,6 +420,7 @@ class ReviewAnnotationsApi:
             '200': "object",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -492,6 +496,7 @@ class ReviewAnnotationsApi:
             '200': "object",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -567,6 +572,7 @@ class ReviewAnnotationsApi:
             '200': "object",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -1918,6 +1924,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -1998,6 +2005,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }
@@ -2078,6 +2086,7 @@ class ReviewAnnotationsApi:
             '400': "CovalReviewsAPIErrorResponse",
             '401': "CovalReviewsAPIErrorResponse",
             '404': "CovalReviewsAPIErrorResponse",
+            '409': "CovalReviewsAPIErrorResponse",
             '412': "CovalReviewsAPIErrorResponse",
             '500': "CovalReviewsAPIErrorResponse",
         }

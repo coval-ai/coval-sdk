@@ -21,6 +21,7 @@ import json
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
+from coval_sdk.models.test_sets_api_initial_test_case_input import TestSetsAPIInitialTestCaseInput
 from typing import Optional, Set
 from typing_extensions import Self
 from pydantic_core import to_jsonable_python
@@ -29,6 +30,7 @@ class TestSetsAPICreateTestSetRequest(BaseModel):
     """
     Request body for creating a test set
     """ # noqa: E501
+    test_cases: Optional[Annotated[List[TestSetsAPIInitialTestCaseInput], Field(max_length=50)]] = Field(default=None, description="Initial cases saved atomically with the set. Omitted or [] creates an empty set; null is invalid.")
     display_name: Annotated[str, Field(min_length=1, strict=True, max_length=100)] = Field(description="Human-readable test set name")
     slug: Optional[Annotated[str, Field(min_length=1, strict=True, max_length=100)]] = Field(default=None, description="URL-friendly identifier containing only lowercase letters, numbers, dashes, and underscores (auto-generated from display_name if not provided)")
     description: Optional[StrictStr] = Field(default=None, description="Test set description")
@@ -37,7 +39,7 @@ class TestSetsAPICreateTestSetRequest(BaseModel):
     parameters: Optional[Dict[str, Any]] = Field(default=None, description="Test case parameterization")
     tags: Optional[List[StrictStr]] = Field(default=None, description="Tags to associate with this test set. Null or omitted creates the test set with no tags. Pass [] for an empty tag list.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["display_name", "slug", "description", "test_set_type", "test_set_metadata", "parameters", "tags"]
+    __properties: ClassVar[List[str]] = ["test_cases", "display_name", "slug", "description", "test_set_type", "test_set_metadata", "parameters", "tags"]
 
     @field_validator('slug')
     def slug_validate_regular_expression(cls, value):
@@ -93,6 +95,13 @@ class TestSetsAPICreateTestSetRequest(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in test_cases (list)
+        _items = []
+        if self.test_cases:
+            for _item_test_cases in self.test_cases:
+                if _item_test_cases:
+                    _items.append(_item_test_cases.to_dict())
+            _dict['test_cases'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -120,6 +129,7 @@ class TestSetsAPICreateTestSetRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "test_cases": [TestSetsAPIInitialTestCaseInput.from_dict(_item) for _item in obj["test_cases"]] if obj.get("test_cases") is not None else None,
             "display_name": obj.get("display_name"),
             "slug": obj.get("slug"),
             "description": obj.get("description"),

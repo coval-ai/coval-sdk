@@ -638,9 +638,14 @@ __all__ = [
     "TestSetsAPIErrorResponse",
     "TestSetsAPIErrorResponseError",
     "TestSetsAPIErrorResponseErrorDetailsInner",
+    "TestSetsAPIInitialTestCaseInput",
+    "TestSetsAPIInitialTestCaseInputScriptTurnsInner",
     "TestSetsAPIListTestSetAgentsResponse",
     "TestSetsAPIListTestSetRecordsResponse",
     "TestSetsAPIListTestSetVersionsResponse",
+    "TestSetsAPIScriptTurnDtmf",
+    "TestSetsAPIScriptTurnSkip",
+    "TestSetsAPIScriptTurnText",
     "TestSetsAPITestSetAgentResource",
     "TestSetsAPITestSetRecordResource",
     "TestSetsAPITestSetResource",
@@ -1280,9 +1285,14 @@ from coval_sdk.models.test_sets_api_create_test_set_request import TestSetsAPICr
 from coval_sdk.models.test_sets_api_error_response import TestSetsAPIErrorResponse as TestSetsAPIErrorResponse
 from coval_sdk.models.test_sets_api_error_response_error import TestSetsAPIErrorResponseError as TestSetsAPIErrorResponseError
 from coval_sdk.models.test_sets_api_error_response_error_details_inner import TestSetsAPIErrorResponseErrorDetailsInner as TestSetsAPIErrorResponseErrorDetailsInner
+from coval_sdk.models.test_sets_api_initial_test_case_input import TestSetsAPIInitialTestCaseInput as TestSetsAPIInitialTestCaseInput
+from coval_sdk.models.test_sets_api_initial_test_case_input_script_turns_inner import TestSetsAPIInitialTestCaseInputScriptTurnsInner as TestSetsAPIInitialTestCaseInputScriptTurnsInner
 from coval_sdk.models.test_sets_api_list_test_set_agents_response import TestSetsAPIListTestSetAgentsResponse as TestSetsAPIListTestSetAgentsResponse
 from coval_sdk.models.test_sets_api_list_test_set_records_response import TestSetsAPIListTestSetRecordsResponse as TestSetsAPIListTestSetRecordsResponse
 from coval_sdk.models.test_sets_api_list_test_set_versions_response import TestSetsAPIListTestSetVersionsResponse as TestSetsAPIListTestSetVersionsResponse
+from coval_sdk.models.test_sets_api_script_turn_dtmf import TestSetsAPIScriptTurnDtmf as TestSetsAPIScriptTurnDtmf
+from coval_sdk.models.test_sets_api_script_turn_skip import TestSetsAPIScriptTurnSkip as TestSetsAPIScriptTurnSkip
+from coval_sdk.models.test_sets_api_script_turn_text import TestSetsAPIScriptTurnText as TestSetsAPIScriptTurnText
 from coval_sdk.models.test_sets_api_test_set_agent_resource import TestSetsAPITestSetAgentResource as TestSetsAPITestSetAgentResource
 from coval_sdk.models.test_sets_api_test_set_record_resource import TestSetsAPITestSetRecordResource as TestSetsAPITestSetRecordResource
 from coval_sdk.models.test_sets_api_test_set_resource import TestSetsAPITestSetResource as TestSetsAPITestSetResource
