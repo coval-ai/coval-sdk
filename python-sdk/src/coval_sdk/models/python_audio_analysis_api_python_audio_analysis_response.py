@@ -18,7 +18,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from coval_sdk.models.python_audio_analysis_api_python_audio_analysis_response_value import PythonAudioAnalysisAPIPythonAudioAnalysisResponseValue
 from typing import Optional, Set
@@ -29,6 +29,8 @@ class PythonAudioAnalysisAPIPythonAudioAnalysisResponse(BaseModel):
     """
     PythonAudioAnalysisAPIPythonAudioAnalysisResponse
     """ # noqa: E501
+    fingerprint: StrictStr = Field(description="Fingerprint of the exact source and execution configuration.")
+    evidence_expires_at: Optional[StrictInt] = Field(default=None, description="Evidence expiry as Unix seconds; null when reusable evidence is absent. Saving revalidates applicability.")
     analysis_id: StrictStr = Field(description="Identifier for reading this analysis outcome.")
     simulation_output_id: StrictStr = Field(description="Conversation used by this analysis.")
     status: StrictStr = Field(description="Only succeeded contains a computed value.")
@@ -39,7 +41,7 @@ class PythonAudioAnalysisAPIPythonAudioAnalysisResponse(BaseModel):
     error_code: Optional[StrictStr] = Field(default=None, description="Failure category; null when no failure is recorded.")
     message: Optional[StrictStr] = Field(default=None, description="Bounded failure explanation; null when no failure is recorded.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["analysis_id", "simulation_output_id", "status", "source", "output_type", "value", "explanation", "error_code", "message"]
+    __properties: ClassVar[List[str]] = ["fingerprint", "evidence_expires_at", "analysis_id", "simulation_output_id", "status", "source", "output_type", "value", "explanation", "error_code", "message"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -104,6 +106,11 @@ class PythonAudioAnalysisAPIPythonAudioAnalysisResponse(BaseModel):
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
 
+        # set to None if evidence_expires_at (nullable) is None
+        # and model_fields_set contains the field
+        if self.evidence_expires_at is None and "evidence_expires_at" in self.model_fields_set:
+            _dict['evidence_expires_at'] = None
+
         # set to None if value (nullable) is None
         # and model_fields_set contains the field
         if self.value is None and "value" in self.model_fields_set:
@@ -136,6 +143,8 @@ class PythonAudioAnalysisAPIPythonAudioAnalysisResponse(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "fingerprint": obj.get("fingerprint"),
+            "evidence_expires_at": obj.get("evidence_expires_at"),
             "analysis_id": obj.get("analysis_id"),
             "simulation_output_id": obj.get("simulation_output_id"),
             "status": obj.get("status"),

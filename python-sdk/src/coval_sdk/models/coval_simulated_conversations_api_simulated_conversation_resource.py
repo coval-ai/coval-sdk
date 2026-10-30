@@ -35,7 +35,8 @@ class CovalSimulatedConversationsAPISimulatedConversationResource(BaseModel):
     simulation_id: StrictStr = Field(description="The unique identifier for this simulation execution")
     run_id: StrictStr = Field(description="The parent run ID (for grouping simulations)")
     status: StrictStr = Field(description="Current status of the simulation")
-    create_time: datetime = Field(description="Timestamp when the simulation was created (ISO 8601, UTC)")
+    create_time: datetime = Field(description="Timestamp when the simulation was created and queued (ISO 8601, UTC)")
+    simulation_start_time: Optional[datetime] = Field(default=None, description="Timestamp when a simulator picked the simulation off the queue and marked it IN PROGRESS (ISO 8601, UTC). Later than create_time by the time spent queued. Null when the simulator has not recorded a start time, for example while PENDING or IN QUEUE, or when cancelled before starting; a simulation that ran can also have none. Always null on the metric-aware list path (include=metric_values or a metric.<id> filter) — fetch GET /v1/conversations/simulated/{id} for the value. ")
     agent_id: Optional[StrictStr] = Field(default=None, description="Reference to agent resource")
     persona_id: Optional[StrictStr] = Field(default=None, description="Reference to persona resource")
     test_set_id: Optional[StrictStr] = Field(default=None, description="Reference to test set resource")
@@ -48,9 +49,9 @@ class CovalSimulatedConversationsAPISimulatedConversationResource(BaseModel):
     mutation_name: Optional[StrictStr] = Field(default=None, description="Display name of the mutation variant, or null for base agent simulations.")
     notes: Optional[StrictStr] = Field(default=None, description="Free-text notes attached to the simulation. Settable via PATCH /conversations/simulated/{simulation_id}.")
     is_public: Optional[StrictBool] = Field(default=None, description="Whether the simulation is shared via a public link. Settable via PATCH /conversations/simulated/{simulation_id}.")
-    metric_values: Optional[Dict[str, Union[StrictFloat, StrictInt]]] = Field(default=None, description="Numeric value per metric on this simulation, keyed by metric id. Present when the list request sets include=metric_values or filters by metric value (filter=metric.<id> ...); omitted from the default summary view. Only numeric (float) metric values are included — string-metric values are not. On this metric-aware path the simulation is a summary projection: has_audio and is_public are reported false and test_case_id / mutation / endpoint fields are null regardless of the record — fetch GET /v1/conversations/simulated/{id} for authoritative values. ")
+    metric_values: Optional[Dict[str, Union[StrictFloat, StrictInt]]] = Field(default=None, description="Numeric value per metric on this simulation, keyed by metric id. Present when the list request sets include=metric_values or filters by metric value (filter=metric.<id> ...); omitted from the default summary view. Only numeric (float) metric values are included — string-metric values are not. On this metric-aware path the simulation is a summary projection: has_audio and is_public are reported false and test_case_id / mutation / endpoint / simulation_start_time fields are null regardless of the record — fetch GET /v1/conversations/simulated/{id} for authoritative values. ")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["name", "simulation_id", "run_id", "status", "create_time", "agent_id", "persona_id", "test_set_id", "test_case_id", "has_audio", "source", "destination", "error_message", "mutation_id", "mutation_name", "notes", "is_public", "metric_values"]
+    __properties: ClassVar[List[str]] = ["name", "simulation_id", "run_id", "status", "create_time", "simulation_start_time", "agent_id", "persona_id", "test_set_id", "test_case_id", "has_audio", "source", "destination", "error_message", "mutation_id", "mutation_name", "notes", "is_public", "metric_values"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -110,6 +111,11 @@ class CovalSimulatedConversationsAPISimulatedConversationResource(BaseModel):
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
+
+        # set to None if simulation_start_time (nullable) is None
+        # and model_fields_set contains the field
+        if self.simulation_start_time is None and "simulation_start_time" in self.model_fields_set:
+            _dict['simulation_start_time'] = None
 
         # set to None if agent_id (nullable) is None
         # and model_fields_set contains the field
@@ -183,6 +189,7 @@ class CovalSimulatedConversationsAPISimulatedConversationResource(BaseModel):
             "run_id": obj.get("run_id"),
             "status": obj.get("status"),
             "create_time": obj.get("create_time"),
+            "simulation_start_time": obj.get("simulation_start_time"),
             "agent_id": obj.get("agent_id"),
             "persona_id": obj.get("persona_id"),
             "test_set_id": obj.get("test_set_id"),

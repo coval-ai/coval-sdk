@@ -546,6 +546,7 @@ export * from './PythonMetricsAPIPythonMetricDraftResponse.js';
 export * from './PythonMetricsAPIPythonMetricPreviewResource.js';
 export * from './PythonMetricsAPIPythonMetricPreviewResourceValue.js';
 export * from './PythonMetricsAPIPythonMetricPreviewsResponse.js';
+export * from './PythonMetricsAPISavePythonAnalysisMetricRequest.js';
 export * from './SCRIPTTestCaseWithLegacyNestedTurns.js';
 export * from './SCRIPTTestCaseWithLegacyNestedTurnsSimulationMetadataInput.js';
 export * from './SCRIPTTestCaseWithTopLevelTurns.js';

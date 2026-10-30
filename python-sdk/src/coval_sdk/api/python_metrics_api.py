@@ -25,6 +25,7 @@ from coval_sdk.models.python_metrics_api_publish_python_metric_body import Pytho
 from coval_sdk.models.python_metrics_api_publish_python_metric_response import PythonMetricsAPIPublishPythonMetricResponse
 from coval_sdk.models.python_metrics_api_python_metric_draft_response import PythonMetricsAPIPythonMetricDraftResponse
 from coval_sdk.models.python_metrics_api_python_metric_previews_response import PythonMetricsAPIPythonMetricPreviewsResponse
+from coval_sdk.models.python_metrics_api_save_python_analysis_metric_request import PythonMetricsAPISavePythonAnalysisMetricRequest
 
 from coval_sdk.api_client import ApiClient, RequestSerialized
 from coval_sdk.api_response import ApiResponse
@@ -1874,6 +1875,313 @@ class PythonMetricsApi:
         return self.api_client.param_serialize(
             method='POST',
             resource_path='/python-metric-drafts/{draft_id}/publish',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def save_python_analysis_metric(
+        self,
+        python_metrics_api_save_python_analysis_metric_request: PythonMetricsAPISavePythonAnalysisMetricRequest,
+        x_coval_workspace_id: Annotated[Optional[StrictStr], Field(description="Active workspace in the authenticated organization. Defaults to its default workspace.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> PythonMetricsAPIPublishPythonMetricResponse:
+        """Save an analyzed audio computation as a metric
+
+        Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+
+        :param python_metrics_api_save_python_analysis_metric_request: (required)
+        :type python_metrics_api_save_python_analysis_metric_request: PythonMetricsAPISavePythonAnalysisMetricRequest
+        :param x_coval_workspace_id: Active workspace in the authenticated organization. Defaults to its default workspace.
+        :type x_coval_workspace_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._save_python_analysis_metric_serialize(
+            python_metrics_api_save_python_analysis_metric_request=python_metrics_api_save_python_analysis_metric_request,
+            x_coval_workspace_id=x_coval_workspace_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "PythonMetricsAPIPublishPythonMetricResponse",
+            '400': None,
+            '401': None,
+            '403': None,
+            '404': None,
+            '409': None,
+            '503': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def save_python_analysis_metric_with_http_info(
+        self,
+        python_metrics_api_save_python_analysis_metric_request: PythonMetricsAPISavePythonAnalysisMetricRequest,
+        x_coval_workspace_id: Annotated[Optional[StrictStr], Field(description="Active workspace in the authenticated organization. Defaults to its default workspace.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[PythonMetricsAPIPublishPythonMetricResponse]:
+        """Save an analyzed audio computation as a metric
+
+        Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+
+        :param python_metrics_api_save_python_analysis_metric_request: (required)
+        :type python_metrics_api_save_python_analysis_metric_request: PythonMetricsAPISavePythonAnalysisMetricRequest
+        :param x_coval_workspace_id: Active workspace in the authenticated organization. Defaults to its default workspace.
+        :type x_coval_workspace_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._save_python_analysis_metric_serialize(
+            python_metrics_api_save_python_analysis_metric_request=python_metrics_api_save_python_analysis_metric_request,
+            x_coval_workspace_id=x_coval_workspace_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "PythonMetricsAPIPublishPythonMetricResponse",
+            '400': None,
+            '401': None,
+            '403': None,
+            '404': None,
+            '409': None,
+            '503': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def save_python_analysis_metric_without_preload_content(
+        self,
+        python_metrics_api_save_python_analysis_metric_request: PythonMetricsAPISavePythonAnalysisMetricRequest,
+        x_coval_workspace_id: Annotated[Optional[StrictStr], Field(description="Active workspace in the authenticated organization. Defaults to its default workspace.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Save an analyzed audio computation as a metric
+
+        Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+
+        :param python_metrics_api_save_python_analysis_metric_request: (required)
+        :type python_metrics_api_save_python_analysis_metric_request: PythonMetricsAPISavePythonAnalysisMetricRequest
+        :param x_coval_workspace_id: Active workspace in the authenticated organization. Defaults to its default workspace.
+        :type x_coval_workspace_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._save_python_analysis_metric_serialize(
+            python_metrics_api_save_python_analysis_metric_request=python_metrics_api_save_python_analysis_metric_request,
+            x_coval_workspace_id=x_coval_workspace_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "PythonMetricsAPIPublishPythonMetricResponse",
+            '400': None,
+            '401': None,
+            '403': None,
+            '404': None,
+            '409': None,
+            '503': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _save_python_analysis_metric_serialize(
+        self,
+        python_metrics_api_save_python_analysis_metric_request,
+        x_coval_workspace_id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        if x_coval_workspace_id is not None:
+            _header_params['X-Coval-Workspace-Id'] = x_coval_workspace_id
+        # process the form parameters
+        # process the body parameter
+        if python_metrics_api_save_python_analysis_metric_request is not None:
+            _body_params = python_metrics_api_save_python_analysis_metric_request
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/json'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'Python_Metrics_API_ApiKeyAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/python-metrics:fromAnalysis',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

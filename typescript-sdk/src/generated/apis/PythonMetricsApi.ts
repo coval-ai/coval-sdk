@@ -43,6 +43,11 @@ import {
     PythonMetricsAPIPythonMetricPreviewsResponseFromJSON,
     PythonMetricsAPIPythonMetricPreviewsResponseToJSON,
 } from '../models/PythonMetricsAPIPythonMetricPreviewsResponse.js';
+import {
+    type PythonMetricsAPISavePythonAnalysisMetricRequest,
+    PythonMetricsAPISavePythonAnalysisMetricRequestFromJSON,
+    PythonMetricsAPISavePythonAnalysisMetricRequestToJSON,
+} from '../models/PythonMetricsAPISavePythonAnalysisMetricRequest.js';
 
 export interface CancelPythonMetricPreviewRequest {
     draftId: string;
@@ -75,6 +80,11 @@ export interface PreviewPythonMetricRequest {
 export interface PublishPythonMetricRequest {
     draftId: string;
     pythonMetricsAPIPublishPythonMetricBody: PythonMetricsAPIPublishPythonMetricBody;
+    xCovalWorkspaceId?: string;
+}
+
+export interface SavePythonAnalysisMetricRequest {
+    pythonMetricsAPISavePythonAnalysisMetricRequest: PythonMetricsAPISavePythonAnalysisMetricRequest;
     xCovalWorkspaceId?: string;
 }
 
@@ -248,6 +258,32 @@ export interface PythonMetricsApiInterface {
      * Publish an approved and tested Python metric
      */
     publishPythonMetric(requestParameters: PublishPythonMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPublishPythonMetricResponse>;
+
+    /**
+     * Creates request options for savePythonAnalysisMetric without sending the request
+     * @param {PythonMetricsAPISavePythonAnalysisMetricRequest} pythonMetricsAPISavePythonAnalysisMetricRequest 
+     * @param {string} [xCovalWorkspaceId] Active workspace in the authenticated organization. Defaults to its default workspace.
+     * @throws {RequiredError}
+     * @memberof PythonMetricsApiInterface
+     */
+    savePythonAnalysisMetricRequestOpts(requestParameters: SavePythonAnalysisMetricRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+     * @summary Save an analyzed audio computation as a metric
+     * @param {PythonMetricsAPISavePythonAnalysisMetricRequest} pythonMetricsAPISavePythonAnalysisMetricRequest 
+     * @param {string} [xCovalWorkspaceId] Active workspace in the authenticated organization. Defaults to its default workspace.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof PythonMetricsApiInterface
+     */
+    savePythonAnalysisMetricRaw(requestParameters: SavePythonAnalysisMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonMetricsAPIPublishPythonMetricResponse>>;
+
+    /**
+     * Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+     * Save an analyzed audio computation as a metric
+     */
+    savePythonAnalysisMetric(requestParameters: SavePythonAnalysisMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPublishPythonMetricResponse>;
 
 }
 
@@ -621,6 +657,63 @@ export class PythonMetricsApi extends runtime.BaseAPI implements PythonMetricsAp
      */
     async publishPythonMetric(requestParameters: PublishPythonMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPublishPythonMetricResponse> {
         const response = await this.publishPythonMetricRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for savePythonAnalysisMetric without sending the request
+     */
+    async savePythonAnalysisMetricRequestOpts(requestParameters: SavePythonAnalysisMetricRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['pythonMetricsAPISavePythonAnalysisMetricRequest'] == null) {
+            throw new runtime.RequiredError(
+                'pythonMetricsAPISavePythonAnalysisMetricRequest',
+                'Required parameter "pythonMetricsAPISavePythonAnalysisMetricRequest" was null or undefined when calling savePythonAnalysisMetric().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (requestParameters['xCovalWorkspaceId'] != null) {
+            headerParameters['X-Coval-Workspace-Id'] = String(requestParameters['xCovalWorkspaceId']);
+        }
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["X-API-Key"] = await this.configuration.apiKey("X-API-Key"); // Python_Metrics_API_ApiKeyAuth authentication
+        }
+
+
+        let urlPath = `/python-metrics:fromAnalysis`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PythonMetricsAPISavePythonAnalysisMetricRequestToJSON(requestParameters['pythonMetricsAPISavePythonAnalysisMetricRequest']),
+        };
+    }
+
+    /**
+     * Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+     * Save an analyzed audio computation as a metric
+     */
+    async savePythonAnalysisMetricRaw(requestParameters: SavePythonAnalysisMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonMetricsAPIPublishPythonMetricResponse>> {
+        const requestOptions = await this.savePythonAnalysisMetricRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PythonMetricsAPIPublishPythonMetricResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Save the exact successful audio computation without running it again. Requires metrics write and simulations read permissions in the same workspace. Only unexpired evidence from the current accepted runtime and unchanged recording is reusable. Source, output type, unit and input requirements cannot be changed here; use the draft and preview flow to change the computation. Repeating an identical request returns the same metric while the analysis, recording and unchanged saved metric remain accessible in the current workspace. Reusing the analysis with different display metadata returns a conflict. A retryable failure does not authorize creating another analysis; recover by repeating the identical save request. A recording conflict requires a metric draft with supported audio and a new preview.
+     * Save an analyzed audio computation as a metric
+     */
+    async savePythonAnalysisMetric(requestParameters: SavePythonAnalysisMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPublishPythonMetricResponse> {
+        const response = await this.savePythonAnalysisMetricRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

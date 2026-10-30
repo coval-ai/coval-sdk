@@ -59,11 +59,23 @@ export interface CovalSimulatedConversationsAPISimulatedConversationResource {
      */
     status: CovalSimulatedConversationsAPISimulatedConversationResourceStatusEnum;
     /**
-     * Timestamp when the simulation was created (ISO 8601, UTC)
+     * Timestamp when the simulation was created and queued (ISO 8601, UTC)
      * @type {Date}
      * @memberof CovalSimulatedConversationsAPISimulatedConversationResource
      */
     create_time: Date;
+    /**
+     * Timestamp when a simulator picked the simulation off the queue and marked it IN PROGRESS
+     * (ISO 8601, UTC). Later than create_time by the time spent queued. Null when the simulator has not
+     * recorded a start time, for example while PENDING or IN QUEUE, or when cancelled before starting;
+     * a simulation that ran can also have none. Always null on the metric-aware list path
+     * (include=metric_values or a metric.<id> filter) — fetch GET /v1/conversations/simulated/{id}
+     * for the value.
+     * 
+     * @type {Date}
+     * @memberof CovalSimulatedConversationsAPISimulatedConversationResource
+     */
+    simulation_start_time?: Date | null;
     /**
      * Reference to agent resource
      * @type {string}
@@ -142,7 +154,7 @@ export interface CovalSimulatedConversationsAPISimulatedConversationResource {
      * omitted from the default summary view. Only numeric (float) metric values are included —
      * string-metric values are not. On this metric-aware path the simulation is a summary
      * projection: has_audio and is_public are reported false and test_case_id / mutation /
-     * endpoint fields are null regardless of the record — fetch GET /v1/conversations/simulated/{id} for
+     * endpoint / simulation_start_time fields are null regardless of the record — fetch GET /v1/conversations/simulated/{id} for
      * authoritative values.
      * 
      * @type {{ [key: string]: number; }}
@@ -195,6 +207,7 @@ export function CovalSimulatedConversationsAPISimulatedConversationResourceFromJ
         'run_id': json['run_id'],
         'status': json['status'],
         'create_time': (new Date(json['create_time'])),
+        'simulation_start_time': json['simulation_start_time'] == null ? undefined : (new Date(json['simulation_start_time'])),
         'agent_id': json['agent_id'] == null ? undefined : json['agent_id'],
         'persona_id': json['persona_id'] == null ? undefined : json['persona_id'],
         'test_set_id': json['test_set_id'] == null ? undefined : json['test_set_id'],
@@ -227,6 +240,7 @@ export function CovalSimulatedConversationsAPISimulatedConversationResourceToJSO
         'run_id': value['run_id'],
         'status': value['status'],
         'create_time': value['create_time'].toISOString(),
+        'simulation_start_time': value['simulation_start_time'] == null ? value['simulation_start_time'] : value['simulation_start_time'].toISOString(),
         'agent_id': value['agent_id'],
         'persona_id': value['persona_id'],
         'test_set_id': value['test_set_id'],

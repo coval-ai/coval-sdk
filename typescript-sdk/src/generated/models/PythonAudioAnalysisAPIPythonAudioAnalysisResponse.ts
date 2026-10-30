@@ -28,6 +28,18 @@ import {
  */
 export interface PythonAudioAnalysisAPIPythonAudioAnalysisResponse {
     /**
+     * Fingerprint of the exact source and execution configuration.
+     * @type {string}
+     * @memberof PythonAudioAnalysisAPIPythonAudioAnalysisResponse
+     */
+    fingerprint: string;
+    /**
+     * Evidence expiry as Unix seconds; null when reusable evidence is absent. Saving revalidates applicability.
+     * @type {number}
+     * @memberof PythonAudioAnalysisAPIPythonAudioAnalysisResponse
+     */
+    evidence_expires_at?: number | null;
+    /**
      * Identifier for reading this analysis outcome.
      * @type {string}
      * @memberof PythonAudioAnalysisAPIPythonAudioAnalysisResponse
@@ -110,6 +122,7 @@ export type PythonAudioAnalysisAPIPythonAudioAnalysisResponseOutputTypeEnum = ty
  * Check if a given object implements the PythonAudioAnalysisAPIPythonAudioAnalysisResponse interface.
  */
 export function instanceOfPythonAudioAnalysisAPIPythonAudioAnalysisResponse(value: object): value is PythonAudioAnalysisAPIPythonAudioAnalysisResponse {
+    if (!('fingerprint' in value) || value['fingerprint'] === undefined) return false;
     if (!('analysis_id' in value) || value['analysis_id'] === undefined) return false;
     if (!('simulation_output_id' in value) || value['simulation_output_id'] === undefined) return false;
     if (!('status' in value) || value['status'] === undefined) return false;
@@ -128,6 +141,8 @@ export function PythonAudioAnalysisAPIPythonAudioAnalysisResponseFromJSONTyped(j
     }
     return {
         
+        'fingerprint': json['fingerprint'],
+        'evidence_expires_at': json['evidence_expires_at'] == null ? undefined : json['evidence_expires_at'],
         'analysis_id': json['analysis_id'],
         'simulation_output_id': json['simulation_output_id'],
         'status': json['status'],
@@ -151,6 +166,8 @@ export function PythonAudioAnalysisAPIPythonAudioAnalysisResponseToJSONTyped(val
 
     return {
         
+        'fingerprint': value['fingerprint'],
+        'evidence_expires_at': value['evidence_expires_at'],
         'analysis_id': value['analysis_id'],
         'simulation_output_id': value['simulation_output_id'],
         'status': value['status'],
