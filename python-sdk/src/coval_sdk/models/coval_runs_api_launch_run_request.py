@@ -34,7 +34,7 @@ class CovalRunsAPILaunchRunRequest(BaseModel):
     agent_id: Annotated[str, Field(min_length=22, strict=True, max_length=22)] = Field(description="The agent to test. Must be owned by the authenticated organization.")
     persona_id: Annotated[str, Field(min_length=22, strict=True, max_length=22)] = Field(description="The simulated persona to use for testing.")
     test_set_id: Annotated[str, Field(min_length=8, strict=True, max_length=8)] = Field(description="The test set containing test cases to run.")
-    metric_ids: Optional[List[Annotated[str, Field(min_length=22, strict=True, max_length=22)]]] = Field(default=None, description="Optional list of metric IDs to evaluate. If not provided, uses agent's default metrics.")
+    metric_ids: Optional[List[Annotated[str, Field(min_length=22, strict=True, max_length=22)]]] = Field(default=None, description="Optional list of metric IDs to evaluate. Omitted or null uses the agent's default metrics. An empty list selects no customer metrics.")
     mutation_id: Optional[Annotated[str, Field(min_length=26, strict=True, max_length=26)]] = Field(default=None, description="Single mutation ID to run in addition to the base agent. Mutually exclusive with `mutation_ids`. The base agent always runs. ")
     mutation_ids: Optional[Annotated[List[Annotated[str, Field(min_length=26, strict=True, max_length=26)]], Field(max_length=100)]] = Field(default=None, description="List of mutation IDs to run in addition to the base agent. Mutually exclusive with `mutation_id`. Max 100 mutations. The base agent always runs alongside all mutations.  **Total simulations** = test_cases × iterations × (1 + len(mutation_ids)) ")
     options: Optional[CovalRunsAPILaunchOptions] = None
@@ -94,6 +94,11 @@ class CovalRunsAPILaunchRunRequest(BaseModel):
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
+
+        # set to None if metric_ids (nullable) is None
+        # and model_fields_set contains the field
+        if self.metric_ids is None and "metric_ids" in self.model_fields_set:
+            _dict['metric_ids'] = None
 
         # set to None if mutation_id (nullable) is None
         # and model_fields_set contains the field

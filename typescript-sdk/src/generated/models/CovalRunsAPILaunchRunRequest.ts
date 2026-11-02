@@ -53,11 +53,11 @@ export interface CovalRunsAPILaunchRunRequest {
      */
     test_set_id: string;
     /**
-     * Optional list of metric IDs to evaluate. If not provided, uses agent's default metrics.
+     * Optional list of metric IDs to evaluate. Omitted or null uses the agent's default metrics. An empty list selects no customer metrics.
      * @type {Array<string>}
      * @memberof CovalRunsAPILaunchRunRequest
      */
-    metric_ids?: Array<string>;
+    metric_ids?: Array<string> | null;
     /**
      * Single mutation ID to run in addition to the base agent.
      * Mutually exclusive with `mutation_ids`. The base agent always runs.
