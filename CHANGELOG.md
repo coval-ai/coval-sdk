@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.9.20 (2026-11-02)
+
+### Bug Fixes
+
+- **sdks**: Regenerate from published OpenAPI specs
+  ([`260f44a`](https://github.com/coval-ai/coval-sdk/commit/260f44a54675717625f95d8c9afc34c9485a63bd))
+
+### Continuous Integration
+
+- Restore Python 3.9 SDK validation (COVAL-8703)
+  ([#12](https://github.com/coval-ai/coval-sdk/pull/12),
+  [`c3b74cb`](https://github.com/coval-ai/coval-sdk/commit/c3b74cb418e126f1ea0528474b93b682d2861463))
+
+
 ## v0.9.19 (2026-11-02)
 
 ### Bug Fixes
