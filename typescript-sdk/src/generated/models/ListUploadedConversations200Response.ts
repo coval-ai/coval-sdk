@@ -12,6 +12,13 @@
  * Do not edit the class manually.
  */
 
+import type { CovalUploadedConversationsAPIActivityVolumeResponse } from './CovalUploadedConversationsAPIActivityVolumeResponse.js';
+import {
+    instanceOfCovalUploadedConversationsAPIActivityVolumeResponse,
+    CovalUploadedConversationsAPIActivityVolumeResponseFromJSON,
+    CovalUploadedConversationsAPIActivityVolumeResponseFromJSONTyped,
+    CovalUploadedConversationsAPIActivityVolumeResponseToJSON,
+} from './CovalUploadedConversationsAPIActivityVolumeResponse.js';
 import type { CovalUploadedConversationsAPIListUploadedConversationsResponse } from './CovalUploadedConversationsAPIListUploadedConversationsResponse.js';
 import {
     instanceOfCovalUploadedConversationsAPIListUploadedConversationsResponse,
@@ -32,7 +39,7 @@ import {
  * 
  * @export
  */
-export type ListUploadedConversations200Response = CovalUploadedConversationsAPIListUploadedConversationsResponse | CovalUploadedConversationsAPIMetricBreakdownResponse;
+export type ListUploadedConversations200Response = CovalUploadedConversationsAPIActivityVolumeResponse | CovalUploadedConversationsAPIListUploadedConversationsResponse | CovalUploadedConversationsAPIMetricBreakdownResponse;
 
 export function ListUploadedConversations200ResponseFromJSON(json: any): ListUploadedConversations200Response {
     return ListUploadedConversations200ResponseFromJSONTyped(json, false);
@@ -44,6 +51,9 @@ export function ListUploadedConversations200ResponseFromJSONTyped(json: any, ign
     }
     if (typeof json !== 'object') {
         return json;
+    }
+    if (instanceOfCovalUploadedConversationsAPIActivityVolumeResponse(json)) {
+        return CovalUploadedConversationsAPIActivityVolumeResponseFromJSONTyped(json, true);
     }
     if (instanceOfCovalUploadedConversationsAPIListUploadedConversationsResponse(json)) {
         return CovalUploadedConversationsAPIListUploadedConversationsResponseFromJSONTyped(json, true);
@@ -64,6 +74,9 @@ export function ListUploadedConversations200ResponseToJSONTyped(value?: ListUplo
     }
     if (typeof value !== 'object') {
         return value;
+    }
+    if (instanceOfCovalUploadedConversationsAPIActivityVolumeResponse(value)) {
+        return CovalUploadedConversationsAPIActivityVolumeResponseToJSON(value as CovalUploadedConversationsAPIActivityVolumeResponse);
     }
     if (instanceOfCovalUploadedConversationsAPIListUploadedConversationsResponse(value)) {
         return CovalUploadedConversationsAPIListUploadedConversationsResponseToJSON(value as CovalUploadedConversationsAPIListUploadedConversationsResponse);

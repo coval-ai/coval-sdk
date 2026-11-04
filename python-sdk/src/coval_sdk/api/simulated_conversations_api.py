@@ -16,12 +16,12 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
+from datetime import date
 from pydantic import Field, StrictStr, field_validator
 from typing import Any, Dict, Optional
 from typing_extensions import Annotated
 from coval_sdk.models.coval_simulated_conversations_api_get_simulated_conversation_audio_response import CovalSimulatedConversationsAPIGetSimulatedConversationAudioResponse
 from coval_sdk.models.coval_simulated_conversations_api_get_simulated_conversation_response import CovalSimulatedConversationsAPIGetSimulatedConversationResponse
-from coval_sdk.models.coval_simulated_conversations_api_list_simulated_conversations_response import CovalSimulatedConversationsAPIListSimulatedConversationsResponse
 from coval_sdk.models.coval_simulated_conversations_api_rerun_simulated_conversation_metrics_request import CovalSimulatedConversationsAPIRerunSimulatedConversationMetricsRequest
 from coval_sdk.models.coval_simulated_conversations_api_rerun_simulated_conversation_metrics_response import CovalSimulatedConversationsAPIRerunSimulatedConversationMetricsResponse
 from coval_sdk.models.coval_simulated_conversations_api_resimulate_simulated_conversation_response import CovalSimulatedConversationsAPIResimulateSimulatedConversationResponse
@@ -29,6 +29,7 @@ from coval_sdk.models.coval_simulated_conversations_api_update_simulated_convers
 from coval_sdk.models.coval_simulated_conversations_api_update_simulated_conversation_response import CovalSimulatedConversationsAPIUpdateSimulatedConversationResponse
 from coval_sdk.models.get_simulation_attribute200_response import GetSimulationAttribute200Response
 from coval_sdk.models.get_simulation_connect200_response import GetSimulationConnect200Response
+from coval_sdk.models.list_simulated_conversations200_response import ListSimulatedConversations200Response
 
 from coval_sdk.api_client import ApiClient, RequestSerialized
 from coval_sdk.api_response import ApiResponse
@@ -1462,6 +1463,10 @@ class SimulatedConversationsApi:
         page_token: Annotated[Optional[StrictStr], Field(description="Opaque pagination token from previous response")] = None,
         order_by: Annotated[Optional[StrictStr], Field(description="Sort order specification.  Format: `field` or `-field` (descending)  Supported fields: `create_time`, `status` ")] = None,
         include: Annotated[Optional[StrictStr], Field(description="Set to `metric_values` to embed each simulation's value per metric inline. Served by the keyset engine (newest-first, `page_size` capped at 100). ")] = None,
+        view: Annotated[Optional[StrictStr], Field(description="Return workspace-scoped daily simulation counts instead of rows. Requires `volume_start_date` and `volume_end_date`, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. ")] = None,
+        volume_start_date: Annotated[Optional[date], Field(description="Inclusive start date for `view=volume_by_day`.")] = None,
+        volume_end_date: Annotated[Optional[date], Field(description="Exclusive end date for `view=volume_by_day`, at most 31 days after the start and no later than tomorrow in the requested time zone.")] = None,
+        time_zone: Annotated[Optional[StrictStr], Field(description="IANA time zone used to define calendar days for `view=volume_by_day`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1474,7 +1479,7 @@ class SimulatedConversationsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CovalSimulatedConversationsAPIListSimulatedConversationsResponse:
+    ) -> ListSimulatedConversations200Response:
         """List simulations
 
         List simulations with optional filtering and sorting. 
@@ -1489,6 +1494,14 @@ class SimulatedConversationsApi:
         :type order_by: str
         :param include: Set to `metric_values` to embed each simulation's value per metric inline. Served by the keyset engine (newest-first, `page_size` capped at 100). 
         :type include: str
+        :param view: Return workspace-scoped daily simulation counts instead of rows. Requires `volume_start_date` and `volume_end_date`, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+        :type view: str
+        :param volume_start_date: Inclusive start date for `view=volume_by_day`.
+        :type volume_start_date: date
+        :param volume_end_date: Exclusive end date for `view=volume_by_day`, at most 31 days after the start and no later than tomorrow in the requested time zone.
+        :type volume_end_date: date
+        :param time_zone: IANA time zone used to define calendar days for `view=volume_by_day`.
+        :type time_zone: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1517,6 +1530,10 @@ class SimulatedConversationsApi:
             page_token=page_token,
             order_by=order_by,
             include=include,
+            view=view,
+            volume_start_date=volume_start_date,
+            volume_end_date=volume_end_date,
+            time_zone=time_zone,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1524,7 +1541,7 @@ class SimulatedConversationsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalSimulatedConversationsAPIListSimulatedConversationsResponse",
+            '200': "ListSimulatedConversations200Response",
             '400': "CovalSimulatedConversationsAPIErrorResponse",
             '401': "CovalSimulatedConversationsAPIErrorResponse",
             '412': "CovalSimulatedConversationsAPIErrorResponse",
@@ -1549,6 +1566,10 @@ class SimulatedConversationsApi:
         page_token: Annotated[Optional[StrictStr], Field(description="Opaque pagination token from previous response")] = None,
         order_by: Annotated[Optional[StrictStr], Field(description="Sort order specification.  Format: `field` or `-field` (descending)  Supported fields: `create_time`, `status` ")] = None,
         include: Annotated[Optional[StrictStr], Field(description="Set to `metric_values` to embed each simulation's value per metric inline. Served by the keyset engine (newest-first, `page_size` capped at 100). ")] = None,
+        view: Annotated[Optional[StrictStr], Field(description="Return workspace-scoped daily simulation counts instead of rows. Requires `volume_start_date` and `volume_end_date`, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. ")] = None,
+        volume_start_date: Annotated[Optional[date], Field(description="Inclusive start date for `view=volume_by_day`.")] = None,
+        volume_end_date: Annotated[Optional[date], Field(description="Exclusive end date for `view=volume_by_day`, at most 31 days after the start and no later than tomorrow in the requested time zone.")] = None,
+        time_zone: Annotated[Optional[StrictStr], Field(description="IANA time zone used to define calendar days for `view=volume_by_day`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1561,7 +1582,7 @@ class SimulatedConversationsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CovalSimulatedConversationsAPIListSimulatedConversationsResponse]:
+    ) -> ApiResponse[ListSimulatedConversations200Response]:
         """List simulations
 
         List simulations with optional filtering and sorting. 
@@ -1576,6 +1597,14 @@ class SimulatedConversationsApi:
         :type order_by: str
         :param include: Set to `metric_values` to embed each simulation's value per metric inline. Served by the keyset engine (newest-first, `page_size` capped at 100). 
         :type include: str
+        :param view: Return workspace-scoped daily simulation counts instead of rows. Requires `volume_start_date` and `volume_end_date`, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+        :type view: str
+        :param volume_start_date: Inclusive start date for `view=volume_by_day`.
+        :type volume_start_date: date
+        :param volume_end_date: Exclusive end date for `view=volume_by_day`, at most 31 days after the start and no later than tomorrow in the requested time zone.
+        :type volume_end_date: date
+        :param time_zone: IANA time zone used to define calendar days for `view=volume_by_day`.
+        :type time_zone: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1604,6 +1633,10 @@ class SimulatedConversationsApi:
             page_token=page_token,
             order_by=order_by,
             include=include,
+            view=view,
+            volume_start_date=volume_start_date,
+            volume_end_date=volume_end_date,
+            time_zone=time_zone,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1611,7 +1644,7 @@ class SimulatedConversationsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalSimulatedConversationsAPIListSimulatedConversationsResponse",
+            '200': "ListSimulatedConversations200Response",
             '400': "CovalSimulatedConversationsAPIErrorResponse",
             '401': "CovalSimulatedConversationsAPIErrorResponse",
             '412': "CovalSimulatedConversationsAPIErrorResponse",
@@ -1636,6 +1669,10 @@ class SimulatedConversationsApi:
         page_token: Annotated[Optional[StrictStr], Field(description="Opaque pagination token from previous response")] = None,
         order_by: Annotated[Optional[StrictStr], Field(description="Sort order specification.  Format: `field` or `-field` (descending)  Supported fields: `create_time`, `status` ")] = None,
         include: Annotated[Optional[StrictStr], Field(description="Set to `metric_values` to embed each simulation's value per metric inline. Served by the keyset engine (newest-first, `page_size` capped at 100). ")] = None,
+        view: Annotated[Optional[StrictStr], Field(description="Return workspace-scoped daily simulation counts instead of rows. Requires `volume_start_date` and `volume_end_date`, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. ")] = None,
+        volume_start_date: Annotated[Optional[date], Field(description="Inclusive start date for `view=volume_by_day`.")] = None,
+        volume_end_date: Annotated[Optional[date], Field(description="Exclusive end date for `view=volume_by_day`, at most 31 days after the start and no later than tomorrow in the requested time zone.")] = None,
+        time_zone: Annotated[Optional[StrictStr], Field(description="IANA time zone used to define calendar days for `view=volume_by_day`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1663,6 +1700,14 @@ class SimulatedConversationsApi:
         :type order_by: str
         :param include: Set to `metric_values` to embed each simulation's value per metric inline. Served by the keyset engine (newest-first, `page_size` capped at 100). 
         :type include: str
+        :param view: Return workspace-scoped daily simulation counts instead of rows. Requires `volume_start_date` and `volume_end_date`, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+        :type view: str
+        :param volume_start_date: Inclusive start date for `view=volume_by_day`.
+        :type volume_start_date: date
+        :param volume_end_date: Exclusive end date for `view=volume_by_day`, at most 31 days after the start and no later than tomorrow in the requested time zone.
+        :type volume_end_date: date
+        :param time_zone: IANA time zone used to define calendar days for `view=volume_by_day`.
+        :type time_zone: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1691,6 +1736,10 @@ class SimulatedConversationsApi:
             page_token=page_token,
             order_by=order_by,
             include=include,
+            view=view,
+            volume_start_date=volume_start_date,
+            volume_end_date=volume_end_date,
+            time_zone=time_zone,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1698,7 +1747,7 @@ class SimulatedConversationsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalSimulatedConversationsAPIListSimulatedConversationsResponse",
+            '200': "ListSimulatedConversations200Response",
             '400': "CovalSimulatedConversationsAPIErrorResponse",
             '401': "CovalSimulatedConversationsAPIErrorResponse",
             '412': "CovalSimulatedConversationsAPIErrorResponse",
@@ -1718,6 +1767,10 @@ class SimulatedConversationsApi:
         page_token,
         order_by,
         include,
+        view,
+        volume_start_date,
+        volume_end_date,
+        time_zone,
         _request_auth,
         _content_type,
         _headers,
@@ -1759,6 +1812,40 @@ class SimulatedConversationsApi:
         if include is not None:
             
             _query_params.append(('include', include))
+            
+        if view is not None:
+            
+            _query_params.append(('view', view))
+            
+        if volume_start_date is not None:
+            if isinstance(volume_start_date, date):
+                _query_params.append(
+                    (
+                        'volume_start_date',
+                        volume_start_date.strftime(
+                            self.api_client.configuration.date_format
+                        )
+                    )
+                )
+            else:
+                _query_params.append(('volume_start_date', volume_start_date))
+            
+        if volume_end_date is not None:
+            if isinstance(volume_end_date, date):
+                _query_params.append(
+                    (
+                        'volume_end_date',
+                        volume_end_date.strftime(
+                            self.api_client.configuration.date_format
+                        )
+                    )
+                )
+            else:
+                _query_params.append(('volume_end_date', volume_end_date))
+            
+        if time_zone is not None:
+            
+            _query_params.append(('time_zone', time_zone))
             
         # process the header parameters
         # process the form parameters

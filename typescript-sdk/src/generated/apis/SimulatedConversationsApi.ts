@@ -29,11 +29,6 @@ import {
     CovalSimulatedConversationsAPIGetSimulatedConversationResponseToJSON,
 } from '../models/CovalSimulatedConversationsAPIGetSimulatedConversationResponse.js';
 import {
-    type CovalSimulatedConversationsAPIListSimulatedConversationsResponse,
-    CovalSimulatedConversationsAPIListSimulatedConversationsResponseFromJSON,
-    CovalSimulatedConversationsAPIListSimulatedConversationsResponseToJSON,
-} from '../models/CovalSimulatedConversationsAPIListSimulatedConversationsResponse.js';
-import {
     type CovalSimulatedConversationsAPIRerunSimulatedConversationMetricsRequest,
     CovalSimulatedConversationsAPIRerunSimulatedConversationMetricsRequestFromJSON,
     CovalSimulatedConversationsAPIRerunSimulatedConversationMetricsRequestToJSON,
@@ -68,6 +63,11 @@ import {
     GetSimulationConnect200ResponseFromJSON,
     GetSimulationConnect200ResponseToJSON,
 } from '../models/GetSimulationConnect200Response.js';
+import {
+    type ListSimulatedConversations200Response,
+    ListSimulatedConversations200ResponseFromJSON,
+    ListSimulatedConversations200ResponseToJSON,
+} from '../models/ListSimulatedConversations200Response.js';
 
 export interface DeleteSimulatedConversationRequest {
     simulationId: string;
@@ -97,6 +97,10 @@ export interface ListSimulatedConversationsRequest {
     pageToken?: string;
     orderBy?: string;
     include?: ListSimulatedConversationsIncludeEnum;
+    view?: ListSimulatedConversationsViewEnum;
+    volumeStartDate?: Date;
+    volumeEndDate?: Date;
+    timeZone?: string;
 }
 
 export interface RerunSimulatedConversationMetricsRequest {
@@ -251,6 +255,10 @@ export interface SimulatedConversationsApiInterface {
      * @param {string} [pageToken] Opaque pagination token from previous response
      * @param {string} [orderBy] Sort order specification.  Format: &#x60;field&#x60; or &#x60;-field&#x60; (descending)  Supported fields: &#x60;create_time&#x60;, &#x60;status&#x60; 
      * @param {'metric_values'} [include] Set to &#x60;metric_values&#x60; to embed each simulation\&#39;s value per metric inline. Served by the keyset engine (newest-first, &#x60;page_size&#x60; capped at 100). 
+     * @param {'volume_by_day'} [view] Return workspace-scoped daily simulation counts instead of rows. Requires &#x60;volume_start_date&#x60; and &#x60;volume_end_date&#x60;, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+     * @param {Date} [volumeStartDate] Inclusive start date for &#x60;view&#x3D;volume_by_day&#x60;.
+     * @param {Date} [volumeEndDate] Exclusive end date for &#x60;view&#x3D;volume_by_day&#x60;, at most 31 days after the start and no later than tomorrow in the requested time zone.
+     * @param {string} [timeZone] IANA time zone used to define calendar days for &#x60;view&#x3D;volume_by_day&#x60;.
      * @throws {RequiredError}
      * @memberof SimulatedConversationsApiInterface
      */
@@ -264,17 +272,21 @@ export interface SimulatedConversationsApiInterface {
      * @param {string} [pageToken] Opaque pagination token from previous response
      * @param {string} [orderBy] Sort order specification.  Format: &#x60;field&#x60; or &#x60;-field&#x60; (descending)  Supported fields: &#x60;create_time&#x60;, &#x60;status&#x60; 
      * @param {'metric_values'} [include] Set to &#x60;metric_values&#x60; to embed each simulation\&#39;s value per metric inline. Served by the keyset engine (newest-first, &#x60;page_size&#x60; capped at 100). 
+     * @param {'volume_by_day'} [view] Return workspace-scoped daily simulation counts instead of rows. Requires &#x60;volume_start_date&#x60; and &#x60;volume_end_date&#x60;, and does not accept list filters, pagination, ordering or expansions. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+     * @param {Date} [volumeStartDate] Inclusive start date for &#x60;view&#x3D;volume_by_day&#x60;.
+     * @param {Date} [volumeEndDate] Exclusive end date for &#x60;view&#x3D;volume_by_day&#x60;, at most 31 days after the start and no later than tomorrow in the requested time zone.
+     * @param {string} [timeZone] IANA time zone used to define calendar days for &#x60;view&#x3D;volume_by_day&#x60;.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SimulatedConversationsApiInterface
      */
-    listSimulatedConversationsRaw(requestParameters: ListSimulatedConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalSimulatedConversationsAPIListSimulatedConversationsResponse>>;
+    listSimulatedConversationsRaw(requestParameters: ListSimulatedConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListSimulatedConversations200Response>>;
 
     /**
      * List simulations with optional filtering and sorting. 
      * List simulations
      */
-    listSimulatedConversations(requestParameters: ListSimulatedConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalSimulatedConversationsAPIListSimulatedConversationsResponse>;
+    listSimulatedConversations(requestParameters: ListSimulatedConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListSimulatedConversations200Response>;
 
     /**
      * Creates request options for rerunSimulatedConversationMetrics without sending the request
@@ -652,6 +664,22 @@ export class SimulatedConversationsApi extends runtime.BaseAPI implements Simula
             queryParameters['include'] = requestParameters['include'];
         }
 
+        if (requestParameters['view'] != null) {
+            queryParameters['view'] = requestParameters['view'];
+        }
+
+        if (requestParameters['volumeStartDate'] != null) {
+            queryParameters['volume_start_date'] = (requestParameters['volumeStartDate'] as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters['volumeEndDate'] != null) {
+            queryParameters['volume_end_date'] = (requestParameters['volumeEndDate'] as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters['timeZone'] != null) {
+            queryParameters['time_zone'] = requestParameters['timeZone'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
@@ -673,18 +701,18 @@ export class SimulatedConversationsApi extends runtime.BaseAPI implements Simula
      * List simulations with optional filtering and sorting. 
      * List simulations
      */
-    async listSimulatedConversationsRaw(requestParameters: ListSimulatedConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalSimulatedConversationsAPIListSimulatedConversationsResponse>> {
+    async listSimulatedConversationsRaw(requestParameters: ListSimulatedConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListSimulatedConversations200Response>> {
         const requestOptions = await this.listSimulatedConversationsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CovalSimulatedConversationsAPIListSimulatedConversationsResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListSimulatedConversations200ResponseFromJSON(jsonValue));
     }
 
     /**
      * List simulations with optional filtering and sorting. 
      * List simulations
      */
-    async listSimulatedConversations(requestParameters: ListSimulatedConversationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalSimulatedConversationsAPIListSimulatedConversationsResponse> {
+    async listSimulatedConversations(requestParameters: ListSimulatedConversationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListSimulatedConversations200Response> {
         const response = await this.listSimulatedConversationsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -859,3 +887,10 @@ export const ListSimulatedConversationsIncludeEnum = {
     MetricValues: 'metric_values'
 } as const;
 export type ListSimulatedConversationsIncludeEnum = typeof ListSimulatedConversationsIncludeEnum[keyof typeof ListSimulatedConversationsIncludeEnum];
+/**
+ * @export
+ */
+export const ListSimulatedConversationsViewEnum = {
+    VolumeByDay: 'volume_by_day'
+} as const;
+export type ListSimulatedConversationsViewEnum = typeof ListSimulatedConversationsViewEnum[keyof typeof ListSimulatedConversationsViewEnum];

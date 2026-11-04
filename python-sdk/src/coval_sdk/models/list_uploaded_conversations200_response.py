@@ -18,13 +18,14 @@ import json
 import pprint
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
 from typing import Any, List, Optional
+from coval_sdk.models.coval_uploaded_conversations_api_activity_volume_response import CovalUploadedConversationsAPIActivityVolumeResponse
 from coval_sdk.models.coval_uploaded_conversations_api_list_uploaded_conversations_response import CovalUploadedConversationsAPIListUploadedConversationsResponse
 from coval_sdk.models.coval_uploaded_conversations_api_metric_breakdown_response import CovalUploadedConversationsAPIMetricBreakdownResponse
 from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-LISTUPLOADEDCONVERSATIONS200RESPONSE_ONE_OF_SCHEMAS = ["CovalUploadedConversationsAPIListUploadedConversationsResponse", "CovalUploadedConversationsAPIMetricBreakdownResponse"]
+LISTUPLOADEDCONVERSATIONS200RESPONSE_ONE_OF_SCHEMAS = ["CovalUploadedConversationsAPIActivityVolumeResponse", "CovalUploadedConversationsAPIListUploadedConversationsResponse", "CovalUploadedConversationsAPIMetricBreakdownResponse"]
 
 class ListUploadedConversations200Response(BaseModel):
     """
@@ -34,8 +35,10 @@ class ListUploadedConversations200Response(BaseModel):
     oneof_schema_1_validator: Optional[CovalUploadedConversationsAPIListUploadedConversationsResponse] = None
     # data type: CovalUploadedConversationsAPIMetricBreakdownResponse
     oneof_schema_2_validator: Optional[CovalUploadedConversationsAPIMetricBreakdownResponse] = None
-    actual_instance: Optional[Union[CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse]] = None
-    one_of_schemas: Set[str] = { "CovalUploadedConversationsAPIListUploadedConversationsResponse", "CovalUploadedConversationsAPIMetricBreakdownResponse" }
+    # data type: CovalUploadedConversationsAPIActivityVolumeResponse
+    oneof_schema_3_validator: Optional[CovalUploadedConversationsAPIActivityVolumeResponse] = None
+    actual_instance: Optional[Union[CovalUploadedConversationsAPIActivityVolumeResponse, CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse]] = None
+    one_of_schemas: Set[str] = { "CovalUploadedConversationsAPIActivityVolumeResponse", "CovalUploadedConversationsAPIListUploadedConversationsResponse", "CovalUploadedConversationsAPIMetricBreakdownResponse" }
 
     model_config = ConfigDict(
         validate_assignment=True,
@@ -68,12 +71,17 @@ class ListUploadedConversations200Response(BaseModel):
             error_messages.append(f"Error! Input type `{type(v)}` is not `CovalUploadedConversationsAPIMetricBreakdownResponse`")
         else:
             match += 1
+        # validate data type: CovalUploadedConversationsAPIActivityVolumeResponse
+        if not isinstance(v, CovalUploadedConversationsAPIActivityVolumeResponse):
+            error_messages.append(f"Error! Input type `{type(v)}` is not `CovalUploadedConversationsAPIActivityVolumeResponse`")
+        else:
+            match += 1
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIActivityVolumeResponse, CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIActivityVolumeResponse, CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -100,13 +108,19 @@ class ListUploadedConversations200Response(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
+        # deserialize data into CovalUploadedConversationsAPIActivityVolumeResponse
+        try:
+            instance.actual_instance = CovalUploadedConversationsAPIActivityVolumeResponse.from_json(json_str)
+            match += 1
+        except (ValidationError, ValueError) as e:
+            error_messages.append(str(e))
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIActivityVolumeResponse, CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into ListUploadedConversations200Response with oneOf schemas: CovalUploadedConversationsAPIActivityVolumeResponse, CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse. Details: " + ", ".join(error_messages))
         else:
             return instance
 
@@ -120,7 +134,7 @@ class ListUploadedConversations200Response(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse]]:
+    def to_dict(self) -> Optional[Union[Dict[str, Any], CovalUploadedConversationsAPIActivityVolumeResponse, CovalUploadedConversationsAPIListUploadedConversationsResponse, CovalUploadedConversationsAPIMetricBreakdownResponse]]:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

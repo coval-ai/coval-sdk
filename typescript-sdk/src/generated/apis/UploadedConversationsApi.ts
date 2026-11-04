@@ -86,6 +86,9 @@ export interface ListUploadedConversationsRequest {
     filter?: string;
     orderBy?: string;
     view?: ListUploadedConversationsViewEnum;
+    volumeStartDate?: Date;
+    volumeEndDate?: Date;
+    timeZone?: string;
     metricId?: string;
     include?: ListUploadedConversationsIncludeEnum;
     groupByMetadata?: string;
@@ -231,7 +234,10 @@ export interface UploadedConversationsApiInterface {
      * @param {'eventual' | 'strong'} [consistency] Read consistency for the request. &#x60;strong&#x60; is available only for a single &#x60;external_conversation_id&#x60; equality filter with &#x60;page_size&#x60; at most 2 and without expansion, ordering, pagination, or aggregate-view parameters. All other list requests use &#x60;eventual&#x60; consistency. 
      * @param {string} [filter] Filter expression syntax.  **Operators:** &#x60;&#x3D;&#x60;, &#x60;!&#x3D;&#x60;, &#x60;&gt;&#x60;, &#x60;&lt;&#x60;, &#x60;&gt;&#x3D;&#x60;, &#x60;&lt;&#x3D;&#x60;, &#x60;AND&#x60;, &#x60;OR&#x60;  Values may be unquoted or double-quoted. Values containing spaces must be quoted.  **Fields:** - &#x60;status&#x60; - PENDING, IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED, CANCELLED, DELETED - &#x60;external_conversation_id&#x60; - Your system\&#39;s conversation ID - &#x60;create_time&#x60; - ISO 8601 timestamp - &#x60;occurred_at&#x60; - ISO 8601 timestamp - &#x60;metadata.{key}&#x60; - Custom metadata fields - &#x60;metric.{metric_id}&#x60; - Filter by a metric\&#39;s value (score filtering)  **Metric-value filtering:** a &#x60;metric.{metric_id}&#x60; predicate (e.g. &#x60;metric.29Blkepvvx&lt;\&quot;0.9\&quot;&#x60;; &#x60;&gt;&#x60;/&#x60;&lt;&#x60;/&#x60;&gt;&#x3D;&#x60;/&#x60;&lt;&#x3D;&#x60;/&#x60;&#x3D;&#x60;/&#x60;!&#x3D;&#x60; for float metrics, &#x60;&#x3D;&#x60;/&#x60;!&#x3D;&#x60; for string metrics) returns only conversations whose metric matches, with every metric\&#39;s value embedded inline (&#x60;metric_values&#x60;). The metric type is inferred from the literal — a numeric literal is compared as a float metric. When a metric predicate is present the request is served with keyset pagination, ordered newest-first by creation time, and supports only &#x60;AND&#x60; alongside &#x60;create_time&#x60; (inclusive bounds), &#x60;agent_id&#x60;, and &#x60;metadata.{key}&#x60;; other filter fields (including &#x60;occurred_at&#x60;) and any non-default &#x60;order_by&#x60; are rejected with 400, and &#x60;page_size&#x60; is capped at 100.  **Examples:** - &#x60;status&#x3D;COMPLETED&#x60; - &#x60;create_time&gt;\&quot;2025-11-01T00:00:00Z\&quot;&#x60; - &#x60;status&#x3D;COMPLETED AND occurred_at&gt;&#x3D;\&quot;2025-11-01T00:00:00Z\&quot;&#x60; - &#x60;external_conversation_id&#x3D;external-call-abc&#x60; - &#x60;metric.29BlkepvvX19ebbLDB0y6Q&lt;\&quot;0.5\&quot;&#x60; 
      * @param {string} [orderBy] Sort field with optional &#x60;-&#x60; prefix for descending order.  **Fields:** &#x60;create_time&#x60;, &#x60;occurred_at&#x60;, &#x60;status&#x60;  **Examples:** - &#x60;create_time&#x60; (ascending) - &#x60;-create_time&#x60; (descending, most recent first) - &#x60;-occurred_at&#x60; (most recent conversations first) 
-     * @param {'metric_breakdown'} [view] Set to &#x60;metric_breakdown&#x60; to return an aggregate of one metric\&#39;s scores grouped by a &#x60;customer_metadata&#x60; key (e.g. vendor), computed over the whole scored uploaded-conversation corpus, instead of the conversation list. Requires &#x60;metric_id&#x60; and &#x60;group_by_metadata&#x60;; the response is a metric-breakdown object (&#x60;{view, metric_id, group_by_metadata, aggregation, breakdown:[{metadata_value, value, count}], total_count}&#x60;). 
+     * @param {'metric_breakdown' | 'volume_by_day'} [view] Set to &#x60;metric_breakdown&#x60; to return an aggregate of one metric\&#39;s scores grouped by a &#x60;customer_metadata&#x60; key (e.g. vendor), computed over the whole scored uploaded-conversation corpus, instead of the conversation list. Requires &#x60;metric_id&#x60; and &#x60;group_by_metadata&#x60;; the response is a metric-breakdown object (&#x60;{view, metric_id, group_by_metadata, aggregation, breakdown:[{metadata_value, value, count}], total_count}&#x60;). Set to &#x60;volume_by_day&#x60; to count uploads by creation date in the active workspace. It requires &#x60;volume_start_date&#x60; and &#x60;volume_end_date&#x60; and accepts no list filters, pagination, ordering, or metric parameters. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+     * @param {Date} [volumeStartDate] Inclusive calendar start date for &#x60;view&#x3D;volume_by_day&#x60;.
+     * @param {Date} [volumeEndDate] Exclusive calendar end date for &#x60;view&#x3D;volume_by_day&#x60;, at most 31 days after the start and no later than tomorrow in the requested time zone.
+     * @param {string} [timeZone] IANA time zone used for calendar days in &#x60;view&#x3D;volume_by_day&#x60;; defaults to UTC.
      * @param {string} [metricId] Metric to aggregate when &#x60;view&#x3D;metric_breakdown&#x60;, or the metric whose full outputs should be embedded when &#x60;include&#x3D;metric_outputs&#x60;. 
      * @param {'metric_outputs' | 'metric_values'} [include] Set to &#x60;metric_outputs&#x60; to embed full outputs for &#x60;metric_id&#x60; on every conversation in the returned page, or &#x60;metric_values&#x60; to embed every metric\&#39;s value inline on each conversation (keyset-paginated; &#x60;page_size&#x60; capped at 100). Omitted by default to keep list payloads small. 
      * @param {string} [groupByMetadata] Required when &#x60;view&#x3D;metric_breakdown&#x60;: the customer_metadata key to group by (e.g. nlp_provider).
@@ -251,7 +257,10 @@ export interface UploadedConversationsApiInterface {
      * @param {'eventual' | 'strong'} [consistency] Read consistency for the request. &#x60;strong&#x60; is available only for a single &#x60;external_conversation_id&#x60; equality filter with &#x60;page_size&#x60; at most 2 and without expansion, ordering, pagination, or aggregate-view parameters. All other list requests use &#x60;eventual&#x60; consistency. 
      * @param {string} [filter] Filter expression syntax.  **Operators:** &#x60;&#x3D;&#x60;, &#x60;!&#x3D;&#x60;, &#x60;&gt;&#x60;, &#x60;&lt;&#x60;, &#x60;&gt;&#x3D;&#x60;, &#x60;&lt;&#x3D;&#x60;, &#x60;AND&#x60;, &#x60;OR&#x60;  Values may be unquoted or double-quoted. Values containing spaces must be quoted.  **Fields:** - &#x60;status&#x60; - PENDING, IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED, CANCELLED, DELETED - &#x60;external_conversation_id&#x60; - Your system\&#39;s conversation ID - &#x60;create_time&#x60; - ISO 8601 timestamp - &#x60;occurred_at&#x60; - ISO 8601 timestamp - &#x60;metadata.{key}&#x60; - Custom metadata fields - &#x60;metric.{metric_id}&#x60; - Filter by a metric\&#39;s value (score filtering)  **Metric-value filtering:** a &#x60;metric.{metric_id}&#x60; predicate (e.g. &#x60;metric.29Blkepvvx&lt;\&quot;0.9\&quot;&#x60;; &#x60;&gt;&#x60;/&#x60;&lt;&#x60;/&#x60;&gt;&#x3D;&#x60;/&#x60;&lt;&#x3D;&#x60;/&#x60;&#x3D;&#x60;/&#x60;!&#x3D;&#x60; for float metrics, &#x60;&#x3D;&#x60;/&#x60;!&#x3D;&#x60; for string metrics) returns only conversations whose metric matches, with every metric\&#39;s value embedded inline (&#x60;metric_values&#x60;). The metric type is inferred from the literal — a numeric literal is compared as a float metric. When a metric predicate is present the request is served with keyset pagination, ordered newest-first by creation time, and supports only &#x60;AND&#x60; alongside &#x60;create_time&#x60; (inclusive bounds), &#x60;agent_id&#x60;, and &#x60;metadata.{key}&#x60;; other filter fields (including &#x60;occurred_at&#x60;) and any non-default &#x60;order_by&#x60; are rejected with 400, and &#x60;page_size&#x60; is capped at 100.  **Examples:** - &#x60;status&#x3D;COMPLETED&#x60; - &#x60;create_time&gt;\&quot;2025-11-01T00:00:00Z\&quot;&#x60; - &#x60;status&#x3D;COMPLETED AND occurred_at&gt;&#x3D;\&quot;2025-11-01T00:00:00Z\&quot;&#x60; - &#x60;external_conversation_id&#x3D;external-call-abc&#x60; - &#x60;metric.29BlkepvvX19ebbLDB0y6Q&lt;\&quot;0.5\&quot;&#x60; 
      * @param {string} [orderBy] Sort field with optional &#x60;-&#x60; prefix for descending order.  **Fields:** &#x60;create_time&#x60;, &#x60;occurred_at&#x60;, &#x60;status&#x60;  **Examples:** - &#x60;create_time&#x60; (ascending) - &#x60;-create_time&#x60; (descending, most recent first) - &#x60;-occurred_at&#x60; (most recent conversations first) 
-     * @param {'metric_breakdown'} [view] Set to &#x60;metric_breakdown&#x60; to return an aggregate of one metric\&#39;s scores grouped by a &#x60;customer_metadata&#x60; key (e.g. vendor), computed over the whole scored uploaded-conversation corpus, instead of the conversation list. Requires &#x60;metric_id&#x60; and &#x60;group_by_metadata&#x60;; the response is a metric-breakdown object (&#x60;{view, metric_id, group_by_metadata, aggregation, breakdown:[{metadata_value, value, count}], total_count}&#x60;). 
+     * @param {'metric_breakdown' | 'volume_by_day'} [view] Set to &#x60;metric_breakdown&#x60; to return an aggregate of one metric\&#39;s scores grouped by a &#x60;customer_metadata&#x60; key (e.g. vendor), computed over the whole scored uploaded-conversation corpus, instead of the conversation list. Requires &#x60;metric_id&#x60; and &#x60;group_by_metadata&#x60;; the response is a metric-breakdown object (&#x60;{view, metric_id, group_by_metadata, aggregation, breakdown:[{metadata_value, value, count}], total_count}&#x60;). Set to &#x60;volume_by_day&#x60; to count uploads by creation date in the active workspace. It requires &#x60;volume_start_date&#x60; and &#x60;volume_end_date&#x60; and accepts no list filters, pagination, ordering, or metric parameters. Counts cover all creators and all non-deleted statuses. Data uses eventual consistency; the current day may be incomplete. 
+     * @param {Date} [volumeStartDate] Inclusive calendar start date for &#x60;view&#x3D;volume_by_day&#x60;.
+     * @param {Date} [volumeEndDate] Exclusive calendar end date for &#x60;view&#x3D;volume_by_day&#x60;, at most 31 days after the start and no later than tomorrow in the requested time zone.
+     * @param {string} [timeZone] IANA time zone used for calendar days in &#x60;view&#x3D;volume_by_day&#x60;; defaults to UTC.
      * @param {string} [metricId] Metric to aggregate when &#x60;view&#x3D;metric_breakdown&#x60;, or the metric whose full outputs should be embedded when &#x60;include&#x3D;metric_outputs&#x60;. 
      * @param {'metric_outputs' | 'metric_values'} [include] Set to &#x60;metric_outputs&#x60; to embed full outputs for &#x60;metric_id&#x60; on every conversation in the returned page, or &#x60;metric_values&#x60; to embed every metric\&#39;s value inline on each conversation (keyset-paginated; &#x60;page_size&#x60; capped at 100). Omitted by default to keep list payloads small. 
      * @param {string} [groupByMetadata] Required when &#x60;view&#x3D;metric_breakdown&#x60;: the customer_metadata key to group by (e.g. nlp_provider).
@@ -601,6 +610,18 @@ export class UploadedConversationsApi extends runtime.BaseAPI implements Uploade
             queryParameters['view'] = requestParameters['view'];
         }
 
+        if (requestParameters['volumeStartDate'] != null) {
+            queryParameters['volume_start_date'] = (requestParameters['volumeStartDate'] as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters['volumeEndDate'] != null) {
+            queryParameters['volume_end_date'] = (requestParameters['volumeEndDate'] as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters['timeZone'] != null) {
+            queryParameters['time_zone'] = requestParameters['timeZone'];
+        }
+
         if (requestParameters['metricId'] != null) {
             queryParameters['metric_id'] = requestParameters['metricId'];
         }
@@ -798,7 +819,8 @@ export type ListUploadedConversationsConsistencyEnum = typeof ListUploadedConver
  * @export
  */
 export const ListUploadedConversationsViewEnum = {
-    MetricBreakdown: 'metric_breakdown'
+    MetricBreakdown: 'metric_breakdown',
+    VolumeByDay: 'volume_by_day'
 } as const;
 export type ListUploadedConversationsViewEnum = typeof ListUploadedConversationsViewEnum[keyof typeof ListUploadedConversationsViewEnum];
 /**
