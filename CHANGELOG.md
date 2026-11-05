@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.26 (2026-11-05)
+
+### Bug Fixes
+
+- **sdks**: Regenerate from published OpenAPI specs
+  ([`cb8746a`](https://github.com/coval-ai/coval-sdk/commit/cb8746ab5265d77ec86db5b85cb8806ade143cdd))
+
+
 ## v0.9.25 (2026-11-05)
 
 ### Bug Fixes
