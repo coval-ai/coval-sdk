@@ -432,6 +432,7 @@ __all__ = [
     "CovalRunsAPIMetricValue",
     "CovalRunsAPIMetricValueValue",
     "CovalRunsAPIMonitoringRunTagUpdateResource",
+    "CovalRunsAPIRunDetailResource",
     "CovalRunsAPIRunProgress",
     "CovalRunsAPIRunResource",
     "CovalRunsAPIRunResults",
@@ -1084,6 +1085,7 @@ from coval_sdk.models.coval_runs_api_metric_result import CovalRunsAPIMetricResu
 from coval_sdk.models.coval_runs_api_metric_value import CovalRunsAPIMetricValue as CovalRunsAPIMetricValue
 from coval_sdk.models.coval_runs_api_metric_value_value import CovalRunsAPIMetricValueValue as CovalRunsAPIMetricValueValue
 from coval_sdk.models.coval_runs_api_monitoring_run_tag_update_resource import CovalRunsAPIMonitoringRunTagUpdateResource as CovalRunsAPIMonitoringRunTagUpdateResource
+from coval_sdk.models.coval_runs_api_run_detail_resource import CovalRunsAPIRunDetailResource as CovalRunsAPIRunDetailResource
 from coval_sdk.models.coval_runs_api_run_progress import CovalRunsAPIRunProgress as CovalRunsAPIRunProgress
 from coval_sdk.models.coval_runs_api_run_resource import CovalRunsAPIRunResource as CovalRunsAPIRunResource
 from coval_sdk.models.coval_runs_api_run_results import CovalRunsAPIRunResults as CovalRunsAPIRunResults

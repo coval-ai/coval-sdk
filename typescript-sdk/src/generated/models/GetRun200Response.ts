@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { CovalRunsAPIRunResource } from './CovalRunsAPIRunResource.js';
+import type { CovalRunsAPIRunDetailResource } from './CovalRunsAPIRunDetailResource.js';
 import {
-    CovalRunsAPIRunResourceFromJSON,
-    CovalRunsAPIRunResourceFromJSONTyped,
-    CovalRunsAPIRunResourceToJSON,
-    CovalRunsAPIRunResourceToJSONTyped,
-} from './CovalRunsAPIRunResource.js';
+    CovalRunsAPIRunDetailResourceFromJSON,
+    CovalRunsAPIRunDetailResourceFromJSONTyped,
+    CovalRunsAPIRunDetailResourceToJSON,
+    CovalRunsAPIRunDetailResourceToJSONTyped,
+} from './CovalRunsAPIRunDetailResource.js';
 
 /**
  * 
@@ -29,10 +29,10 @@ import {
 export interface GetRun200Response {
     /**
      * 
-     * @type {CovalRunsAPIRunResource}
+     * @type {CovalRunsAPIRunDetailResource}
      * @memberof GetRun200Response
      */
-    run: CovalRunsAPIRunResource;
+    run: CovalRunsAPIRunDetailResource;
 }
 
 /**
@@ -53,7 +53,7 @@ export function GetRun200ResponseFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'run': CovalRunsAPIRunResourceFromJSON(json['run']),
+        'run': CovalRunsAPIRunDetailResourceFromJSON(json['run']),
     };
 }
 
@@ -68,7 +68,7 @@ export function GetRun200ResponseToJSONTyped(value?: GetRun200Response | null, i
 
     return {
         
-        'run': CovalRunsAPIRunResourceToJSON(value['run']),
+        'run': CovalRunsAPIRunDetailResourceToJSON(value['run']),
     };
 }
 

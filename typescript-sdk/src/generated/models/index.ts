@@ -362,6 +362,7 @@ export * from './CovalRunsAPIMetricResult.js';
 export * from './CovalRunsAPIMetricValue.js';
 export * from './CovalRunsAPIMetricValueValue.js';
 export * from './CovalRunsAPIMonitoringRunTagUpdateResource.js';
+export * from './CovalRunsAPIRunDetailResource.js';
 export * from './CovalRunsAPIRunProgress.js';
 export * from './CovalRunsAPIRunResource.js';
 export * from './CovalRunsAPIRunResults.js';
