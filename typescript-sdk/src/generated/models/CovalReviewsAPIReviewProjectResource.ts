@@ -161,6 +161,18 @@ export interface CovalReviewsAPIReviewProjectResource {
      */
     batch_size?: number | null;
     /**
+     * Reviewer emails whose work counts toward project progress although their role is manager. Annotators count by default.
+     * @type {Array<string>}
+     * @memberof CovalReviewsAPIReviewProjectResource
+     */
+    readonly progress_included_assignees?: Array<string>;
+    /**
+     * Reviewer emails whose work does not count toward project progress. Managers are excluded by default. In collaborative projects a conversation completed by anyone still counts as complete.
+     * @type {Array<string>}
+     * @memberof CovalReviewsAPIReviewProjectResource
+     */
+    readonly progress_excluded_assignees?: Array<string>;
+    /**
      * Creation timestamp (ISO 8601)
      * @type {Date}
      * @memberof CovalReviewsAPIReviewProjectResource
@@ -298,6 +310,8 @@ export function CovalReviewsAPIReviewProjectResourceFromJSONTyped(json: any, ign
         'skippable_metric_ids': json['skippable_metric_ids'] == null ? undefined : json['skippable_metric_ids'],
         'batch_assignment_mode': json['batch_assignment_mode'] == null ? undefined : json['batch_assignment_mode'],
         'batch_size': json['batch_size'] == null ? undefined : json['batch_size'],
+        'progress_included_assignees': json['progress_included_assignees'] == null ? undefined : json['progress_included_assignees'],
+        'progress_excluded_assignees': json['progress_excluded_assignees'] == null ? undefined : json['progress_excluded_assignees'],
         'create_time': (new Date(json['create_time'])),
         'update_time': (new Date(json['update_time'])),
         'blind_labeling_shown_metric_ids': json['blind_labeling_shown_metric_ids'] == null ? undefined : json['blind_labeling_shown_metric_ids'],
@@ -314,7 +328,7 @@ export function CovalReviewsAPIReviewProjectResourceToJSON(json: any): CovalRevi
     return CovalReviewsAPIReviewProjectResourceToJSONTyped(json, false);
 }
 
-export function CovalReviewsAPIReviewProjectResourceToJSONTyped(value?: Omit<CovalReviewsAPIReviewProjectResource, 'created_at'|'created_by'|'updated_at'|'updated_by'> | null, ignoreDiscriminator: boolean = false): any {
+export function CovalReviewsAPIReviewProjectResourceToJSONTyped(value?: Omit<CovalReviewsAPIReviewProjectResource, 'created_at'|'created_by'|'updated_at'|'updated_by'|'progress_included_assignees'|'progress_excluded_assignees'> | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

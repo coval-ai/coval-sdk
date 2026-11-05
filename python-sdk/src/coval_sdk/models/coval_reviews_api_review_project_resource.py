@@ -53,6 +53,8 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
     skippable_metric_ids: Optional[List[Annotated[str, Field(min_length=1, strict=True, max_length=200)]]] = Field(default=None, description="Metric IDs eligible for skipping. Null means all linked metrics; an empty list means none.")
     batch_assignment_mode: Optional[StrictStr] = Field(default=None, description="Who forms reviewer batches on an enforced collaborative project: SELF (reviewers start their own) or MANAGER (managers assign them). Null means SELF.")
     batch_size: Optional[Annotated[int, Field(le=50, strict=True, ge=1)]] = Field(default=None, description="Conversations per reviewer batch, from 1 to 50. Null means 10.")
+    progress_included_assignees: Optional[List[StrictStr]] = Field(default=None, description="Reviewer emails whose work counts toward project progress although their role is manager. Annotators count by default.")
+    progress_excluded_assignees: Optional[List[StrictStr]] = Field(default=None, description="Reviewer emails whose work does not count toward project progress. Managers are excluded by default. In collaborative projects a conversation completed by anyone still counts as complete.")
     create_time: datetime = Field(description="Creation timestamp (ISO 8601)")
     update_time: datetime = Field(description="Last update timestamp (ISO 8601)")
     blind_labeling_shown_metric_ids: Optional[List[StrictStr]] = None
@@ -63,7 +65,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
     review_label_options: Optional[List[StrictStr]] = None
     review_label_selection_mode: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["reviewer_user_ids", "opted_out_assignee_user_ids", "created_at", "created_by", "updated_at", "updated_by", "name", "id", "display_name", "description", "assignees", "linked_simulation_ids", "linked_metric_ids", "project_type", "notifications", "project_rules", "enforced_collaboration", "allow_metric_skipping", "skippable_metric_ids", "batch_assignment_mode", "batch_size", "create_time", "update_time", "blind_labeling_shown_metric_ids", "linked_metric_count", "linked_simulation_count", "review_label_enabled", "review_label_input_mode", "review_label_options", "review_label_selection_mode"]
+    __properties: ClassVar[List[str]] = ["reviewer_user_ids", "opted_out_assignee_user_ids", "created_at", "created_by", "updated_at", "updated_by", "name", "id", "display_name", "description", "assignees", "linked_simulation_ids", "linked_metric_ids", "project_type", "notifications", "project_rules", "enforced_collaboration", "allow_metric_skipping", "skippable_metric_ids", "batch_assignment_mode", "batch_size", "progress_included_assignees", "progress_excluded_assignees", "create_time", "update_time", "blind_labeling_shown_metric_ids", "linked_metric_count", "linked_simulation_count", "review_label_enabled", "review_label_input_mode", "review_label_options", "review_label_selection_mode"]
 
     @field_validator('batch_assignment_mode')
     def batch_assignment_mode_validate_enum(cls, value):
@@ -129,6 +131,8 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
+        * OpenAPI `readOnly` fields are excluded.
+        * OpenAPI `readOnly` fields are excluded.
         * Fields in `self.additional_properties` are added to the output dict.
         """
         excluded_fields: Set[str] = set([
@@ -136,6 +140,8 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
             "created_by",
             "updated_at",
             "updated_by",
+            "progress_included_assignees",
+            "progress_excluded_assignees",
             "additional_properties",
         ])
 
@@ -247,6 +253,8 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
             "skippable_metric_ids": obj.get("skippable_metric_ids"),
             "batch_assignment_mode": obj.get("batch_assignment_mode"),
             "batch_size": obj.get("batch_size"),
+            "progress_included_assignees": obj.get("progress_included_assignees"),
+            "progress_excluded_assignees": obj.get("progress_excluded_assignees"),
             "create_time": obj.get("create_time"),
             "update_time": obj.get("update_time"),
             "blind_labeling_shown_metric_ids": obj.get("blind_labeling_shown_metric_ids"),
