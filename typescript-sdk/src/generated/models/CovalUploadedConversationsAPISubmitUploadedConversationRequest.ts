@@ -124,7 +124,14 @@ export interface CovalUploadedConversationsAPISubmitUploadedConversationRequest 
      * Metric IDs or exact legacy metric_name values to evaluate. IDs take precedence.
      * Legacy names must resolve to a unique active metric visible in the request workspace.
      * Display names are not accepted. Unknown, ambiguous, inactive, hidden, deleted, or
-     * inaccessible selections return 400 INVALID_ARGUMENT.
+     * inaccessible selections return 400 INVALID_ARGUMENT. The response includes an
+     * X-Request-Id header and up to 20 error details with fields such as metrics[2],
+     * reason invalid_metric_selection, and JSON-escaped previews of the rejected
+     * caller references (128 characters each, followed by ... when truncated).
+     * Detail indices refer to the original request, before legacy-name resolution.
+     * Missing, inactive, ambiguous, and inaccessible selections share the same
+     * explanation to avoid disclosing catalog visibility. Use IDs returned by
+     * GET /v1/metrics?include_builtin=true in the same workspace before retrying.
      * 
      * If not provided, uses your default metrics configured in the Coval dashboard.
      * 

@@ -28,10 +28,11 @@ class CovalUploadedConversationsAPIErrorDetail(BaseModel):
     """
     CovalUploadedConversationsAPIErrorDetail
     """ # noqa: E501
+    reason: Optional[StrictStr] = Field(default=None, description="Optional stable machine-readable reason; invalid_metric_selection identifies rejected scoring selections.")
     var_field: Optional[StrictStr] = Field(default=None, description="Field that caused the error", alias="field")
     description: Optional[StrictStr] = Field(default=None, description="Detailed description of the error")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["field", "description"]
+    __properties: ClassVar[List[str]] = ["reason", "field", "description"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -91,6 +92,7 @@ class CovalUploadedConversationsAPIErrorDetail(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "reason": obj.get("reason"),
             "field": obj.get("field"),
             "description": obj.get("description")
         })

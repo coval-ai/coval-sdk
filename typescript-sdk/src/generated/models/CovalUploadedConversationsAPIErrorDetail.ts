@@ -20,6 +20,12 @@ import { mapValues } from '../runtime.js';
  */
 export interface CovalUploadedConversationsAPIErrorDetail {
     /**
+     * Optional stable machine-readable reason; invalid_metric_selection identifies rejected scoring selections.
+     * @type {string}
+     * @memberof CovalUploadedConversationsAPIErrorDetail
+     */
+    reason?: string;
+    /**
      * Field that caused the error
      * @type {string}
      * @memberof CovalUploadedConversationsAPIErrorDetail
@@ -50,6 +56,7 @@ export function CovalUploadedConversationsAPIErrorDetailFromJSONTyped(json: any,
     }
     return {
         
+        'reason': json['reason'] == null ? undefined : json['reason'],
         'field': json['field'] == null ? undefined : json['field'],
         'description': json['description'] == null ? undefined : json['description'],
     };
@@ -66,6 +73,7 @@ export function CovalUploadedConversationsAPIErrorDetailToJSONTyped(value?: Cova
 
     return {
         
+        'reason': value['reason'],
         'field': value['field'],
         'description': value['description'],
     };
