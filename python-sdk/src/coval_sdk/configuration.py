@@ -121,7 +121,9 @@ AuthSettings = TypedDict(
         "Coval_Agent_Mutations_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Organization_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Personas_API_ApiKeyAuth": APIKeyAuthSetting,
+        "Python_Audio_Analysis_API_InternalApiKeyAuth": APIKeyAuthSetting,
         "Python_Audio_Analysis_API_ApiKeyAuth": APIKeyAuthSetting,
+        "Python_Metrics_API_InternalApiKeyAuth": APIKeyAuthSetting,
         "Python_Metrics_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Reports_API_ApiKeyAuth": APIKeyAuthSetting,
         "Coval_Reviews_API_ApiKeyAuth": APIKeyAuthSetting,
@@ -644,6 +646,15 @@ conf = coval_sdk.Configuration(
                     'Coval_Personas_API_ApiKeyAuth',
                 ),
             }
+        if 'Python_Audio_Analysis_API_InternalApiKeyAuth' in self.api_key:
+            auth['Python_Audio_Analysis_API_InternalApiKeyAuth'] = {
+                'type': 'api_key',
+                'in': 'header',
+                'key': 'X-Coval-Internal-Api-Key',
+                'value': self.get_api_key_with_prefix(
+                    'Python_Audio_Analysis_API_InternalApiKeyAuth',
+                ),
+            }
         if 'Python_Audio_Analysis_API_ApiKeyAuth' in self.api_key:
             auth['Python_Audio_Analysis_API_ApiKeyAuth'] = {
                 'type': 'api_key',
@@ -651,6 +662,15 @@ conf = coval_sdk.Configuration(
                 'key': 'x-api-key',
                 'value': self.get_api_key_with_prefix(
                     'Python_Audio_Analysis_API_ApiKeyAuth',
+                ),
+            }
+        if 'Python_Metrics_API_InternalApiKeyAuth' in self.api_key:
+            auth['Python_Metrics_API_InternalApiKeyAuth'] = {
+                'type': 'api_key',
+                'in': 'header',
+                'key': 'X-Coval-Internal-Api-Key',
+                'value': self.get_api_key_with_prefix(
+                    'Python_Metrics_API_InternalApiKeyAuth',
                 ),
             }
         if 'Python_Metrics_API_ApiKeyAuth' in self.api_key:

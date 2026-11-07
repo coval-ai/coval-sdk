@@ -51,7 +51,7 @@ export interface PythonAudioAnalysisApiInterface {
     createPythonAudioAnalysisRequestOpts(requestParameters: CreatePythonAudioAnalysisRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+     * Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
      * @summary Analyze conversation audio
      * @param {PythonAudioAnalysisAPICreatePythonAudioAnalysisRequest} pythonAudioAnalysisAPICreatePythonAudioAnalysisRequest 
      * @param {string} [xCovalWorkspaceId] Active workspace in the authenticated organization. Defaults to its default workspace.
@@ -62,7 +62,7 @@ export interface PythonAudioAnalysisApiInterface {
     createPythonAudioAnalysisRaw(requestParameters: CreatePythonAudioAnalysisRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonAudioAnalysisAPIPythonAudioAnalysisResponse>>;
 
     /**
-     * Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+     * Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
      * Analyze conversation audio
      */
     createPythonAudioAnalysis(requestParameters: CreatePythonAudioAnalysisRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonAudioAnalysisAPIPythonAudioAnalysisResponse>;
@@ -122,6 +122,10 @@ export class PythonAudioAnalysisApi extends runtime.BaseAPI implements PythonAud
         }
 
         if (this.configuration && this.configuration.apiKey) {
+            headerParameters["X-Coval-Internal-Api-Key"] = await this.configuration.apiKey("X-Coval-Internal-Api-Key"); // Python_Audio_Analysis_API_InternalApiKeyAuth authentication
+        }
+
+        if (this.configuration && this.configuration.apiKey) {
             headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // Python_Audio_Analysis_API_ApiKeyAuth authentication
         }
 
@@ -138,7 +142,7 @@ export class PythonAudioAnalysisApi extends runtime.BaseAPI implements PythonAud
     }
 
     /**
-     * Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+     * Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
      * Analyze conversation audio
      */
     async createPythonAudioAnalysisRaw(requestParameters: CreatePythonAudioAnalysisRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonAudioAnalysisAPIPythonAudioAnalysisResponse>> {
@@ -149,7 +153,7 @@ export class PythonAudioAnalysisApi extends runtime.BaseAPI implements PythonAud
     }
 
     /**
-     * Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+     * Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
      * Analyze conversation audio
      */
     async createPythonAudioAnalysis(requestParameters: CreatePythonAudioAnalysisRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonAudioAnalysisAPIPythonAudioAnalysisResponse> {

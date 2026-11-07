@@ -60,7 +60,7 @@ class PythonAudioAnalysisApi:
     ) -> PythonAudioAnalysisAPIPythonAudioAnalysisResponse:
         """Analyze conversation audio
 
-        Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+        Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
 
         :param python_audio_analysis_api_create_python_audio_analysis_request: (required)
         :type python_audio_analysis_api_create_python_audio_analysis_request: PythonAudioAnalysisAPICreatePythonAudioAnalysisRequest
@@ -139,7 +139,7 @@ class PythonAudioAnalysisApi:
     ) -> ApiResponse[PythonAudioAnalysisAPIPythonAudioAnalysisResponse]:
         """Analyze conversation audio
 
-        Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+        Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
 
         :param python_audio_analysis_api_create_python_audio_analysis_request: (required)
         :type python_audio_analysis_api_create_python_audio_analysis_request: PythonAudioAnalysisAPICreatePythonAudioAnalysisRequest
@@ -218,7 +218,7 @@ class PythonAudioAnalysisApi:
     ) -> RESTResponseType:
         """Analyze conversation audio
 
-        Submit exact Python source for one completed conversation. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
+        Sofia submits exact Python source for one completed conversation using backend service authentication and the acting user’s managed API key. Customer API keys cannot submit source. Reuse the same request UUID to recover an uncertain submission; read the returned analysis ID for the asynchronous result.
 
         :param python_audio_analysis_api_create_python_audio_analysis_request: (required)
         :type python_audio_analysis_api_create_python_audio_analysis_request: PythonAudioAnalysisAPICreatePythonAudioAnalysisRequest
@@ -332,6 +332,7 @@ class PythonAudioAnalysisApi:
 
         # authentication setting
         _auth_settings: List[str] = [
+            'Python_Audio_Analysis_API_InternalApiKeyAuth', 
             'Python_Audio_Analysis_API_ApiKeyAuth'
         ]
 

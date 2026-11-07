@@ -133,7 +133,7 @@ export interface PythonMetricsApiInterface {
     createPythonMetricDraftRequestOpts(requestParameters: CreatePythonMetricDraftRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
      * @summary Save a Python metric draft
      * @param {PythonMetricsAPICreatePythonMetricDraftRequest} pythonMetricsAPICreatePythonMetricDraftRequest 
      * @param {string} [xCovalWorkspaceId] Active workspace; defaults to the authenticated organization’s default workspace.
@@ -144,7 +144,7 @@ export interface PythonMetricsApiInterface {
     createPythonMetricDraftRaw(requestParameters: CreatePythonMetricDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonMetricsAPIPythonMetricDraftResponse>>;
 
     /**
-     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
      * Save a Python metric draft
      */
     createPythonMetricDraft(requestParameters: CreatePythonMetricDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPythonMetricDraftResponse>;
@@ -380,6 +380,10 @@ export class PythonMetricsApi extends runtime.BaseAPI implements PythonMetricsAp
             headerParameters["X-API-Key"] = await this.configuration.apiKey("X-API-Key"); // Python_Metrics_API_ApiKeyAuth authentication
         }
 
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["X-Coval-Internal-Api-Key"] = await this.configuration.apiKey("X-Coval-Internal-Api-Key"); // Python_Metrics_API_InternalApiKeyAuth authentication
+        }
+
 
         let urlPath = `/python-metric-drafts`;
 
@@ -393,7 +397,7 @@ export class PythonMetricsApi extends runtime.BaseAPI implements PythonMetricsAp
     }
 
     /**
-     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
      * Save a Python metric draft
      */
     async createPythonMetricDraftRaw(requestParameters: CreatePythonMetricDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PythonMetricsAPIPythonMetricDraftResponse>> {
@@ -404,7 +408,7 @@ export class PythonMetricsApi extends runtime.BaseAPI implements PythonMetricsAp
     }
 
     /**
-     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+     * Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
      * Save a Python metric draft
      */
     async createPythonMetricDraft(requestParameters: CreatePythonMetricDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PythonMetricsAPIPythonMetricDraftResponse> {

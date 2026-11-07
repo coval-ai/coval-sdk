@@ -371,7 +371,7 @@ class PythonMetricsApi:
     ) -> PythonMetricsAPIPythonMetricDraftResponse:
         """Save a Python metric draft
 
-        Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+        Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
 
         :param python_metrics_api_create_python_metric_draft_request: (required)
         :type python_metrics_api_create_python_metric_draft_request: PythonMetricsAPICreatePythonMetricDraftRequest
@@ -447,7 +447,7 @@ class PythonMetricsApi:
     ) -> ApiResponse[PythonMetricsAPIPythonMetricDraftResponse]:
         """Save a Python metric draft
 
-        Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+        Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
 
         :param python_metrics_api_create_python_metric_draft_request: (required)
         :type python_metrics_api_create_python_metric_draft_request: PythonMetricsAPICreatePythonMetricDraftRequest
@@ -523,7 +523,7 @@ class PythonMetricsApi:
     ) -> RESTResponseType:
         """Save a Python metric draft
 
-        Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft.
+        Save an immutable hidden draft pinned to the accepted runtime. Source or input changes require another draft. Source submission requires Sofia backend service authentication in addition to the acting user’s managed API key. Customer API keys and browser transport cannot submit Python source.
 
         :param python_metrics_api_create_python_metric_draft_request: (required)
         :type python_metrics_api_create_python_metric_draft_request: PythonMetricsAPICreatePythonMetricDraftRequest
@@ -634,7 +634,8 @@ class PythonMetricsApi:
 
         # authentication setting
         _auth_settings: List[str] = [
-            'Python_Metrics_API_ApiKeyAuth'
+            'Python_Metrics_API_ApiKeyAuth', 
+            'Python_Metrics_API_InternalApiKeyAuth'
         ]
 
         return self.api_client.param_serialize(
