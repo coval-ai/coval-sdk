@@ -72,6 +72,7 @@ export const CovalMetricsAPIMetricType = {
     MetricDropoutArtifact: 'METRIC_DROPOUT_ARTIFACT',
     MetricTimbreDrift: 'METRIC_TIMBRE_DRIFT',
     MetricSpeechArtifactAnomaly: 'METRIC_SPEECH_ARTIFACT_ANOMALY',
+    MetricTytoAudioRisk: 'METRIC_TYTO_AUDIO_RISK',
     MetricPitchVariability: 'METRIC_PITCH_VARIABILITY',
     MetricNonExpressivePauses: 'METRIC_NON_EXPRESSIVE_PAUSES',
     MetricAbruptPitchChanges: 'METRIC_ABRUPT_PITCH_CHANGES',

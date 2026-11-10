@@ -142,6 +142,12 @@ export interface CovalReviewsAPIUpdateReviewProjectRequest {
      */
     batch_size?: number | null;
     /**
+     * Which free conversations a new reviewer batch takes: LIST_ORDER (from the top of the project's conversation list, the order of the review queue), LATEST_ADDED_FIRST (most recently added to the project) or RANDOM. A held batch keeps one order while the setting is unchanged. Null restores LIST_ORDER; omission preserves the current value.
+     * @type {CovalReviewsAPIUpdateReviewProjectRequestBatchAllocationOrderEnum}
+     * @memberof CovalReviewsAPIUpdateReviewProjectRequest
+     */
+    batch_allocation_order?: CovalReviewsAPIUpdateReviewProjectRequestBatchAllocationOrderEnum | null;
+    /**
      * 
      * @type {string}
      * @memberof CovalReviewsAPIUpdateReviewProjectRequest
@@ -191,6 +197,16 @@ export const CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum = 
     Manager: 'MANAGER'
 } as const;
 export type CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum = typeof CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum[keyof typeof CovalReviewsAPIUpdateReviewProjectRequestBatchAssignmentModeEnum];
+
+/**
+ * @export
+ */
+export const CovalReviewsAPIUpdateReviewProjectRequestBatchAllocationOrderEnum = {
+    ListOrder: 'LIST_ORDER',
+    LatestAddedFirst: 'LATEST_ADDED_FIRST',
+    Random: 'RANDOM'
+} as const;
+export type CovalReviewsAPIUpdateReviewProjectRequestBatchAllocationOrderEnum = typeof CovalReviewsAPIUpdateReviewProjectRequestBatchAllocationOrderEnum[keyof typeof CovalReviewsAPIUpdateReviewProjectRequestBatchAllocationOrderEnum];
 
 /**
  * @export
@@ -248,6 +264,7 @@ export function CovalReviewsAPIUpdateReviewProjectRequestFromJSONTyped(json: any
         'skippable_metric_ids': json['skippable_metric_ids'],
         'batch_assignment_mode': json['batch_assignment_mode'] == null ? undefined : json['batch_assignment_mode'],
         'batch_size': json['batch_size'] == null ? undefined : json['batch_size'],
+        'batch_allocation_order': json['batch_allocation_order'] == null ? undefined : json['batch_allocation_order'],
         'project_type': json['project_type'] == null ? undefined : json['project_type'],
         'review_label_enabled': json['review_label_enabled'] == null ? undefined : json['review_label_enabled'],
         'review_label_input_mode': json['review_label_input_mode'] == null ? undefined : json['review_label_input_mode'],
@@ -286,6 +303,7 @@ export function CovalReviewsAPIUpdateReviewProjectRequestToJSONTyped(value?: Cov
         'skippable_metric_ids': value['skippable_metric_ids'],
         'batch_assignment_mode': value['batch_assignment_mode'],
         'batch_size': value['batch_size'],
+        'batch_allocation_order': value['batch_allocation_order'],
         'project_type': value['project_type'],
         'review_label_enabled': value['review_label_enabled'],
         'review_label_input_mode': value['review_label_input_mode'],

@@ -53,6 +53,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
     skippable_metric_ids: Optional[List[Annotated[str, Field(min_length=1, strict=True, max_length=200)]]] = Field(default=None, description="Metric IDs eligible for skipping. Null means all linked metrics; an empty list means none.")
     batch_assignment_mode: Optional[StrictStr] = Field(default=None, description="Who forms reviewer batches on an enforced collaborative project: SELF (reviewers start their own) or MANAGER (managers assign them). Null means SELF.")
     batch_size: Optional[Annotated[int, Field(le=50, strict=True, ge=1)]] = Field(default=None, description="Conversations per reviewer batch, from 1 to 50. Null means 10.")
+    batch_allocation_order: Optional[StrictStr] = Field(default=None, description="Which free conversations a new reviewer batch takes: LIST_ORDER (from the top of the project's conversation list, the order of the review queue), LATEST_ADDED_FIRST (most recently added to the project) or RANDOM. A held batch keeps one order while the setting is unchanged. Null means LIST_ORDER.")
     progress_included_assignees: Optional[List[StrictStr]] = Field(default=None, description="Reviewer emails whose work counts toward project progress although their role is manager. Annotators count by default.")
     progress_excluded_assignees: Optional[List[StrictStr]] = Field(default=None, description="Reviewer emails whose work does not count toward project progress. Managers are excluded by default. In collaborative projects a conversation completed by anyone still counts as complete.")
     create_time: datetime = Field(description="Creation timestamp (ISO 8601)")
@@ -65,7 +66,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
     review_label_options: Optional[List[StrictStr]] = None
     review_label_selection_mode: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["reviewer_user_ids", "opted_out_assignee_user_ids", "created_at", "created_by", "updated_at", "updated_by", "name", "id", "display_name", "description", "assignees", "linked_simulation_ids", "linked_metric_ids", "project_type", "notifications", "project_rules", "enforced_collaboration", "allow_metric_skipping", "skippable_metric_ids", "batch_assignment_mode", "batch_size", "progress_included_assignees", "progress_excluded_assignees", "create_time", "update_time", "blind_labeling_shown_metric_ids", "linked_metric_count", "linked_simulation_count", "review_label_enabled", "review_label_input_mode", "review_label_options", "review_label_selection_mode"]
+    __properties: ClassVar[List[str]] = ["reviewer_user_ids", "opted_out_assignee_user_ids", "created_at", "created_by", "updated_at", "updated_by", "name", "id", "display_name", "description", "assignees", "linked_simulation_ids", "linked_metric_ids", "project_type", "notifications", "project_rules", "enforced_collaboration", "allow_metric_skipping", "skippable_metric_ids", "batch_assignment_mode", "batch_size", "batch_allocation_order", "progress_included_assignees", "progress_excluded_assignees", "create_time", "update_time", "blind_labeling_shown_metric_ids", "linked_metric_count", "linked_simulation_count", "review_label_enabled", "review_label_input_mode", "review_label_options", "review_label_selection_mode"]
 
     @field_validator('batch_assignment_mode')
     def batch_assignment_mode_validate_enum(cls, value):
@@ -75,6 +76,16 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
 
         if value not in set(['SELF', 'MANAGER']):
             raise ValueError("must be one of enum values ('SELF', 'MANAGER')")
+        return value
+
+    @field_validator('batch_allocation_order')
+    def batch_allocation_order_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['LIST_ORDER', 'LATEST_ADDED_FIRST', 'RANDOM']):
+            raise ValueError("must be one of enum values ('LIST_ORDER', 'LATEST_ADDED_FIRST', 'RANDOM')")
         return value
 
     @field_validator('review_label_input_mode')
@@ -200,6 +211,11 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
         if self.batch_size is None and "batch_size" in self.model_fields_set:
             _dict['batch_size'] = None
 
+        # set to None if batch_allocation_order (nullable) is None
+        # and model_fields_set contains the field
+        if self.batch_allocation_order is None and "batch_allocation_order" in self.model_fields_set:
+            _dict['batch_allocation_order'] = None
+
         # set to None if blind_labeling_shown_metric_ids (nullable) is None
         # and model_fields_set contains the field
         if self.blind_labeling_shown_metric_ids is None and "blind_labeling_shown_metric_ids" in self.model_fields_set:
@@ -253,6 +269,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
             "skippable_metric_ids": obj.get("skippable_metric_ids"),
             "batch_assignment_mode": obj.get("batch_assignment_mode"),
             "batch_size": obj.get("batch_size"),
+            "batch_allocation_order": obj.get("batch_allocation_order"),
             "progress_included_assignees": obj.get("progress_included_assignees"),
             "progress_excluded_assignees": obj.get("progress_excluded_assignees"),
             "create_time": obj.get("create_time"),

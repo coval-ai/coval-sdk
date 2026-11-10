@@ -85,6 +85,15 @@ export type CovalReviewsAPICreateReviewProjectRequestBatchAssignmentModeEnum = t
 
 
 /** @export */
+export const CovalReviewsAPICreateReviewProjectRequestBatchAllocationOrderEnum = {
+    LISTORDER: "LIST_ORDER" as const,
+    LATESTADDEDFIRST: "LATEST_ADDED_FIRST" as const,
+    RANDOM: "RANDOM" as const,
+} as const;
+export type CovalReviewsAPICreateReviewProjectRequestBatchAllocationOrderEnum = typeof CovalReviewsAPICreateReviewProjectRequestBatchAllocationOrderEnum[keyof typeof CovalReviewsAPICreateReviewProjectRequestBatchAllocationOrderEnum];
+
+
+/** @export */
 export const CovalReviewsAPICreateReviewProjectRequestReviewLabelInputModeEnum = {
     OPTIONONLY: "OPTION_ONLY" as const,
     CUSTOMONLY: "CUSTOM_ONLY" as const,
