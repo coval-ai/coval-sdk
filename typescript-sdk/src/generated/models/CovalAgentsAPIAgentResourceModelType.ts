@@ -30,6 +30,7 @@ export const CovalAgentsAPIAgentResourceModelType = {
     ModelTypeSms: 'MODEL_TYPE_SMS',
     ModelTypeWebsocket: 'MODEL_TYPE_WEBSOCKET',
     ModelTypeSdkWebsocket: 'MODEL_TYPE_SDK_WEBSOCKET',
+    ModelTypeSdkChat: 'MODEL_TYPE_SDK_CHAT',
     ModelTypeOpenaiRealtime: 'MODEL_TYPE_OPENAI_REALTIME',
     ModelTypeGeminiRealtime: 'MODEL_TYPE_GEMINI_REALTIME',
     ModelTypeGrokRealtime: 'MODEL_TYPE_GROK_REALTIME',
