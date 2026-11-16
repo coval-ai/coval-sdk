@@ -638,3 +638,21 @@ def test_timeout_can_be_disabled(monkeypatch) -> None:
 def test_invalid_timeout_is_rejected(value) -> None:
   with pytest.raises(ValueError, match="timeout"):
     CovalClient("test-key", timeout=value)
+
+
+@pytest.mark.parametrize("field,value", [
+  ("batch_allocation_order", None),
+  ("batch_allocation_order", "LIST_ORDER"),
+  ("batch_allocation_order", "LATEST_ADDED_FIRST"),
+  ("batch_allocation_order", "RANDOM"),
+  ("batch_assignment_mode", None),
+  ("batch_assignment_mode", "SELF"),
+  ("batch_assignment_mode", "MANAGER"),
+  ("batch_size", None),
+  ("batch_size", 1),
+  ("batch_size", 50),
+])
+def test_review_project_batch_patch_preserves_explicit_values(field, value) -> None:
+  payload = {"display_name": "Renamed", field: value}
+  model = generated_models.CovalReviewsAPIUpdateReviewProjectRequest.from_dict(payload)
+  assert model.to_dict() == payload
