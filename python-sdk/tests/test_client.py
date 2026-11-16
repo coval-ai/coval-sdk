@@ -656,3 +656,18 @@ def test_review_project_batch_patch_preserves_explicit_values(field, value) -> N
   payload = {"display_name": "Renamed", field: value}
   model = generated_models.CovalReviewsAPIUpdateReviewProjectRequest.from_dict(payload)
   assert model.to_dict() == payload
+
+
+@pytest.mark.parametrize("payload", [
+  {"review_label_enabled": None}, {"review_label_enabled": False}, {"review_label_enabled": True},
+  {"review_label_options": None}, {"review_label_options": []}, {"review_label_options": ["keep"]},
+  {"review_label_input_mode": None}, {"review_label_input_mode": "OPTION_ONLY"},
+  {"review_label_input_mode": "CUSTOM_ONLY"}, {"review_label_input_mode": "OPTION_OR_CUSTOM"},
+  {"review_label_selection_mode": None}, {"review_label_selection_mode": "SINGLE"},
+  {"review_label_selection_mode": "MULTIPLE"},
+  {"review_label_options": [], "review_label_input_mode": None, "review_label_selection_mode": None},
+  {"review_label_enabled": None, "review_label_options": None, "review_label_input_mode": None, "review_label_selection_mode": None},
+])
+def test_review_label_patch_preserves_null_empty_false_and_pause_config(payload) -> None:
+  model = generated_models.CovalReviewsAPIUpdateReviewProjectRequest.from_dict(payload)
+  assert model.to_dict() == payload

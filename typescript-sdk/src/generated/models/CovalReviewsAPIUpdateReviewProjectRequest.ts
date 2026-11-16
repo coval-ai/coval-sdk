@@ -266,10 +266,10 @@ export function CovalReviewsAPIUpdateReviewProjectRequestFromJSONTyped(json: any
         'batch_size': json['batch_size'],
         'batch_allocation_order': json['batch_allocation_order'],
         'project_type': json['project_type'] == null ? undefined : json['project_type'],
-        'review_label_enabled': json['review_label_enabled'] == null ? undefined : json['review_label_enabled'],
-        'review_label_input_mode': json['review_label_input_mode'] == null ? undefined : json['review_label_input_mode'],
-        'review_label_options': json['review_label_options'] == null ? undefined : json['review_label_options'],
-        'review_label_selection_mode': json['review_label_selection_mode'] == null ? undefined : json['review_label_selection_mode'],
+        'review_label_enabled': json['review_label_enabled'],
+        'review_label_input_mode': json['review_label_input_mode'],
+        'review_label_options': json['review_label_options'],
+        'review_label_selection_mode': json['review_label_selection_mode'],
     };
 }
 

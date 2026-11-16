@@ -540,3 +540,44 @@ describe('reviewer batch PATCH resets', () => {
     expect(bodies).toEqual([payload]);
   });
 });
+
+describe('review label PATCH null semantics', () => {
+  it.each([
+    ['review_label_enabled', null], ['review_label_enabled', false], ['review_label_enabled', true],
+    ['review_label_options', null], ['review_label_options', []], ['review_label_options', ['keep']],
+    ['review_label_input_mode', null], ['review_label_input_mode', 'OPTION_ONLY'],
+    ['review_label_input_mode', 'CUSTOM_ONLY'], ['review_label_input_mode', 'OPTION_OR_CUSTOM'],
+    ['review_label_selection_mode', null], ['review_label_selection_mode', 'SINGLE'],
+    ['review_label_selection_mode', 'MULTIPLE'],
+  ])('preserves %s=%j through JSON decoding', (field, value) => {
+    const payload = { display_name: 'Renamed', [field as string]: value };
+    const model = generatedModels.CovalReviewsAPIUpdateReviewProjectRequestFromJSON(payload);
+    expect(JSON.parse(JSON.stringify(generatedModels.CovalReviewsAPIUpdateReviewProjectRequestToJSON(model)))).toEqual(payload);
+  });
+
+  it('omits undefined label settings without turning them into resets', () => {
+    const model = generatedModels.CovalReviewsAPIUpdateReviewProjectRequestFromJSON({
+      display_name: 'Renamed', review_label_enabled: undefined, review_label_options: undefined,
+      review_label_input_mode: undefined, review_label_selection_mode: undefined,
+    });
+    expect(JSON.parse(JSON.stringify(generatedModels.CovalReviewsAPIUpdateReviewProjectRequestToJSON(model)))).toEqual({ display_name: 'Renamed' });
+  });
+
+  it.each([
+    { review_label_options: [], review_label_input_mode: null, review_label_selection_mode: null },
+    { review_label_enabled: null, review_label_options: null, review_label_input_mode: null, review_label_selection_mode: null },
+  ])('preserves the complete label reset/pause PATCH %j', async (payload) => {
+    const bodies: unknown[] = [];
+    const fakeFetch = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      expect(init?.method).toBe('PATCH');
+      bodies.push(JSON.parse(String(init?.body)));
+      return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
+    }) as unknown as typeof fetch;
+    const client = new CovalClient({ apiKey: 'synthetic-test-key', retry: false, fetch: fakeFetch });
+    await client.reviewProjects.updateReviewProjectRaw({
+      projectId: '01KABCDE000000000000000000',
+      covalReviewsAPIUpdateReviewProjectRequest: generatedModels.CovalReviewsAPIUpdateReviewProjectRequestFromJSON(payload),
+    });
+    expect(bodies).toEqual([payload]);
+  });
+});

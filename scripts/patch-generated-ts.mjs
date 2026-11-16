@@ -389,7 +389,16 @@ if (emptyAliases.length > 0) {
 // These project settings distinguish an explicit reset from an omitted update.
 const projectUpdateModel = join(MODELS_DIR, 'CovalReviewsAPIUpdateReviewProjectRequest.ts');
 let projectUpdateContents = readFileSync(projectUpdateModel, 'utf8');
-for (const field of ['skippable_metric_ids', 'batch_assignment_mode', 'batch_size', 'batch_allocation_order']) {
+for (const field of [
+  'skippable_metric_ids',
+  'batch_assignment_mode',
+  'batch_size',
+  'batch_allocation_order',
+  'review_label_enabled',
+  'review_label_options',
+  'review_label_input_mode',
+  'review_label_selection_mode',
+]) {
   const before = `'${field}': json['${field}'] == null ? undefined : json['${field}'],`;
   const after = `'${field}': json['${field}'],`;
   if (projectUpdateContents.includes(before)) {
