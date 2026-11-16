@@ -386,15 +386,26 @@ if (emptyAliases.length > 0) {
   process.exit(1);
 }
 
-// The skip policy distinguishes null (all metrics) from omission (keep policy).
+// These project settings distinguish an explicit reset from an omitted update.
 const projectUpdateModel = join(MODELS_DIR, 'CovalReviewsAPIUpdateReviewProjectRequest.ts');
 let projectUpdateContents = readFileSync(projectUpdateModel, 'utf8');
-const skipPolicyBefore = "'skippable_metric_ids': json['skippable_metric_ids'] == null ? undefined : json['skippable_metric_ids'],";
-const skipPolicyAfter = "'skippable_metric_ids': json['skippable_metric_ids'],";
-if (projectUpdateContents.includes(skipPolicyBefore)) {
-  projectUpdateContents = projectUpdateContents.replace(skipPolicyBefore, skipPolicyAfter);
-} else if (!projectUpdateContents.includes(skipPolicyAfter)) {
-  throw new Error('Generated review project skip-policy deserialization anchor changed');
+for (const field of [
+  'skippable_metric_ids',
+  'batch_assignment_mode',
+  'batch_size',
+  'batch_allocation_order',
+  'review_label_enabled',
+  'review_label_options',
+  'review_label_input_mode',
+  'review_label_selection_mode',
+]) {
+  const before = `'${field}': json['${field}'] == null ? undefined : json['${field}'],`;
+  const after = `'${field}': json['${field}'],`;
+  if (projectUpdateContents.includes(before)) {
+    projectUpdateContents = projectUpdateContents.replace(before, after);
+  } else if (!projectUpdateContents.includes(after)) {
+    throw new Error(`Generated review project ${field} deserialization anchor changed`);
+  }
 }
 writeFileSync(projectUpdateModel, projectUpdateContents);
 
