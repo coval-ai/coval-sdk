@@ -46,7 +46,9 @@ export interface CovalAlertsAPIAlertChannel {
      * 
      * **EMAIL**: `{"recipients": ["team@company.com"]}`
      * **WEBHOOK**: `{"url": "https://...", "method": "POST", "auth_token": "..."}`
-     * **HUMAN_REVIEW**: `{"project_id": "...", "sample_rate": 0.1}`
+     * **HUMAN_REVIEW**: `{"project_id": "...", "sample_rate": 0.1, "daily_cap": 500}`. `daily_cap` is the most
+     * conversations the rule adds per UTC day: 1 to 1000, default 1000. Channels are replaced on update, so
+     * an update that omits `daily_cap` (or `sample_rate`) resets it to the default.
      * 
      * @type {object}
      * @memberof CovalAlertsAPIAlertChannel
