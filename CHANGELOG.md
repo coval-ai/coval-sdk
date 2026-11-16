@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.9.38 (2026-11-16)
+
+### Bug Fixes
+
+- **sdks**: Preserve review-project reset semantics (COVAL-7887)
+  ([#13](https://github.com/coval-ai/coval-sdk/pull/13),
+  [`489f111`](https://github.com/coval-ai/coval-sdk/commit/489f11160ba4d4ff56a5c734d2c6451c39c7f880))
+
+
 ## v0.9.37 (2026-11-13)
 
 ### Bug Fixes
