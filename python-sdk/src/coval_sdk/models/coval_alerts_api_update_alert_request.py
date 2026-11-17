@@ -18,6 +18,7 @@ import pprint
 import re  # noqa: F401
 import json
 
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
@@ -49,8 +50,9 @@ class CovalAlertsAPIUpdateAlertRequest(BaseModel):
     customer_metadata: Optional[Dict[str, CovalAlertsAPIAlertResourceCustomerMetadataValue]] = Field(default=None, description="Exact scalar Run customer metadata filters, joined by AND. Literal keys are 1–256 characters; values are case-sensitive text. A list of values matches when the metadata equals any one of them. Numbers and booleans use JSON text; missing, null, array, and object values do not match. Omission or null leaves filters unchanged. An empty object clears filters only if at least one metric condition remains.")
     conditions: Optional[List[CovalAlertsAPIConditionInput]] = Field(default=None, description="Replaces all existing conditions. With ALL match mode, an empty list matches every conversation passing the remaining filters. ANY requires a metric condition or customer_metadata filter. Null or omission preserves conditions.")
     channels: Optional[List[CovalAlertsAPIChannelInput]] = Field(default=None, description="Replaces all channels; at most one HUMAN_REVIEW channel is allowed. Null or omission preserves channels.")
+    expected_update_time: Optional[datetime] = Field(default=None, description="Optional version check. Send the `update_time` you read, unchanged. If the stored alert's `update_time` differs, the update fails with 409 `CONFLICT` and nothing is saved. Omission or null skips the check.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["enabled", "name", "description", "evaluation_type", "conversation_source", "match_mode", "cooldown_seconds", "custom_message_template", "agent_ids", "required_tags", "scheduled_run_ids", "customer_metadata", "conditions", "channels"]
+    __properties: ClassVar[List[str]] = ["enabled", "name", "description", "evaluation_type", "conversation_source", "match_mode", "cooldown_seconds", "custom_message_template", "agent_ids", "required_tags", "scheduled_run_ids", "customer_metadata", "conditions", "channels", "expected_update_time"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -149,6 +151,11 @@ class CovalAlertsAPIUpdateAlertRequest(BaseModel):
         if self.customer_metadata is None and "customer_metadata" in self.model_fields_set:
             _dict['customer_metadata'] = None
 
+        # set to None if expected_update_time (nullable) is None
+        # and model_fields_set contains the field
+        if self.expected_update_time is None and "expected_update_time" in self.model_fields_set:
+            _dict['expected_update_time'] = None
+
         return _dict
 
     @classmethod
@@ -179,7 +186,8 @@ class CovalAlertsAPIUpdateAlertRequest(BaseModel):
             if obj.get("customer_metadata") is not None
             else None,
             "conditions": [CovalAlertsAPIConditionInput.from_dict(_item) for _item in obj["conditions"]] if obj.get("conditions") is not None else None,
-            "channels": [CovalAlertsAPIChannelInput.from_dict(_item) for _item in obj["channels"]] if obj.get("channels") is not None else None
+            "channels": [CovalAlertsAPIChannelInput.from_dict(_item) for _item in obj["channels"]] if obj.get("channels") is not None else None,
+            "expected_update_time": obj.get("expected_update_time")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

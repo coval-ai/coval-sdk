@@ -234,7 +234,7 @@ export interface AlertsApiInterface {
     updateAlertRequestOpts(requestParameters: UpdateAlertRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else\'s change, send the alert\'s `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
      * @summary Update an alert
      * @param {string} alertId Alert ULID
      * @param {CovalAlertsAPIUpdateAlertRequest} covalAlertsAPIUpdateAlertRequest 
@@ -246,7 +246,7 @@ export interface AlertsApiInterface {
     updateAlertRaw(requestParameters: UpdateAlertRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalAlertsAPIAlertResource>>;
 
     /**
-     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else\'s change, send the alert\'s `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
      * Update an alert
      */
     updateAlert(requestParameters: UpdateAlertRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalAlertsAPIAlertResource>;
@@ -590,7 +590,7 @@ export class AlertsApi extends runtime.BaseAPI implements AlertsApiInterface {
     }
 
     /**
-     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else\'s change, send the alert\'s `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
      * Update an alert
      */
     async updateAlertRaw(requestParameters: UpdateAlertRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalAlertsAPIAlertResource>> {
@@ -601,7 +601,7 @@ export class AlertsApi extends runtime.BaseAPI implements AlertsApiInterface {
     }
 
     /**
-     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+     * Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else\'s change, send the alert\'s `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
      * Update an alert
      */
     async updateAlert(requestParameters: UpdateAlertRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalAlertsAPIAlertResource> {

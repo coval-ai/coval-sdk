@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { CovalAlertsAPIErrorResponseError } from './CovalAlertsAPIErrorResponseError.js';
+import type { CovalMonitorsAPIErrorResponseError } from './CovalMonitorsAPIErrorResponseError.js';
 import {
-    CovalAlertsAPIErrorResponseErrorFromJSON,
-    CovalAlertsAPIErrorResponseErrorFromJSONTyped,
-    CovalAlertsAPIErrorResponseErrorToJSON,
-    CovalAlertsAPIErrorResponseErrorToJSONTyped,
-} from './CovalAlertsAPIErrorResponseError.js';
+    CovalMonitorsAPIErrorResponseErrorFromJSON,
+    CovalMonitorsAPIErrorResponseErrorFromJSONTyped,
+    CovalMonitorsAPIErrorResponseErrorToJSON,
+    CovalMonitorsAPIErrorResponseErrorToJSONTyped,
+} from './CovalMonitorsAPIErrorResponseError.js';
 
 /**
  * 
@@ -29,10 +29,10 @@ import {
 export interface CovalMonitorsAPIErrorResponse {
     /**
      * 
-     * @type {CovalAlertsAPIErrorResponseError}
+     * @type {CovalMonitorsAPIErrorResponseError}
      * @memberof CovalMonitorsAPIErrorResponse
      */
-    error: CovalAlertsAPIErrorResponseError;
+    error: CovalMonitorsAPIErrorResponseError;
 }
 
 /**
@@ -53,7 +53,7 @@ export function CovalMonitorsAPIErrorResponseFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
-        'error': CovalAlertsAPIErrorResponseErrorFromJSON(json['error']),
+        'error': CovalMonitorsAPIErrorResponseErrorFromJSON(json['error']),
     };
 }
 
@@ -68,7 +68,7 @@ export function CovalMonitorsAPIErrorResponseToJSONTyped(value?: CovalMonitorsAP
 
     return {
         
-        'error': CovalAlertsAPIErrorResponseErrorToJSON(value['error']),
+        'error': CovalMonitorsAPIErrorResponseErrorToJSON(value['error']),
     };
 }
 

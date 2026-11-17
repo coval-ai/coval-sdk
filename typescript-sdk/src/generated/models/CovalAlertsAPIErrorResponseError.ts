@@ -57,6 +57,7 @@ export const CovalAlertsAPIErrorResponseErrorCodeEnum = {
     PermissionDenied: 'PERMISSION_DENIED',
     NotFound: 'NOT_FOUND',
     AlreadyExists: 'ALREADY_EXISTS',
+    Conflict: 'CONFLICT',
     Internal: 'INTERNAL'
 } as const;
 export type CovalAlertsAPIErrorResponseErrorCodeEnum = typeof CovalAlertsAPIErrorResponseErrorCodeEnum[keyof typeof CovalAlertsAPIErrorResponseErrorCodeEnum];

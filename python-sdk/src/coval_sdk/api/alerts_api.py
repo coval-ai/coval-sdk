@@ -1570,7 +1570,7 @@ class AlertsApi:
     ) -> CovalAlertsAPIAlertResource:
         """Update an alert
 
-        Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+        Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else's change, send the alert's `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
 
         :param alert_id: Alert ULID (required)
         :type alert_id: str
@@ -1651,7 +1651,7 @@ class AlertsApi:
     ) -> ApiResponse[CovalAlertsAPIAlertResource]:
         """Update an alert
 
-        Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+        Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else's change, send the alert's `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
 
         :param alert_id: Alert ULID (required)
         :type alert_id: str
@@ -1732,7 +1732,7 @@ class AlertsApi:
     ) -> RESTResponseType:
         """Update an alert
 
-        Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new). 
+        Partially updates an alert. All fields are optional; omitted fields retain their current values (PATCH semantics).  When `conditions` or `channels` are provided, they **replace** the existing set atomically (delete old, create new).  To avoid overwriting someone else's change, send the alert's `update_time` as `expected_update_time`. If the alert changed since you read it, the update fails with 409 `CONFLICT` and nothing is saved. 
 
         :param alert_id: Alert ULID (required)
         :type alert_id: str

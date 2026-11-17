@@ -23,7 +23,6 @@ __all__ = [
     "InvalidListItemWarning",
     "CovalClient",
     "CovalMonitorsAPIMonitorEventResourceConditionResultsInnerComputedValue",
-    "CovalMonitorsAPIErrorResponseError",
     "CovalMetricsAPIErrorResponseErrorDetailsInner",
     "APIKeysApi",
     "AgentsApi",
@@ -290,6 +289,7 @@ __all__ = [
     "CovalMonitorsAPIConditionOperator",
     "CovalMonitorsAPICreateMonitorRequest",
     "CovalMonitorsAPIErrorResponse",
+    "CovalMonitorsAPIErrorResponseError",
     "CovalMonitorsAPIListMonitorEventsResponse",
     "CovalMonitorsAPIListMonitorsResponse",
     "CovalMonitorsAPIMonitorChannel",
@@ -943,6 +943,7 @@ from coval_sdk.models.coval_monitors_api_condition_input import CovalMonitorsAPI
 from coval_sdk.models.coval_monitors_api_condition_operator import CovalMonitorsAPIConditionOperator as CovalMonitorsAPIConditionOperator
 from coval_sdk.models.coval_monitors_api_create_monitor_request import CovalMonitorsAPICreateMonitorRequest as CovalMonitorsAPICreateMonitorRequest
 from coval_sdk.models.coval_monitors_api_error_response import CovalMonitorsAPIErrorResponse as CovalMonitorsAPIErrorResponse
+from coval_sdk.models.coval_monitors_api_error_response_error import CovalMonitorsAPIErrorResponseError as CovalMonitorsAPIErrorResponseError
 from coval_sdk.models.coval_monitors_api_list_monitor_events_response import CovalMonitorsAPIListMonitorEventsResponse as CovalMonitorsAPIListMonitorEventsResponse
 from coval_sdk.models.coval_monitors_api_list_monitors_response import CovalMonitorsAPIListMonitorsResponse as CovalMonitorsAPIListMonitorsResponse
 from coval_sdk.models.coval_monitors_api_monitor_channel import CovalMonitorsAPIMonitorChannel as CovalMonitorsAPIMonitorChannel
@@ -1326,8 +1327,6 @@ from coval_sdk.models.update_run200_response import UpdateRun200Response as Upda
 from coval_sdk.models.update_run200_response_run import UpdateRun200ResponseRun as UpdateRun200ResponseRun
 
 from coval_sdk.models.coval_metrics_api_error_response_error_details_inner import CovalMetricsAPIErrorResponseErrorDetailsInner
-
-from coval_sdk.models.coval_monitors_api_error_response_error import CovalMonitorsAPIErrorResponseError
 
 from coval_sdk.models.coval_monitors_api_monitor_event_resource_condition_results_inner_computed_value import CovalMonitorsAPIMonitorEventResourceConditionResultsInnerComputedValue
 

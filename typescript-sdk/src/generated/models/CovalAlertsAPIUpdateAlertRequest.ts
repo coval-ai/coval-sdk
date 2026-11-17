@@ -146,6 +146,12 @@ export interface CovalAlertsAPIUpdateAlertRequest {
      * @memberof CovalAlertsAPIUpdateAlertRequest
      */
     channels?: Array<CovalAlertsAPIChannelInput>;
+    /**
+     * Optional version check. Send the `update_time` you read, unchanged. If the stored alert's `update_time` differs, the update fails with 409 `CONFLICT` and nothing is saved. Omission or null skips the check.
+     * @type {Date}
+     * @memberof CovalAlertsAPIUpdateAlertRequest
+     */
+    expected_update_time?: Date | null;
 }
 
 
@@ -181,6 +187,7 @@ export function CovalAlertsAPIUpdateAlertRequestFromJSONTyped(json: any, ignoreD
         'customer_metadata': json['customer_metadata'] == null ? undefined : (mapValues(json['customer_metadata'], CovalAlertsAPIAlertResourceCustomerMetadataValueFromJSON)),
         'conditions': json['conditions'] == null ? undefined : ((json['conditions'] as Array<any>).map(CovalAlertsAPIConditionInputFromJSON)),
         'channels': json['channels'] == null ? undefined : ((json['channels'] as Array<any>).map(CovalAlertsAPIChannelInputFromJSON)),
+        'expected_update_time': json['expected_update_time'] == null ? undefined : (new Date(json['expected_update_time'])),
     };
 }
 
@@ -209,6 +216,7 @@ export function CovalAlertsAPIUpdateAlertRequestToJSONTyped(value?: CovalAlertsA
         'customer_metadata': value['customer_metadata'] == null ? undefined : (mapValues(value['customer_metadata'], CovalAlertsAPIAlertResourceCustomerMetadataValueToJSON)),
         'conditions': value['conditions'] == null ? undefined : ((value['conditions'] as Array<any>).map(CovalAlertsAPIConditionInputToJSON)),
         'channels': value['channels'] == null ? undefined : ((value['channels'] as Array<any>).map(CovalAlertsAPIChannelInputToJSON)),
+        'expected_update_time': value['expected_update_time'] == null ? value['expected_update_time'] : value['expected_update_time'].toISOString(),
     };
 }
 
