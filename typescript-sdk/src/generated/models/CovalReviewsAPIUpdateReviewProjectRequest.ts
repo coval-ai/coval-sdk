@@ -154,25 +154,25 @@ export interface CovalReviewsAPIUpdateReviewProjectRequest {
      */
     project_type?: string | null;
     /**
-     * False pauses conversation triage for everyone while preserving categories, modes, and saved labels. True enables triage. Null uses legacy configuration-based activation. Omission leaves the enabled state unchanged. For legacy clients, explicitly sending empty categories and both modes as null without this field pauses triage while preserving configuration. When all three configuration fields are supplied without this field, a valid enabled configuration is treated as enabled.
+     * False pauses conversation triage for everyone while preserving categories, modes, and saved labels. True enables triage. Null uses legacy configuration-based activation. Omission leaves the enabled state unchanged. For legacy clients, explicitly sending empty categories and both modes as null without this field pauses triage while preserving configuration. When all three configuration fields are supplied without this field, a valid enabled configuration is treated as enabled. For a project that uses the review form, this field turns the form on or off and changes none of its questions; turning it on while the form has no live top-level question is rejected with a 400.
      * @type {boolean}
      * @memberof CovalReviewsAPIUpdateReviewProjectRequest
      */
     review_label_enabled?: boolean | null;
     /**
-     * 
+     * Rejected with a 400 for a project that uses the review form, whose categories and modes are managed there.
      * @type {CovalReviewsAPIUpdateReviewProjectRequestReviewLabelInputModeEnum}
      * @memberof CovalReviewsAPIUpdateReviewProjectRequest
      */
     review_label_input_mode?: CovalReviewsAPIUpdateReviewProjectRequestReviewLabelInputModeEnum | null;
     /**
-     * 
+     * Rejected with a 400 for a project that uses the review form, whose categories and modes are managed there.
      * @type {Array<string>}
      * @memberof CovalReviewsAPIUpdateReviewProjectRequest
      */
     review_label_options?: Array<string> | null;
     /**
-     * 
+     * Rejected with a 400 for a project that uses the review form, whose categories and modes are managed there.
      * @type {CovalReviewsAPIUpdateReviewProjectRequestReviewLabelSelectionModeEnum}
      * @memberof CovalReviewsAPIUpdateReviewProjectRequest
      */

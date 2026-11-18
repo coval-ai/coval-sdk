@@ -207,7 +207,7 @@ export interface CovalReviewsAPIReviewProjectResource {
      * @type {number}
      * @memberof CovalReviewsAPIReviewProjectResource
      */
-    linked_simulation_count?: number;
+    linked_simulation_count: number;
     /**
      * False pauses conversation triage for everyone while preserving categories, modes, and saved labels. True enables triage. Null uses legacy configuration-based activation.
      * @type {boolean}
@@ -292,6 +292,7 @@ export function instanceOfCovalReviewsAPIReviewProjectResource(value: object): v
     if (!('notifications' in value) || value['notifications'] === undefined) return false;
     if (!('create_time' in value) || value['create_time'] === undefined) return false;
     if (!('update_time' in value) || value['update_time'] === undefined) return false;
+    if (!('linked_simulation_count' in value) || value['linked_simulation_count'] === undefined) return false;
     return true;
 }
 
@@ -333,7 +334,7 @@ export function CovalReviewsAPIReviewProjectResourceFromJSONTyped(json: any, ign
         'update_time': (new Date(json['update_time'])),
         'blind_labeling_shown_metric_ids': json['blind_labeling_shown_metric_ids'] == null ? undefined : json['blind_labeling_shown_metric_ids'],
         'linked_metric_count': json['linked_metric_count'] == null ? undefined : json['linked_metric_count'],
-        'linked_simulation_count': json['linked_simulation_count'] == null ? undefined : json['linked_simulation_count'],
+        'linked_simulation_count': json['linked_simulation_count'],
         'review_label_enabled': json['review_label_enabled'] == null ? undefined : json['review_label_enabled'],
         'review_label_input_mode': json['review_label_input_mode'] == null ? undefined : json['review_label_input_mode'],
         'review_label_options': json['review_label_options'] == null ? undefined : json['review_label_options'],

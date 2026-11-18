@@ -60,7 +60,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
     update_time: datetime = Field(description="Last update timestamp (ISO 8601)")
     blind_labeling_shown_metric_ids: Optional[List[StrictStr]] = None
     linked_metric_count: Optional[StrictInt] = 0
-    linked_simulation_count: Optional[StrictInt] = 0
+    linked_simulation_count: StrictInt
     review_label_enabled: Optional[StrictBool] = Field(default=None, description="False pauses conversation triage for everyone while preserving categories, modes, and saved labels. True enables triage. Null uses legacy configuration-based activation.")
     review_label_input_mode: Optional[StrictStr] = None
     review_label_options: Optional[List[StrictStr]] = None
@@ -276,7 +276,7 @@ class CovalReviewsAPIReviewProjectResource(BaseModel):
             "update_time": obj.get("update_time"),
             "blind_labeling_shown_metric_ids": obj.get("blind_labeling_shown_metric_ids"),
             "linked_metric_count": obj.get("linked_metric_count") if obj.get("linked_metric_count") is not None else 0,
-            "linked_simulation_count": obj.get("linked_simulation_count") if obj.get("linked_simulation_count") is not None else 0,
+            "linked_simulation_count": obj.get("linked_simulation_count"),
             "review_label_enabled": obj.get("review_label_enabled"),
             "review_label_input_mode": obj.get("review_label_input_mode"),
             "review_label_options": obj.get("review_label_options"),
