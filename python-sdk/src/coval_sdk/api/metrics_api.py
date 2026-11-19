@@ -41,6 +41,7 @@ from coval_sdk.models.coval_metrics_api_list_metrics_response import CovalMetric
 from coval_sdk.models.coval_metrics_api_list_recently_deleted_metrics_response import CovalMetricsAPIListRecentlyDeletedMetricsResponse
 from coval_sdk.models.coval_metrics_api_list_thresholds_response import CovalMetricsAPIListThresholdsResponse
 from coval_sdk.models.coval_metrics_api_metric_flow_response import CovalMetricsAPIMetricFlowResponse
+from coval_sdk.models.coval_metrics_api_metric_mutation_response import CovalMetricsAPIMetricMutationResponse
 from coval_sdk.models.coval_metrics_api_metric_output_collection import CovalMetricsAPIMetricOutputCollection
 from coval_sdk.models.coval_metrics_api_patch_threshold_request import CovalMetricsAPIPatchThresholdRequest
 from coval_sdk.models.coval_metrics_api_patch_threshold_response import CovalMetricsAPIPatchThresholdResponse
@@ -377,7 +378,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CovalMetricsAPIGetMetricResponse:
+    ) -> CovalMetricsAPIMetricMutationResponse:
         """Create metric
 
         Create a new custom evaluation metric.  **Required fields vary by metric type:**  | Metric Type | Required Fields | |-------------|-----------------| | METRIC_AGENT_JUDGE | prompt | | METRIC_AGENT_JUDGE_CATEGORICAL | prompt, categories | | METRIC_AGENT_JUDGE_NUMERICAL | prompt, min_value, max_value | | METRIC_LLM_BINARY | prompt | | METRIC_CATEGORICAL | prompt, categories | | METRIC_NUMERICAL_LLM_JUDGE | prompt, min_value, max_value | | METRIC_AUDIO_LLM_BINARY | prompt | | METRIC_AUDIO_LLM_CATEGORICAL | prompt, categories | | METRIC_AUDIO_LLM_NUMERICAL | prompt, min_value, max_value | | METRIC_TOOLCALL | prompt | | METRIC_METADATA_FIELD | metadata_field_type, metadata_field_key | | METRIC_TRANSCRIPT_REGEX | regex_pattern | | METRIC_PAUSE_ANALYSIS | min_pause_duration_seconds | 
@@ -418,7 +419,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CovalMetricsAPIGetMetricResponse",
+            '201': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '403': "CovalMetricsAPIErrorResponse",
@@ -453,7 +454,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CovalMetricsAPIGetMetricResponse]:
+    ) -> ApiResponse[CovalMetricsAPIMetricMutationResponse]:
         """Create metric
 
         Create a new custom evaluation metric.  **Required fields vary by metric type:**  | Metric Type | Required Fields | |-------------|-----------------| | METRIC_AGENT_JUDGE | prompt | | METRIC_AGENT_JUDGE_CATEGORICAL | prompt, categories | | METRIC_AGENT_JUDGE_NUMERICAL | prompt, min_value, max_value | | METRIC_LLM_BINARY | prompt | | METRIC_CATEGORICAL | prompt, categories | | METRIC_NUMERICAL_LLM_JUDGE | prompt, min_value, max_value | | METRIC_AUDIO_LLM_BINARY | prompt | | METRIC_AUDIO_LLM_CATEGORICAL | prompt, categories | | METRIC_AUDIO_LLM_NUMERICAL | prompt, min_value, max_value | | METRIC_TOOLCALL | prompt | | METRIC_METADATA_FIELD | metadata_field_type, metadata_field_key | | METRIC_TRANSCRIPT_REGEX | regex_pattern | | METRIC_PAUSE_ANALYSIS | min_pause_duration_seconds | 
@@ -494,7 +495,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CovalMetricsAPIGetMetricResponse",
+            '201': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '403': "CovalMetricsAPIErrorResponse",
@@ -570,7 +571,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CovalMetricsAPIGetMetricResponse",
+            '201': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '403': "CovalMetricsAPIErrorResponse",
@@ -2720,7 +2721,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CovalMetricsAPIGetMetricResponse:
+    ) -> CovalMetricsAPIMetricMutationResponse:
         """Duplicate a metric
 
         Clone an existing metric into a new metric owned by your organization. Copies the metric configuration, tags, and active thresholds. Returns the new metric. Invalid regex syntax in the source configuration returns INVALID_ARGUMENT with regex_pattern field attribution; correct the source pattern before duplicating it.
@@ -2758,7 +2759,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CovalMetricsAPIGetMetricResponse",
+            '201': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
@@ -2792,7 +2793,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CovalMetricsAPIGetMetricResponse]:
+    ) -> ApiResponse[CovalMetricsAPIMetricMutationResponse]:
         """Duplicate a metric
 
         Clone an existing metric into a new metric owned by your organization. Copies the metric configuration, tags, and active thresholds. Returns the new metric. Invalid regex syntax in the source configuration returns INVALID_ARGUMENT with regex_pattern field attribution; correct the source pattern before duplicating it.
@@ -2830,7 +2831,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CovalMetricsAPIGetMetricResponse",
+            '201': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
@@ -2902,7 +2903,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CovalMetricsAPIGetMetricResponse",
+            '201': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
@@ -2985,6 +2986,7 @@ class MetricsApi:
         self,
         metric_id: Annotated[str, Field(strict=True, description="22-character metric ID")],
         x_coval_workspace_id: Annotated[Optional[Annotated[str, Field(min_length=1, strict=True, max_length=26)]], Field(description="Workspace that scopes this operation. When omitted, the organization's active default workspace is used when one can be resolved.")] = None,
+        include: Annotated[Optional[StrictStr], Field(description="Include the authenticated caller's bounded human-review audit capability for this metric.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3006,6 +3008,8 @@ class MetricsApi:
         :type metric_id: str
         :param x_coval_workspace_id: Workspace that scopes this operation. When omitted, the organization's active default workspace is used when one can be resolved.
         :type x_coval_workspace_id: str
+        :param include: Include the authenticated caller's bounded human-review audit capability for this metric.
+        :type include: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3031,6 +3035,7 @@ class MetricsApi:
         _param = self._get_metric_serialize(
             metric_id=metric_id,
             x_coval_workspace_id=x_coval_workspace_id,
+            include=include,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3060,6 +3065,7 @@ class MetricsApi:
         self,
         metric_id: Annotated[str, Field(strict=True, description="22-character metric ID")],
         x_coval_workspace_id: Annotated[Optional[Annotated[str, Field(min_length=1, strict=True, max_length=26)]], Field(description="Workspace that scopes this operation. When omitted, the organization's active default workspace is used when one can be resolved.")] = None,
+        include: Annotated[Optional[StrictStr], Field(description="Include the authenticated caller's bounded human-review audit capability for this metric.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3081,6 +3087,8 @@ class MetricsApi:
         :type metric_id: str
         :param x_coval_workspace_id: Workspace that scopes this operation. When omitted, the organization's active default workspace is used when one can be resolved.
         :type x_coval_workspace_id: str
+        :param include: Include the authenticated caller's bounded human-review audit capability for this metric.
+        :type include: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3106,6 +3114,7 @@ class MetricsApi:
         _param = self._get_metric_serialize(
             metric_id=metric_id,
             x_coval_workspace_id=x_coval_workspace_id,
+            include=include,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3135,6 +3144,7 @@ class MetricsApi:
         self,
         metric_id: Annotated[str, Field(strict=True, description="22-character metric ID")],
         x_coval_workspace_id: Annotated[Optional[Annotated[str, Field(min_length=1, strict=True, max_length=26)]], Field(description="Workspace that scopes this operation. When omitted, the organization's active default workspace is used when one can be resolved.")] = None,
+        include: Annotated[Optional[StrictStr], Field(description="Include the authenticated caller's bounded human-review audit capability for this metric.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3156,6 +3166,8 @@ class MetricsApi:
         :type metric_id: str
         :param x_coval_workspace_id: Workspace that scopes this operation. When omitted, the organization's active default workspace is used when one can be resolved.
         :type x_coval_workspace_id: str
+        :param include: Include the authenticated caller's bounded human-review audit capability for this metric.
+        :type include: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3181,6 +3193,7 @@ class MetricsApi:
         _param = self._get_metric_serialize(
             metric_id=metric_id,
             x_coval_workspace_id=x_coval_workspace_id,
+            include=include,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3205,6 +3218,7 @@ class MetricsApi:
         self,
         metric_id,
         x_coval_workspace_id,
+        include,
         _request_auth,
         _content_type,
         _headers,
@@ -3229,6 +3243,10 @@ class MetricsApi:
         if metric_id is not None:
             _path_params['metric_id'] = metric_id
         # process the query parameters
+        if include is not None:
+            
+            _query_params.append(('include', include))
+            
         # process the header parameters
         if x_coval_workspace_id is not None:
             _header_params['X-Coval-Workspace-Id'] = x_coval_workspace_id
@@ -7204,7 +7222,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CovalMetricsAPIGetMetricResponse:
+    ) -> CovalMetricsAPIMetricMutationResponse:
         """Restore a recently-deleted metric
 
         Restore a soft-deleted metric to active, returning it to the state it held at deletion time (its version history and current version are unchanged). Restoring an already-active metric is a no-op. A metric that is missing, otherwise not restorable, or outside the current workspace returns 404. The default workspace can restore organization-owned legacy metrics whose workspace is unset. If authentication does not resolve a workspace, restore returns 404.
@@ -7242,7 +7260,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
             '412': "CovalMetricsAPIErrorResponse",
@@ -7275,7 +7293,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CovalMetricsAPIGetMetricResponse]:
+    ) -> ApiResponse[CovalMetricsAPIMetricMutationResponse]:
         """Restore a recently-deleted metric
 
         Restore a soft-deleted metric to active, returning it to the state it held at deletion time (its version history and current version are unchanged). Restoring an already-active metric is a no-op. A metric that is missing, otherwise not restorable, or outside the current workspace returns 404. The default workspace can restore organization-owned legacy metrics whose workspace is unset. If authentication does not resolve a workspace, restore returns 404.
@@ -7313,7 +7331,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
             '412': "CovalMetricsAPIErrorResponse",
@@ -7384,7 +7402,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
             '412': "CovalMetricsAPIErrorResponse",
@@ -7478,7 +7496,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CovalMetricsAPIGetMetricResponse:
+    ) -> CovalMetricsAPIMetricMutationResponse:
         """Revert metric version
 
         Re-apply a prior version's scoring configuration to the live metric. A revert is forward-only: it mints a new version (change_type=revert) and advances the metric, so the response reflects the metric's new live config. Reverting to the version the metric already points at is rejected with 400.
@@ -7519,7 +7537,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
@@ -7554,7 +7572,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CovalMetricsAPIGetMetricResponse]:
+    ) -> ApiResponse[CovalMetricsAPIMetricMutationResponse]:
         """Revert metric version
 
         Re-apply a prior version's scoring configuration to the live metric. A revert is forward-only: it mints a new version (change_type=revert) and advances the metric, so the response reflects the metric's new live config. Reverting to the version the metric already points at is rejected with 400.
@@ -7595,7 +7613,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
@@ -7671,7 +7689,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '404': "CovalMetricsAPIErrorResponse",
@@ -8375,7 +8393,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CovalMetricsAPIGetMetricResponse:
+    ) -> CovalMetricsAPIMetricMutationResponse:
         """Update metric
 
         Partial update of metric fields. Only provided fields are updated.
@@ -8419,7 +8437,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '403': "CovalMetricsAPIErrorResponse",
@@ -8456,7 +8474,7 @@ class MetricsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CovalMetricsAPIGetMetricResponse]:
+    ) -> ApiResponse[CovalMetricsAPIMetricMutationResponse]:
         """Update metric
 
         Partial update of metric fields. Only provided fields are updated.
@@ -8500,7 +8518,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '403': "CovalMetricsAPIErrorResponse",
@@ -8581,7 +8599,7 @@ class MetricsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CovalMetricsAPIGetMetricResponse",
+            '200': "CovalMetricsAPIMetricMutationResponse",
             '400': "CovalMetricsAPIErrorResponse",
             '401': "CovalMetricsAPIErrorResponse",
             '403': "CovalMetricsAPIErrorResponse",

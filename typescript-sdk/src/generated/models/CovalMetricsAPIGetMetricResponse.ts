@@ -28,12 +28,29 @@ import {
  */
 export interface CovalMetricsAPIGetMetricResponse {
     /**
+     * Requested only. Version 1 supports confirming a bounded comparison against up to 50 reviewed conversations. Zero means unavailable. Label coverage is checked during the audit.
+     * @type {CovalMetricsAPIGetMetricResponseReviewedAuditAdmissionVersionEnum}
+     * @memberof CovalMetricsAPIGetMetricResponse
+     */
+    reviewed_audit_admission_version?: CovalMetricsAPIGetMetricResponseReviewedAuditAdmissionVersionEnum | null;
+    /**
      * 
      * @type {CovalMetricsAPIMetricResource}
      * @memberof CovalMetricsAPIGetMetricResponse
      */
     metric: CovalMetricsAPIMetricResource;
 }
+
+
+/**
+ * @export
+ */
+export const CovalMetricsAPIGetMetricResponseReviewedAuditAdmissionVersionEnum = {
+    NUMBER_0: 0,
+    NUMBER_1: 1
+} as const;
+export type CovalMetricsAPIGetMetricResponseReviewedAuditAdmissionVersionEnum = typeof CovalMetricsAPIGetMetricResponseReviewedAuditAdmissionVersionEnum[keyof typeof CovalMetricsAPIGetMetricResponseReviewedAuditAdmissionVersionEnum];
+
 
 /**
  * Check if a given object implements the CovalMetricsAPIGetMetricResponse interface.
@@ -53,6 +70,7 @@ export function CovalMetricsAPIGetMetricResponseFromJSONTyped(json: any, ignoreD
     }
     return {
         
+        'reviewed_audit_admission_version': json['reviewed_audit_admission_version'] == null ? undefined : json['reviewed_audit_admission_version'],
         'metric': CovalMetricsAPIMetricResourceFromJSON(json['metric']),
     };
 }
@@ -68,6 +86,7 @@ export function CovalMetricsAPIGetMetricResponseToJSONTyped(value?: CovalMetrics
 
     return {
         
+        'reviewed_audit_admission_version': value['reviewed_audit_admission_version'],
         'metric': CovalMetricsAPIMetricResourceToJSON(value['metric']),
     };
 }

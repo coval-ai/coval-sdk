@@ -124,6 +124,11 @@ import {
     CovalMetricsAPIMetricFlowResponseToJSON,
 } from '../models/CovalMetricsAPIMetricFlowResponse.js';
 import {
+    type CovalMetricsAPIMetricMutationResponse,
+    CovalMetricsAPIMetricMutationResponseFromJSON,
+    CovalMetricsAPIMetricMutationResponseToJSON,
+} from '../models/CovalMetricsAPIMetricMutationResponse.js';
+import {
     type CovalMetricsAPIMetricOutputCollection,
     CovalMetricsAPIMetricOutputCollectionFromJSON,
     CovalMetricsAPIMetricOutputCollectionToJSON,
@@ -228,6 +233,7 @@ export interface DuplicateMetricRequest {
 export interface GetMetricRequest {
     metricId: string;
     xCovalWorkspaceId?: string;
+    include?: GetMetricIncludeEnum;
 }
 
 export interface GetMetricBaselineRequest {
@@ -377,13 +383,13 @@ export interface MetricsApiInterface {
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
      */
-    createMetricRaw(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>>;
+    createMetricRaw(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>>;
 
     /**
      * Create a new custom evaluation metric.  **Required fields vary by metric type:**  | Metric Type | Required Fields | |-------------|-----------------| | METRIC_AGENT_JUDGE | prompt | | METRIC_AGENT_JUDGE_CATEGORICAL | prompt, categories | | METRIC_AGENT_JUDGE_NUMERICAL | prompt, min_value, max_value | | METRIC_LLM_BINARY | prompt | | METRIC_CATEGORICAL | prompt, categories | | METRIC_NUMERICAL_LLM_JUDGE | prompt, min_value, max_value | | METRIC_AUDIO_LLM_BINARY | prompt | | METRIC_AUDIO_LLM_CATEGORICAL | prompt, categories | | METRIC_AUDIO_LLM_NUMERICAL | prompt, min_value, max_value | | METRIC_TOOLCALL | prompt | | METRIC_METADATA_FIELD | metadata_field_type, metadata_field_key | | METRIC_TRANSCRIPT_REGEX | regex_pattern | | METRIC_PAUSE_ANALYSIS | min_pause_duration_seconds | 
      * Create metric
      */
-    createMetric(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse>;
+    createMetric(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse>;
 
     /**
      * Creates request options for createMetricBaseline without sending the request
@@ -579,18 +585,19 @@ export interface MetricsApiInterface {
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
      */
-    duplicateMetricRaw(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>>;
+    duplicateMetricRaw(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>>;
 
     /**
      * Clone an existing metric into a new metric owned by your organization. Copies the metric configuration, tags, and active thresholds. Returns the new metric. Invalid regex syntax in the source configuration returns INVALID_ARGUMENT with regex_pattern field attribution; correct the source pattern before duplicating it.
      * Duplicate a metric
      */
-    duplicateMetric(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse>;
+    duplicateMetric(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse>;
 
     /**
      * Creates request options for getMetric without sending the request
      * @param {string} metricId 22-character metric ID
      * @param {string} [xCovalWorkspaceId] Workspace that scopes this operation. When omitted, the organization\&#39;s active default workspace is used when one can be resolved.
+     * @param {'reviewed_audit_admission'} [include] Include the authenticated caller\&#39;s bounded human-review audit capability for this metric.
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
      */
@@ -601,6 +608,7 @@ export interface MetricsApiInterface {
      * @summary Get metric
      * @param {string} metricId 22-character metric ID
      * @param {string} [xCovalWorkspaceId] Workspace that scopes this operation. When omitted, the organization\&#39;s active default workspace is used when one can be resolved.
+     * @param {'reviewed_audit_admission'} [include] Include the authenticated caller\&#39;s bounded human-review audit capability for this metric.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
@@ -983,13 +991,13 @@ export interface MetricsApiInterface {
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
      */
-    restoreMetricRaw(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>>;
+    restoreMetricRaw(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>>;
 
     /**
      * Restore a soft-deleted metric to active, returning it to the state it held at deletion time (its version history and current version are unchanged). Restoring an already-active metric is a no-op. A metric that is missing, otherwise not restorable, or outside the current workspace returns 404. The default workspace can restore organization-owned legacy metrics whose workspace is unset. If authentication does not resolve a workspace, restore returns 404.
      * Restore a recently-deleted metric
      */
-    restoreMetric(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse>;
+    restoreMetric(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse>;
 
     /**
      * Creates request options for revertMetricVersion without sending the request
@@ -1009,13 +1017,13 @@ export interface MetricsApiInterface {
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
      */
-    revertMetricVersionRaw(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>>;
+    revertMetricVersionRaw(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>>;
 
     /**
      * Re-apply a prior version\'s scoring configuration to the live metric. A revert is forward-only: it mints a new version (change_type=revert) and advances the metric, so the response reflects the metric\'s new live config. Reverting to the version the metric already points at is rejected with 400.
      * Revert metric version
      */
-    revertMetricVersion(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse>;
+    revertMetricVersion(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse>;
 
     /**
      * Creates request options for testMetric without sending the request
@@ -1087,13 +1095,13 @@ export interface MetricsApiInterface {
      * @throws {RequiredError}
      * @memberof MetricsApiInterface
      */
-    updateMetricRaw(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>>;
+    updateMetricRaw(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>>;
 
     /**
      * Partial update of metric fields. Only provided fields are updated.
      * Update metric
      */
-    updateMetric(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse>;
+    updateMetric(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse>;
 
     /**
      * Creates request options for updateMetricBaseline without sending the request
@@ -1276,18 +1284,18 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
      * Create a new custom evaluation metric.  **Required fields vary by metric type:**  | Metric Type | Required Fields | |-------------|-----------------| | METRIC_AGENT_JUDGE | prompt | | METRIC_AGENT_JUDGE_CATEGORICAL | prompt, categories | | METRIC_AGENT_JUDGE_NUMERICAL | prompt, min_value, max_value | | METRIC_LLM_BINARY | prompt | | METRIC_CATEGORICAL | prompt, categories | | METRIC_NUMERICAL_LLM_JUDGE | prompt, min_value, max_value | | METRIC_AUDIO_LLM_BINARY | prompt | | METRIC_AUDIO_LLM_CATEGORICAL | prompt, categories | | METRIC_AUDIO_LLM_NUMERICAL | prompt, min_value, max_value | | METRIC_TOOLCALL | prompt | | METRIC_METADATA_FIELD | metadata_field_type, metadata_field_key | | METRIC_TRANSCRIPT_REGEX | regex_pattern | | METRIC_PAUSE_ANALYSIS | min_pause_duration_seconds | 
      * Create metric
      */
-    async createMetricRaw(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>> {
+    async createMetricRaw(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>> {
         const requestOptions = await this.createMetricRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIGetMetricResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIMetricMutationResponseFromJSON(jsonValue));
     }
 
     /**
      * Create a new custom evaluation metric.  **Required fields vary by metric type:**  | Metric Type | Required Fields | |-------------|-----------------| | METRIC_AGENT_JUDGE | prompt | | METRIC_AGENT_JUDGE_CATEGORICAL | prompt, categories | | METRIC_AGENT_JUDGE_NUMERICAL | prompt, min_value, max_value | | METRIC_LLM_BINARY | prompt | | METRIC_CATEGORICAL | prompt, categories | | METRIC_NUMERICAL_LLM_JUDGE | prompt, min_value, max_value | | METRIC_AUDIO_LLM_BINARY | prompt | | METRIC_AUDIO_LLM_CATEGORICAL | prompt, categories | | METRIC_AUDIO_LLM_NUMERICAL | prompt, min_value, max_value | | METRIC_TOOLCALL | prompt | | METRIC_METADATA_FIELD | metadata_field_type, metadata_field_key | | METRIC_TRANSCRIPT_REGEX | regex_pattern | | METRIC_PAUSE_ANALYSIS | min_pause_duration_seconds | 
      * Create metric
      */
-    async createMetric(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse> {
+    async createMetric(requestParameters: CreateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse> {
         const response = await this.createMetricRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1725,18 +1733,18 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
      * Clone an existing metric into a new metric owned by your organization. Copies the metric configuration, tags, and active thresholds. Returns the new metric. Invalid regex syntax in the source configuration returns INVALID_ARGUMENT with regex_pattern field attribution; correct the source pattern before duplicating it.
      * Duplicate a metric
      */
-    async duplicateMetricRaw(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>> {
+    async duplicateMetricRaw(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>> {
         const requestOptions = await this.duplicateMetricRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIGetMetricResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIMetricMutationResponseFromJSON(jsonValue));
     }
 
     /**
      * Clone an existing metric into a new metric owned by your organization. Copies the metric configuration, tags, and active thresholds. Returns the new metric. Invalid regex syntax in the source configuration returns INVALID_ARGUMENT with regex_pattern field attribution; correct the source pattern before duplicating it.
      * Duplicate a metric
      */
-    async duplicateMetric(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse> {
+    async duplicateMetric(requestParameters: DuplicateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse> {
         const response = await this.duplicateMetricRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1753,6 +1761,10 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['include'] != null) {
+            queryParameters['include'] = requestParameters['include'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -2558,18 +2570,18 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
      * Restore a soft-deleted metric to active, returning it to the state it held at deletion time (its version history and current version are unchanged). Restoring an already-active metric is a no-op. A metric that is missing, otherwise not restorable, or outside the current workspace returns 404. The default workspace can restore organization-owned legacy metrics whose workspace is unset. If authentication does not resolve a workspace, restore returns 404.
      * Restore a recently-deleted metric
      */
-    async restoreMetricRaw(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>> {
+    async restoreMetricRaw(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>> {
         const requestOptions = await this.restoreMetricRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIGetMetricResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIMetricMutationResponseFromJSON(jsonValue));
     }
 
     /**
      * Restore a soft-deleted metric to active, returning it to the state it held at deletion time (its version history and current version are unchanged). Restoring an already-active metric is a no-op. A metric that is missing, otherwise not restorable, or outside the current workspace returns 404. The default workspace can restore organization-owned legacy metrics whose workspace is unset. If authentication does not resolve a workspace, restore returns 404.
      * Restore a recently-deleted metric
      */
-    async restoreMetric(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse> {
+    async restoreMetric(requestParameters: RestoreMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse> {
         const response = await this.restoreMetricRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -2617,18 +2629,18 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
      * Re-apply a prior version\'s scoring configuration to the live metric. A revert is forward-only: it mints a new version (change_type=revert) and advances the metric, so the response reflects the metric\'s new live config. Reverting to the version the metric already points at is rejected with 400.
      * Revert metric version
      */
-    async revertMetricVersionRaw(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>> {
+    async revertMetricVersionRaw(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>> {
         const requestOptions = await this.revertMetricVersionRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIGetMetricResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIMetricMutationResponseFromJSON(jsonValue));
     }
 
     /**
      * Re-apply a prior version\'s scoring configuration to the live metric. A revert is forward-only: it mints a new version (change_type=revert) and advances the metric, so the response reflects the metric\'s new live config. Reverting to the version the metric already points at is rejected with 400.
      * Revert metric version
      */
-    async revertMetricVersion(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse> {
+    async revertMetricVersion(requestParameters: RevertMetricVersionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse> {
         const response = await this.revertMetricVersionRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -2796,18 +2808,18 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
      * Partial update of metric fields. Only provided fields are updated.
      * Update metric
      */
-    async updateMetricRaw(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIGetMetricResponse>> {
+    async updateMetricRaw(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CovalMetricsAPIMetricMutationResponse>> {
         const requestOptions = await this.updateMetricRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIGetMetricResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CovalMetricsAPIMetricMutationResponseFromJSON(jsonValue));
     }
 
     /**
      * Partial update of metric fields. Only provided fields are updated.
      * Update metric
      */
-    async updateMetric(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIGetMetricResponse> {
+    async updateMetric(requestParameters: UpdateMetricRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CovalMetricsAPIMetricMutationResponse> {
         const response = await this.updateMetricRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -3005,6 +3017,13 @@ export class MetricsApi extends runtime.BaseAPI implements MetricsApiInterface {
 
 }
 
+/**
+ * @export
+ */
+export const GetMetricIncludeEnum = {
+    ReviewedAuditAdmission: 'reviewed_audit_admission'
+} as const;
+export type GetMetricIncludeEnum = typeof GetMetricIncludeEnum[keyof typeof GetMetricIncludeEnum];
 /**
  * @export
  */

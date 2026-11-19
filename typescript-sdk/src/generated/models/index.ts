@@ -179,6 +179,7 @@ export * from './CovalMetricsAPIMetricEvaluationResource.js';
 export * from './CovalMetricsAPIMetricFlowResource.js';
 export * from './CovalMetricsAPIMetricFlowResponse.js';
 export * from './CovalMetricsAPIMetricModelResource.js';
+export * from './CovalMetricsAPIMetricMutationResponse.js';
 export * from './CovalMetricsAPIMetricOutputCollection.js';
 export * from './CovalMetricsAPIMetricResource.js';
 export * from './CovalMetricsAPIMetricResourceExpectedBody.js';

@@ -18,8 +18,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from coval_sdk.models.coval_metrics_api_metric_resource import CovalMetricsAPIMetricResource
 from typing import Optional, Set
 from typing_extensions import Self
@@ -29,9 +29,20 @@ class CovalMetricsAPIGetMetricResponse(BaseModel):
     """
     CovalMetricsAPIGetMetricResponse
     """ # noqa: E501
+    reviewed_audit_admission_version: Optional[StrictInt] = Field(default=None, description="Requested only. Version 1 supports confirming a bounded comparison against up to 50 reviewed conversations. Zero means unavailable. Label coverage is checked during the audit.")
     metric: CovalMetricsAPIMetricResource
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["metric"]
+    __properties: ClassVar[List[str]] = ["reviewed_audit_admission_version", "metric"]
+
+    @field_validator('reviewed_audit_admission_version')
+    def reviewed_audit_admission_version_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -82,6 +93,11 @@ class CovalMetricsAPIGetMetricResponse(BaseModel):
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
 
+        # set to None if reviewed_audit_admission_version (nullable) is None
+        # and model_fields_set contains the field
+        if self.reviewed_audit_admission_version is None and "reviewed_audit_admission_version" in self.model_fields_set:
+            _dict['reviewed_audit_admission_version'] = None
+
         return _dict
 
     @classmethod
@@ -94,6 +110,7 @@ class CovalMetricsAPIGetMetricResponse(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "reviewed_audit_admission_version": obj.get("reviewed_audit_admission_version"),
             "metric": CovalMetricsAPIMetricResource.from_dict(obj["metric"]) if obj.get("metric") is not None else None
         })
         # store additional fields in additional_properties

@@ -248,6 +248,7 @@ __all__ = [
     "CovalMetricsAPIMetricFlowResource",
     "CovalMetricsAPIMetricFlowResponse",
     "CovalMetricsAPIMetricModelResource",
+    "CovalMetricsAPIMetricMutationResponse",
     "CovalMetricsAPIMetricOutputCollection",
     "CovalMetricsAPIMetricResource",
     "CovalMetricsAPIMetricResourceExpectedBody",
@@ -902,6 +903,7 @@ from coval_sdk.models.coval_metrics_api_metric_evaluation_resource import CovalM
 from coval_sdk.models.coval_metrics_api_metric_flow_resource import CovalMetricsAPIMetricFlowResource as CovalMetricsAPIMetricFlowResource
 from coval_sdk.models.coval_metrics_api_metric_flow_response import CovalMetricsAPIMetricFlowResponse as CovalMetricsAPIMetricFlowResponse
 from coval_sdk.models.coval_metrics_api_metric_model_resource import CovalMetricsAPIMetricModelResource as CovalMetricsAPIMetricModelResource
+from coval_sdk.models.coval_metrics_api_metric_mutation_response import CovalMetricsAPIMetricMutationResponse as CovalMetricsAPIMetricMutationResponse
 from coval_sdk.models.coval_metrics_api_metric_output_collection import CovalMetricsAPIMetricOutputCollection as CovalMetricsAPIMetricOutputCollection
 from coval_sdk.models.coval_metrics_api_metric_resource import CovalMetricsAPIMetricResource as CovalMetricsAPIMetricResource
 from coval_sdk.models.coval_metrics_api_metric_resource_expected_body import CovalMetricsAPIMetricResourceExpectedBody as CovalMetricsAPIMetricResourceExpectedBody
