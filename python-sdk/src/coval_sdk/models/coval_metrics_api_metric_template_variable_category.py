@@ -19,23 +19,25 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 from pydantic_core import to_jsonable_python
 
 class CovalMetricsAPIMetricTemplateVariableCategory(BaseModel):
     """
-    One category of `{{prefix.key}}` template variables usable in metric prompts.
+    One namespace or bare-key form usable in text LLM-judge prompts.
     """ # noqa: E501
-    prefix: StrictStr = Field(description="Variable prefix, e.g. `agent`. Used as `{{agent.<key>}}` in prompts.")
+    prefix: StrictStr = Field(description="Namespace name. Empty string denotes the bare `{{key}}` form; see syntax.")
+    syntax: Optional[StrictStr] = Field(default='{{prefix.key}}', description="Prompt form: namespace {{prefix.key}} or bare {{key}}.")
+    deprecated: Optional[StrictBool] = Field(default=False, description="Whether this supported form is deprecated; see the category description for details.")
     display_name: StrictStr = Field(description="Human-readable category name")
     description: StrictStr = Field(description="What this category substitutes at evaluation time")
     source_field: StrictStr = Field(description="Backend source the values are read from")
     supports_custom_keys: StrictBool = Field(description="Whether arbitrary keys are allowed under this prefix")
     example_keys: List[StrictStr] = Field(description="Example keys for discovery/autocomplete")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["prefix", "display_name", "description", "source_field", "supports_custom_keys", "example_keys"]
+    __properties: ClassVar[List[str]] = ["prefix", "syntax", "deprecated", "display_name", "description", "source_field", "supports_custom_keys", "example_keys"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -96,6 +98,8 @@ class CovalMetricsAPIMetricTemplateVariableCategory(BaseModel):
 
         _obj = cls.model_validate({
             "prefix": obj.get("prefix"),
+            "syntax": obj.get("syntax") if obj.get("syntax") is not None else '{{prefix.key}}',
+            "deprecated": obj.get("deprecated") if obj.get("deprecated") is not None else False,
             "display_name": obj.get("display_name"),
             "description": obj.get("description"),
             "source_field": obj.get("source_field"),

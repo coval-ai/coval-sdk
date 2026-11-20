@@ -14,17 +14,29 @@
 
 import { mapValues } from '../runtime.js';
 /**
- * One category of `{{prefix.key}}` template variables usable in metric prompts.
+ * One namespace or bare-key form usable in text LLM-judge prompts.
  * @export
  * @interface CovalMetricsAPIMetricTemplateVariableCategory
  */
 export interface CovalMetricsAPIMetricTemplateVariableCategory {
     /**
-     * Variable prefix, e.g. `agent`. Used as `{{agent.<key>}}` in prompts.
+     * Namespace name. Empty string denotes the bare `{{key}}` form; see syntax.
      * @type {string}
      * @memberof CovalMetricsAPIMetricTemplateVariableCategory
      */
     prefix: string;
+    /**
+     * Prompt form: namespace {{prefix.key}} or bare {{key}}.
+     * @type {string}
+     * @memberof CovalMetricsAPIMetricTemplateVariableCategory
+     */
+    syntax?: string;
+    /**
+     * Whether this supported form is deprecated; see the category description for details.
+     * @type {boolean}
+     * @memberof CovalMetricsAPIMetricTemplateVariableCategory
+     */
+    deprecated?: boolean;
     /**
      * Human-readable category name
      * @type {string}
@@ -81,6 +93,8 @@ export function CovalMetricsAPIMetricTemplateVariableCategoryFromJSONTyped(json:
     return {
         
         'prefix': json['prefix'],
+        'syntax': json['syntax'] == null ? undefined : json['syntax'],
+        'deprecated': json['deprecated'] == null ? undefined : json['deprecated'],
         'display_name': json['display_name'],
         'description': json['description'],
         'source_field': json['source_field'],
@@ -101,6 +115,8 @@ export function CovalMetricsAPIMetricTemplateVariableCategoryToJSONTyped(value?:
     return {
         
         'prefix': value['prefix'],
+        'syntax': value['syntax'],
+        'deprecated': value['deprecated'],
         'display_name': value['display_name'],
         'description': value['description'],
         'source_field': value['source_field'],

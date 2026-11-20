@@ -5764,7 +5764,7 @@ class MetricsApi:
     ) -> CovalMetricsAPIGetMetricTemplateVariablesResponse:
         """List metric template variables
 
-        Return the catalog of `{{prefix.key}}` template variables that can be used in LLM-judge metric prompts (e.g. `{{agent.company_name}}`, `{{expected_output.balance}}`, `{{customer_metadata.call_id}}`). These are substituted at evaluation time from the agent's `attributes`, the test case's `expected_output`, and the run's `customer_metadata` respectively. 
+        Return the supported text LLM-judge prompt namespaces and bare-key form. `test_case` reads expected-output values and expected_behaviors; `expected_output` is its deprecated alias. `agent` reads agent attributes. Deprecated `simulation_metadata` reads legacy test-case simulation metadata. `metric_input` reads exact test-case metadata keys; `customer_metadata` reads run metadata with flat-key precedence over nested paths. Bare `{{key}}` reads test-case metadata, then run metadata when absent or empty. Wrapper attributes (`sim_wrapper`) and scalar simulation identifiers (`simulation_id`, `simulation_output_id`) are unavailable in text judge prompts. Consult each category's syntax and description. 
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -5829,7 +5829,7 @@ class MetricsApi:
     ) -> ApiResponse[CovalMetricsAPIGetMetricTemplateVariablesResponse]:
         """List metric template variables
 
-        Return the catalog of `{{prefix.key}}` template variables that can be used in LLM-judge metric prompts (e.g. `{{agent.company_name}}`, `{{expected_output.balance}}`, `{{customer_metadata.call_id}}`). These are substituted at evaluation time from the agent's `attributes`, the test case's `expected_output`, and the run's `customer_metadata` respectively. 
+        Return the supported text LLM-judge prompt namespaces and bare-key form. `test_case` reads expected-output values and expected_behaviors; `expected_output` is its deprecated alias. `agent` reads agent attributes. Deprecated `simulation_metadata` reads legacy test-case simulation metadata. `metric_input` reads exact test-case metadata keys; `customer_metadata` reads run metadata with flat-key precedence over nested paths. Bare `{{key}}` reads test-case metadata, then run metadata when absent or empty. Wrapper attributes (`sim_wrapper`) and scalar simulation identifiers (`simulation_id`, `simulation_output_id`) are unavailable in text judge prompts. Consult each category's syntax and description. 
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -5894,7 +5894,7 @@ class MetricsApi:
     ) -> RESTResponseType:
         """List metric template variables
 
-        Return the catalog of `{{prefix.key}}` template variables that can be used in LLM-judge metric prompts (e.g. `{{agent.company_name}}`, `{{expected_output.balance}}`, `{{customer_metadata.call_id}}`). These are substituted at evaluation time from the agent's `attributes`, the test case's `expected_output`, and the run's `customer_metadata` respectively. 
+        Return the supported text LLM-judge prompt namespaces and bare-key form. `test_case` reads expected-output values and expected_behaviors; `expected_output` is its deprecated alias. `agent` reads agent attributes. Deprecated `simulation_metadata` reads legacy test-case simulation metadata. `metric_input` reads exact test-case metadata keys; `customer_metadata` reads run metadata with flat-key precedence over nested paths. Bare `{{key}}` reads test-case metadata, then run metadata when absent or empty. Wrapper attributes (`sim_wrapper`) and scalar simulation identifiers (`simulation_id`, `simulation_output_id`) are unavailable in text judge prompts. Consult each category's syntax and description. 
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

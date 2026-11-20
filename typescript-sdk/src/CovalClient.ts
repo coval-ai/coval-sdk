@@ -30,6 +30,7 @@ import {
   MonitorEventsApi,
   MonitorsApi,
   MutationsApi,
+  OrganizationCallerIDApi,
   OrganizationConversationsConfigApi,
   OrganizationUsersApi,
   PersonasApi,
@@ -94,6 +95,7 @@ export const GENERATED_API_PROPERTY_NAMES = [
   'monitorEvents',
   'monitors',
   'mutations',
+  'organizationCallerID',
   'organizationConversationsConfig',
   'organizationUsers',
   'personas',
@@ -135,6 +137,7 @@ export class CovalClient {
   readonly monitorEvents: MonitorEventsApi;
   readonly monitors: MonitorsApi;
   readonly mutations: MutationsApi;
+  readonly organizationCallerID: OrganizationCallerIDApi;
   readonly organizationConversationsConfig: OrganizationConversationsConfigApi;
   readonly organizationUsers: OrganizationUsersApi;
   readonly personas: PersonasApi;
@@ -212,6 +215,7 @@ export class CovalClient {
     this.monitorEvents = new MonitorEventsApi(this.configuration);
     this.monitors = new MonitorsApi(this.configuration);
     this.mutations = new MutationsApi(this.configuration);
+    this.organizationCallerID = new OrganizationCallerIDApi(this.configuration);
     this.organizationConversationsConfig = new OrganizationConversationsConfigApi(this.configuration);
     this.organizationUsers = new OrganizationUsersApi(this.configuration);
     this.personas = new PersonasApi(this.configuration);

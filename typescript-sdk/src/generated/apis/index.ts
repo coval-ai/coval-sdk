@@ -14,6 +14,7 @@ export * from './MetricsApi.js';
 export * from './MonitorEventsApi.js';
 export * from './MonitorsApi.js';
 export * from './MutationsApi.js';
+export * from './OrganizationCallerIDApi.js';
 export * from './OrganizationConversationsConfigApi.js';
 export * from './OrganizationUsersApi.js';
 export * from './PersonasApi.js';
