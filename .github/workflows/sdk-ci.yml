@@ -31,6 +31,7 @@ jobs:
         run: |
           npm ci --prefix scripts
           npm audit --prefix scripts --audit-level=moderate
+          node --test scripts/bundle-spec.test.mjs
       - name: Build, test, and inspect package
         working-directory: typescript-sdk
         run: |

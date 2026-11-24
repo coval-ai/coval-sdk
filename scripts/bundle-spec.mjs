@@ -24,8 +24,8 @@
 //      tags into a single bundle. Components get prefixed by the source title
 //      to avoid schema-name collisions.
 //
-// Each source spec is self-contained (no cross-file $refs), so step 4 is
-// primarily a paths + components consolidation.
+// Published cross-file refs use public filenames; map them to the verified
+// canonical filenames before consolidation.
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -95,6 +95,50 @@ const HTTP_METHODS = new Set([
 ]);
 
 const slugFromFile = (filename) => basename(filename, '.yaml').replace(/-v1$/, '');
+
+const publishedFilenames = new Map(
+  canonicalFiles.map((filename) => [`${slugFromFile(filename)}.yaml`, filename]),
+);
+const rewritePublishedRefs = (node, seen = new WeakSet()) => {
+  if (!node || typeof node !== 'object' || seen.has(node)) return;
+  seen.add(node);
+  if (typeof node.$ref === 'string') {
+    const separator = node.$ref.indexOf('#');
+    const document = separator < 0 ? node.$ref : node.$ref.slice(0, separator);
+    const fragment = separator < 0 ? '' : node.$ref.slice(separator);
+    const prefix = document.startsWith('./') ? './' : '';
+    const target = publishedFilenames.get(document.slice(prefix.length));
+    if (target) node.$ref = `${prefix}${target}${fragment}`;
+  }
+  for (const value of Object.values(node)) rewritePublishedRefs(value, seen);
+};
+
+// Emit referenced contracts before their consumers. Otherwise imported copies
+// win openapi-generator's inline-schema deduplication and rename existing models.
+const documents = new Map(sources.map((source) => [source.key, parse(readFileSync(source.filepath, 'utf8'))]));
+const canonicalSources = new Map(sources.filter((source) => !source.legacy).map((source) => [source.filename, source]));
+const orderedSources = [];
+const visited = new Set();
+const visitSource = (source) => {
+  if (visited.has(source.key)) return;
+  visited.add(source.key);
+  const doc = documents.get(source.key);
+  rewritePublishedRefs(doc);
+  const seenNodes = new WeakSet();
+  const visitRefs = (node) => {
+    if (!node || typeof node !== 'object' || seenNodes.has(node)) return;
+    seenNodes.add(node);
+    if (typeof node.$ref === 'string') {
+      const document = node.$ref.split('#', 1)[0].replace(/^\.\//, '');
+      const dependency = canonicalSources.get(document);
+      if (dependency) visitSource(dependency);
+    }
+    for (const value of Object.values(node)) visitRefs(value);
+  };
+  visitRefs(doc);
+  orderedSources.push(source);
+};
+for (const source of sources) visitSource(source);
 
 // The frozen legacy files stay byte-for-byte copies; these corrections apply
 // where they misdescribe what the API serves. Each one asserts the frozen
@@ -177,13 +221,13 @@ const canonicalPaths = new Set();
 const canonicalTags = new Set();
 const droppedLegacyPaths = [];
 const droppedLegacyTags = [];
-const tmpFiles = [];
+const tmpFiles = new Map();
 
 const tmpRoot = mkdtempSync(join(tmpdir(), 'coval-sdk-bundle-'));
 process.once('exit', () => rmSync(tmpRoot, { recursive: true, force: true }));
 
-for (const { key, filename, filepath, legacy } of sources) {
-  const doc = parse(readFileSync(filepath, 'utf8'));
+for (const { key, filename, legacy } of sources) {
+  const doc = documents.get(key);
   const slug = slugFromFile(filename);
   if (legacy) applyLegacyCorrections(doc, filename);
   dropRequiredOnlyCompositions(doc, key);
@@ -252,8 +296,10 @@ for (const { key, filename, filepath, legacy } of sources) {
   }
 
   const tmpFile = join(tmpRoot, legacy ? `legacy-${filename}` : filename);
-  writeFileSync(tmpFile, stringify(doc));
-  tmpFiles.push(tmpFile);
+  // Redocly mutates local refs while prefixing components. YAML aliases would
+  // make it prefix a shared response repeatedly, producing dangling refs.
+  writeFileSync(tmpFile, stringify(JSON.parse(JSON.stringify(doc))));
+  tmpFiles.set(key, tmpFile);
 }
 
 if (renamed.length > 0) {
@@ -294,7 +340,7 @@ if (!existsSync(redocly)) {
 // An argument array, not a shell string, so no path needs quoting or escaping.
 const args = [
   'join',
-  ...tmpFiles,
+  ...orderedSources.map((source) => tmpFiles.get(source.key)),
   '-o',
   OUTPUT,
   '--prefix-components-with-info-prop=title',
